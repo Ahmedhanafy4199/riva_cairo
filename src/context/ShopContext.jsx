@@ -60,26 +60,7 @@ export const ShopProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-  const [activePage, setActivePage] = useState('Home');
-  const [previousPage, setPreviousPage] = useState('Home');
-  const [viewProductId, setViewProductId] = useState(null);
   const [toast, setToast] = useState(null);
-
-  const navigateToPage = (page, productId = null) => {
-    setPreviousPage(activePage);
-    setActivePage(page);
-    if (productId) setViewProductId(productId);
-    setIsCartOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const openProductPage = (productId) => navigateToPage('Product', productId);
-  const openCheckoutPage = () => navigateToPage('Checkout');
-  const navigateBack = () => {
-    setActivePage(previousPage);
-    setViewProductId(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const getProductSoldCount = (productId, productTitle) => {
     return orders
@@ -281,13 +262,6 @@ export const ShopProvider = ({ children }) => {
       isAdminLoggedIn,
       loginAdmin,
       logoutAdmin,
-      activePage,
-      setActivePage,
-      previousPage,
-      viewProductId,
-      openProductPage,
-      openCheckoutPage,
-      navigateBack,
       getProductSoldCount,
       deliveredSalesRevenue,
       deliveredOrdersCount,

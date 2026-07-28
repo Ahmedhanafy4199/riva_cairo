@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -11,7 +12,8 @@ import {
 import { useShop } from '../context/ShopContext';
 
 export const CheckoutPage = () => {
-  const { cart, cartSubtotal, placeOrder, navigateBack, setActivePage } = useShop();
+  const { cart, cartSubtotal, placeOrder } = useShop();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: '',
@@ -50,7 +52,7 @@ export const CheckoutPage = () => {
         <h2 className="font-serif-brand text-2xl font-bold text-slate-300">Your cart is empty</h2>
         <p className="text-xs text-slate-500">Add some products before proceeding to checkout.</p>
         <button
-          onClick={() => setActivePage('Category')}
+          onClick={() => navigate('/category/All')}
           className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors"
         >
           Browse Products
@@ -63,7 +65,7 @@ export const CheckoutPage = () => {
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn pb-16">
       {!confirmedOrder && (
         <button
-          onClick={navigateBack}
+          onClick={() => navigate('/category/All')}
           className="flex items-center gap-2 text-sm text-slate-400 hover:text-amber-400 transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -130,7 +132,7 @@ export const CheckoutPage = () => {
             </p>
 
             <button
-              onClick={() => setActivePage('Home')}
+              onClick={() => navigate('/')}
               className="w-full py-3.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
             >
               Back to Storefront

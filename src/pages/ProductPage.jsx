@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   ShoppingBag,
@@ -15,17 +16,14 @@ import { useShop } from '../context/ShopContext';
 import { ProductCard } from '../components/ProductCard';
 
 export const ProductPage = ({ onEditProduct }) => {
-  const {
-    products,
-    viewProductId,
-    navigateBack,
-    addToCart,
-  } = useShop();
+  const { products, addToCart } = useShop();
+  const { productId } = useParams();
+  const navigate = useNavigate();
 
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  const product = products.find((p) => p.id === viewProductId);
+  const product = products.find((p) => p.id === productId);
 
   if (!product) {
     return (
@@ -34,7 +32,7 @@ export const ProductPage = ({ onEditProduct }) => {
           Product not found
         </h2>
         <button
-          onClick={navigateBack}
+          onClick={() => navigate(-1)}
           className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors"
         >
           Go Back
@@ -73,7 +71,7 @@ export const ProductPage = ({ onEditProduct }) => {
     <div className="space-y-12 animate-fadeIn pb-16">
       {/* Back Button */}
       <button
-        onClick={navigateBack}
+        onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-sm text-slate-400 hover:text-amber-400 transition-colors group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

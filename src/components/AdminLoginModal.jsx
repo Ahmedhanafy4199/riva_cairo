@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Lock, ShieldAlert, KeyRound, ArrowRight } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 
-export const AdminLoginModal = ({ onLoginSuccess }) => {
+export const AdminLoginModal = () => {
   const { isAdminModalOpen, setIsAdminModalOpen, loginAdmin } = useShop();
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +15,6 @@ export const AdminLoginModal = ({ onLoginSuccess }) => {
     const success = loginAdmin(pin);
     if (success) {
       setPin('');
-      if (onLoginSuccess) onLoginSuccess();
     } else {
       setError('Invalid Access Code. Default passcode is: 1234');
     }
@@ -55,7 +54,7 @@ export const AdminLoginModal = ({ onLoginSuccess }) => {
           )}
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-2 flex items-center justify-between">
+            <label className="flex items-center justify-between text-xs font-medium text-slate-300 mb-2">
               <span>Enter Security PIN / Password</span>
               <span className="text-[10px] text-amber-400/80 font-mono">Demo PIN: 1234</span>
             </label>
@@ -75,7 +74,7 @@ export const AdminLoginModal = ({ onLoginSuccess }) => {
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20"
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20"
           >
             <span>Unlock Admin Panel</span>
             <ArrowRight className="w-4 h-4" />

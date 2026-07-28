@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShoppingBag, 
   Search, 
@@ -27,11 +28,11 @@ export const Navbar = () => {
     setSearchQuery,
     activeCategory,
     setActiveCategory,
-    activePage,
-    setActivePage,
   } = useShop();
 
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -45,18 +46,18 @@ export const Navbar = () => {
 
   const handleCategoryClick = (catId) => {
     if (catId === 'Home') {
-      setActivePage('Home');
       setActiveCategory('All');
+      navigate('/');
     } else {
-      setActivePage('Category');
       setActiveCategory(catId);
+      navigate(`/category/${catId}`);
     }
     setMobileMenuOpen(false);
   };
 
   const handleAdminClick = () => {
     if (isAdminLoggedIn) {
-      setActivePage('Admin');
+      navigate('/admin');
     } else {
       setIsAdminModalOpen(true);
     }
@@ -78,7 +79,7 @@ export const Navbar = () => {
             onClick={() => handleCategoryClick('Home')}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 p-0.5 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
                 <Crown className="w-5 h-5 text-amber-400" />
               </div>
@@ -97,8 +98,8 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navCategories.map((item) => {
               const Icon = item.icon;
-              const isActive = (activePage === 'Home' && item.id === 'Home') ||
-                               (activePage === 'Category' && activeCategory === item.id);
+              const isActive = (location.pathname === '/' && item.id === 'Home') ||
+                               (location.pathname.startsWith('/category/') && activeCategory === item.id);
               
               return (
                 <button
@@ -140,7 +141,7 @@ export const Navbar = () => {
             >
               <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-bold flex items-center justify-center shadow-md animate-pulse">
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-bold flex items-center justify-center shadow-md animate-pulse">
                   {cartItemCount}
                 </span>
               )}
@@ -159,7 +160,7 @@ export const Navbar = () => {
             <button
               onClick={handleAdminClick}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border transition-all duration-200 ${
-                activePage === 'Admin'
+                location.pathname === '/admin'
                   ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20'
                   : isAdminLoggedIn
                     ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/30 hover:border-emerald-500/60'
@@ -210,8 +211,8 @@ export const Navbar = () => {
         <div className="md:hidden border-t border-slate-800/80 bg-slate-950/95 backdrop-blur-2xl px-4 py-4 space-y-2 animate-fadeIn">
           {navCategories.map((item) => {
             const Icon = item.icon;
-            const isActive = (activePage === 'Home' && item.id === 'Home') ||
-                             (activePage === 'Category' && activeCategory === item.id);
+            const isActive = (location.pathname === '/' && item.id === 'Home') ||
+                             (location.pathname.startsWith('/category/') && activeCategory === item.id);
             return (
               <button
                 key={item.id}

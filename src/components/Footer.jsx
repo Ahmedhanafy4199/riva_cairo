@@ -1,9 +1,25 @@
 import React from 'react';
-import { Crown, Mail, Phone, MapPin, ShieldCheck, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Crown, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 
-export const Footer = ({ onSelectCategory, onAdminClick }) => {
-  const { setActiveCategory } = useShop();
+export const Footer = () => {
+  const { setActiveCategory, isAdminLoggedIn, setIsAdminModalOpen } = useShop();
+  const navigate = useNavigate();
+
+  const handleSelectCategory = (catId) => {
+    const targetCategory = catId === 'Home' ? 'All' : catId;
+    setActiveCategory(targetCategory);
+    navigate(catId === 'Home' ? '/' : `/category/${targetCategory}`);
+  };
+
+  const handleAdminClick = () => {
+    if (isAdminLoggedIn) {
+      navigate('/admin');
+    } else {
+      setIsAdminModalOpen(true);
+    }
+  };
 
   return (
     <footer className="bg-slate-950 border-t border-slate-900 text-slate-400 text-xs">
@@ -13,7 +29,7 @@ export const Footer = ({ onSelectCategory, onAdminClick }) => {
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 p-0.5 shadow-lg shadow-amber-500/20">
+              <div className="w-9 h-9 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 p-0.5 shadow-lg shadow-amber-500/20">
                 <div className="w-full h-full bg-slate-950 rounded-[9px] flex items-center justify-center">
                   <Crown className="w-4 h-4 text-amber-400" />
                 </div>
@@ -48,32 +64,32 @@ export const Footer = ({ onSelectCategory, onAdminClick }) => {
             </h4>
             <ul className="space-y-2">
               <li>
-                <button 
-                  onClick={() => { setActiveCategory('Bags'); onSelectCategory('Category'); }}
+                <button
+                  onClick={() => handleSelectCategory('Bags')}
                   className="hover:text-amber-400 transition-colors"
                 >
                   Handcrafted Bags
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => { setActiveCategory('Wallet'); onSelectCategory('Category'); }}
+                <button
+                  onClick={() => handleSelectCategory('Wallet')}
                   className="hover:text-amber-400 transition-colors"
                 >
                   Leather Wallets
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => { setActiveCategory('Jacket'); onSelectCategory('Category'); }}
+                <button
+                  onClick={() => handleSelectCategory('Jacket')}
                   className="hover:text-amber-400 transition-colors"
                 >
                   Lambskin Jackets
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => { setActiveCategory('Belt'); onSelectCategory('Category'); }}
+                <button
+                  onClick={() => handleSelectCategory('Belt')}
                   className="hover:text-amber-400 transition-colors"
                 >
                   Artisan Belts
@@ -89,16 +105,16 @@ export const Footer = ({ onSelectCategory, onAdminClick }) => {
             </h4>
             <ul className="space-y-2">
               <li>
-                <button 
-                  onClick={() => onSelectCategory('Home')}
+                <button
+                  onClick={() => handleSelectCategory('Home')}
                   className="hover:text-amber-400 transition-colors"
                 >
                   Home Page
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={onAdminClick}
+                <button
+                  onClick={handleAdminClick}
                   className="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1"
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
