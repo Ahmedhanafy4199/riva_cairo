@@ -3,7 +3,7 @@ import { ShoppingBag, Eye, Star, Trash2, Edit3, Sparkles } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
 
 export const ProductCard = ({ product, onEdit }) => {
-  const { addToCart, setSelectedProduct, isAdminLoggedIn, deleteProduct } = useShop();
+  const { addToCart, openProductPage, isAdminLoggedIn, deleteProduct } = useShop();
 
   return (
     <div className="group relative bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col">
@@ -34,7 +34,7 @@ export const ProductCard = ({ product, onEdit }) => {
         {/* Hover Quick Actions */}
         <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] bg-slate-950/40">
           <button
-            onClick={() => setSelectedProduct(product)}
+            onClick={() => openProductPage(product.id)}
             className="p-3 rounded-full bg-slate-900/90 text-slate-200 hover:text-amber-400 hover:bg-slate-900 border border-slate-700/80 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
             title="Quick View"
           >
@@ -90,7 +90,7 @@ export const ProductCard = ({ product, onEdit }) => {
 
           {/* Title */}
           <h3 
-            onClick={() => setSelectedProduct(product)}
+            onClick={() => openProductPage(product.id)}
             className="font-sans font-semibold text-slate-100 text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
           >
             {product.title}
@@ -120,7 +120,7 @@ export const ProductCard = ({ product, onEdit }) => {
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-amber-500 text-slate-200 hover:text-slate-950 text-xs font-semibold border border-slate-700 hover:border-amber-400 transition-all duration-200 group/btn shadow-md"
           >
             <ShoppingBag className="w-3.5 h-3.5 group-hover/btn:scale-110 transition-transform" />
-            <span>Add</span>
+            <span>Add to Cartt</span>
           </button>
         </div>
       </div>

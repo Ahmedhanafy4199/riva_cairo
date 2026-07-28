@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
-import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Tag } from 'lucide-react';
+import React from 'react';
+import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
-import { CheckoutModal } from './CheckoutModal';
 
 export const CartDrawer = () => {
-  const { 
-    cart, 
-    isCartOpen, 
-    setIsCartOpen, 
-    removeFromCart, 
-    updateCartQuantity, 
+  const {
+    cart,
+    isCartOpen,
+    setIsCartOpen,
+    removeFromCart,
+    updateCartQuantity,
     cartSubtotal,
-    clearCart
+    clearCart,
+    openCheckoutPage,
   } = useShop();
-
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   if (!isCartOpen) return null;
 
@@ -177,7 +175,10 @@ export const CartDrawer = () => {
 
                 <div className="space-y-2">
                   <button
-                    onClick={() => setIsCheckoutOpen(true)}
+                    onClick={() => {
+                      setIsCartOpen(false);
+                      openCheckoutPage();
+                    }}
                     className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all duration-300"
                   >
                     <span>Proceed to Checkout</span>
@@ -202,11 +203,6 @@ export const CartDrawer = () => {
           </div>
         </div>
       </div>
-
-      {/* Checkout Modal */}
-      {isCheckoutOpen && (
-        <CheckoutModal onClose={() => setIsCheckoutOpen(false)} />
-      )}
     </>
   );
 };

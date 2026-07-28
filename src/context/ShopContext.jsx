@@ -60,8 +60,43 @@ export const ShopProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [activePage, setActivePage] = useState('Home');
+  const [previousPage, setPreviousPage] = useState('Home');
+  const [viewProductId, setViewProductId] = useState(null);
   const [toast, setToast] = useState(null);
+
+  const navigateToPage = (page, productId = null) => {
+    setPreviousPage(activePage);
+    setActivePage(page);
+    if (productId) setViewProductId(productId);
+    setIsCartOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const openProductPage = (productId) => navigateToPage('Product', productId);
+  const openCheckoutPage = () => navigateToPage('Checkout');
+  const navigateBack = () => {
+    setActivePage(previousPage);
+    setViewProductId(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const getProductSoldCount = (productId, productTitle) => {
+    return orders
+      .filter((o) => o.status === 'Delivered')
+      .reduce((sum, order) => {
+        const item = order.items.find(
+          (i) => i.id === productId || i.title === productTitle
+        );
+        return sum + (item ? item.quantity : 0);
+      }, 0);
+  };
+
+  const deliveredSalesRevenue = orders
+    .filter((o) => o.status === 'Delivered')
+    .reduce((sum, o) => sum + o.totalAmount, 0);
+
+  const deliveredOrdersCount = orders.filter((o) => o.status === 'Delivered').length;
 
   // Sync products to local storage
   useEffect(() => {
@@ -92,19 +127,34 @@ export const ShopProvider = ({ children }) => {
   };
 
   // Cart Handlers
-  const addToCart = (product, quantity = 1) => {
-    setCart(prevCart => {
-      const existingIndex = prevCart.findIndex(item => item.id === product.id);
-      if (existingIndex > -1) {
-        const updated = [...prevCart];
-        updated[existingIndex].quantity += quantity;
-        return updated;
-      } else {
-        return [...prevCart, { ...product, quantity }];
+ const addToCart = (product, quantity = 1) => {
+  setCart(prevCart => {
+    const existingIndex = prevCart.findIndex(
+      item => item.id === product.id
+    );
+
+    if (existingIndex > -1) {
+      return prevCart.map((item, index) =>
+        index === existingIndex
+          ? {
+              ...item,
+              quantity: item.quantity + quantity
+            }
+          : item
+      );
+    }
+
+    return [
+      ...prevCart,
+      {
+        ...product,
+        quantity
       }
-    });
-    showToast(`Added "${product.title}" to cart!`, 'success');
-  };
+    ];
+  });
+
+  showToast(`Added "${product.title}" to cart!`, 'success');
+};
 
   const removeFromCart = (productId) => {
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
@@ -152,7 +202,8 @@ export const ShopProvider = ({ children }) => {
       rating: 5.0,
       reviewsCount: 1,
       featured: newProduct.featured || false,
-      stock: parseInt(newProduct.stock || 10, 10)
+      stock: parseInt(newProduct.stock || 10, 10),
+      purchaseSource: newProduct.purchaseSource || ''
     };
     setProducts(prev => [productWithId, ...prev]);
     showToast(`Product "${newProduct.title}" added to inventory!`, 'success');
@@ -184,7 +235,9 @@ export const ShopProvider = ({ children }) => {
       customerName: customerDetails.name,
       phone: customerDetails.phone,
       address: customerDetails.address,
+      city: customerDetails.city || '',
       items: cart.map(item => ({
+        id: item.id,
         title: item.title,
         price: item.price,
         quantity: item.quantity,
@@ -228,8 +281,16 @@ export const ShopProvider = ({ children }) => {
       isAdminLoggedIn,
       loginAdmin,
       logoutAdmin,
-      selectedProduct,
-      setSelectedProduct,
+      activePage,
+      setActivePage,
+      previousPage,
+      viewProductId,
+      openProductPage,
+      openCheckoutPage,
+      navigateBack,
+      getProductSoldCount,
+      deliveredSalesRevenue,
+      deliveredOrdersCount,
       toast,
       showToast,
       addToCart,

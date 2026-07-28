@@ -198,7 +198,7 @@ export const ProductsPage = ({ onEditProduct }) => {
             </button>
 
             {isSortOpen && (
-              <div className="absolute right-0 top-full mt-2 w-[220px] z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-55 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
                 <div className="px-3 py-2 border-b border-slate-800">
                   <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500">
                     Sort Products

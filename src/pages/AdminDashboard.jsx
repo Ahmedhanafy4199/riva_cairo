@@ -19,6 +19,7 @@ import {
   ChevronDown,
   Upload,
   Link,
+  TrendingUp,
 } from "lucide-react";
 import { useShop } from "../context/ShopContext";
 
@@ -32,6 +33,9 @@ export const AdminDashboard = () => {
     resetProductsToDefault,
     logoutAdmin,
     updateOrderStatus,
+    getProductSoldCount,
+    deliveredSalesRevenue,
+    deliveredOrdersCount,
   } = useShop();
 
   const [activeTab, setActiveTab] = useState("inventory"); // 'inventory', 'add', 'orders'
@@ -48,6 +52,7 @@ export const AdminDashboard = () => {
     price: "",
     originalPrice: "",
     stock: "15",
+    purchaseSource: "",
     image: "",
     images: [],
     description: "",
@@ -79,6 +84,7 @@ export const AdminDashboard = () => {
       price: "",
       originalPrice: "",
       stock: "15",
+      purchaseSource: "",
       image: "",
       images: [],
       description: "",
@@ -98,6 +104,7 @@ export const AdminDashboard = () => {
         ? product.originalPrice.toString()
         : "",
       stock: (product.stock || 10).toString(),
+      purchaseSource: product.purchaseSource || "",
       image: product.image,
       images: product.images || (product.image ? [product.image] : []),
       description: product.description,
@@ -216,6 +223,7 @@ export const AdminDashboard = () => {
         ? parseFloat(form.originalPrice)
         : parseFloat(form.price) * 1.2,
       stock: parseInt(form.stock, 10),
+      purchaseSource: form.purchaseSource || "",
       image: mainImage,
       images: allImages,
       description: form.description,
@@ -280,7 +288,7 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Analytics Cards Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
         <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-slate-400">
@@ -290,11 +298,28 @@ export const AdminDashboard = () => {
               ${totalRevenue.toFixed(2)}
             </div>
             <span className="text-[10px] text-emerald-400">
-              From completed client orders
+              All client orders
             </span>
           </div>
           <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
             <DollarSign className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="p-6 rounded-2xl bg-slate-900/60 border border-emerald-500/20 flex items-center justify-between">
+          <div>
+            <span className="text-xs font-medium text-slate-400">
+              Delivered Sales
+            </span>
+            <div className="text-2xl font-bold font-serif-brand text-emerald-400 mt-1">
+              ${deliveredSalesRevenue.toFixed(2)}
+            </div>
+            <span className="text-[10px] text-emerald-400">
+              {deliveredOrdersCount} delivered order{deliveredOrdersCount !== 1 ? "s" : ""}
+            </span>
+          </div>
+          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <TrendingUp className="w-6 h-6" />
           </div>
         </div>
 
@@ -443,6 +468,8 @@ export const AdminDashboard = () => {
                     <th className="px-6 py-4">Category</th>
                     <th className="px-6 py-4">Price</th>
                     <th className="px-6 py-4">Stock</th>
+                    <th className="px-6 py-4">Sold Qty</th>
+                    <th className="px-6 py-4">Purchase Source</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
@@ -493,6 +520,19 @@ export const AdminDashboard = () => {
 
                         <td className="px-6 py-4 font-mono">
                           {p.stock || 15} units
+                        </td>
+
+                        <td className="px-6 py-4 font-mono">
+                          <span className="text-emerald-400 font-bold">
+                            {getProductSoldCount(p.id, p.title)}
+                          </span>
+                          <span className="text-slate-500 text-[10px] ml-1">sold</span>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <span className="text-[11px] text-slate-300">
+                            {p.purchaseSource || "—"}
+                          </span>
                         </td>
 
                         <td className="px-6 py-4">
@@ -648,8 +688,8 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Price & Stock */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Price, Stock & Purchase Source */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
                   Price{" "}
@@ -690,6 +730,21 @@ export const AdminDashboard = () => {
                   placeholder="15"
                   value={form.stock}
                   onChange={(e) => setForm({ ...form, stock: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Purchase Source (اشترينا من)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Tuscany Leather Supplier"
+                  value={form.purchaseSource}
+                  onChange={(e) =>
+                    setForm({ ...form, purchaseSource: e.target.value })
+                  }
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
                 />
               </div>

@@ -1,38 +1,40 @@
-import React, { useState } from 'react';
-import { ShopProvider, useShop } from './context/ShopContext';
+import React from 'react';
+import { ShopProvider } from './context/ShopContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { Toast } from './components/Toast';
-import { ProductModal } from './components/ProductModal';
 import { CartDrawer } from './components/CartDrawer';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { HeroSection } from './components/HeroSection';
 import { ProductCard } from './components/ProductCard';
 import { ProductsPage } from './pages/ProductsPage';
+import { ProductPage } from './pages/ProductPage';
+import { CheckoutPage } from './pages/CheckoutPage';
 import { AdminDashboard } from './pages/AdminDashboard';
-import { ArrowRight, Sparkles, ShoppingBag, Wallet, Shirt, Award } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { useShop } from './context/ShopContext';
 
 const MainAppContent = () => {
-  const [currentTab, setCurrentTab] = useState('Home'); // 'Home', 'Category', 'Admin'
-  const { 
-    products, 
-    activeCategory, 
-    setActiveCategory, 
-    isAdminLoggedIn, 
+  const {
+    products,
+    activeCategory,
+    setActiveCategory,
+    isAdminLoggedIn,
     setIsAdminModalOpen,
-    searchQuery,
-    setSearchQuery 
+    activePage,
+    setActivePage,
   } = useShop();
 
   const handleSelectCategory = (catId) => {
     if (catId === 'Home') {
-      setCurrentTab('Home');
+      setActivePage('Home');
       setActiveCategory('All');
     } else if (catId === 'All') {
-      setCurrentTab('Category');
+      setActivePage('Category');
       setActiveCategory('All');
     } else {
-      setCurrentTab('Category');
+      setActivePage('Category');
       setActiveCategory(catId);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -40,36 +42,28 @@ const MainAppContent = () => {
 
   const handleAdminClick = () => {
     if (isAdminLoggedIn) {
-      setCurrentTab('Admin');
+      setActivePage('Admin');
     } else {
       setIsAdminModalOpen(true);
     }
   };
 
-  const handleEditProductFromCard = (product) => {
-    setCurrentTab('Admin');
+  const handleEditProductFromCard = () => {
+    setActivePage('Admin');
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
-      
-      {/* Navigation */}
-      <Navbar 
-        currentTab={currentTab} 
-        setCurrentTab={setCurrentTab} 
-      />
 
-      {/* Main Page Routing */}
+      <Navbar />
+
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* TAB 1: HOME PAGE */}
-        {currentTab === 'Home' && (
+
+        {activePage === 'Home' && (
           <div className="space-y-16 animate-fadeIn">
-            
-            {/* Hero Section */}
+
             <HeroSection onSelectCategory={handleSelectCategory} />
 
-            {/* Featured Products Grid */}
             <section className="space-y-8">
               <div className="flex items-end justify-between border-b border-slate-800/80 pb-4">
                 <div>
@@ -93,18 +87,17 @@ const MainAppContent = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.slice(0, 8).map((product) => (
-                  <ProductCard 
-                    key={product.id} 
-                    product={product} 
+                  <ProductCard
+                    key={product.id}
+                    product={product}
                     onEdit={handleEditProductFromCard}
                   />
                 ))}
               </div>
             </section>
 
-            {/* Category Showcase Sections */}
             {['Bags', 'Wallet', 'Jacket', 'Belt'].map((catName) => {
-              const catProducts = products.filter(p => p.category === catName);
+              const catProducts = products.filter((p) => p.category === catName);
               if (catProducts.length === 0) return null;
 
               return (
@@ -129,9 +122,9 @@ const MainAppContent = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {catProducts.slice(0, 4).map((product) => (
-                      <ProductCard 
-                        key={product.id} 
-                        product={product} 
+                      <ProductCard
+                        key={product.id}
+                        product={product}
                         onEdit={handleEditProductFromCard}
                       />
                     ))}
@@ -143,13 +136,19 @@ const MainAppContent = () => {
           </div>
         )}
 
-        {/* TAB 2: CATEGORY / PRODUCTS PAGE */}
-        {currentTab === 'Category' && (
+        {activePage === 'Category' && (
           <ProductsPage onEditProduct={handleEditProductFromCard} />
         )}
 
-        {/* TAB 3: ADMIN DASHBOARD */}
-        {currentTab === 'Admin' && (
+        {activePage === 'Product' && (
+          <ProductPage onEditProduct={handleEditProductFromCard} />
+        )}
+
+        {activePage === 'Checkout' && (
+          <CheckoutPage />
+        )}
+
+        {activePage === 'Admin' && (
           isAdminLoggedIn ? (
             <AdminDashboard />
           ) : (
@@ -172,14 +171,11 @@ const MainAppContent = () => {
 
       </main>
 
-      {/* Global Modals & Overlays */}
       <CartDrawer />
-      <ProductModal />
-      <AdminLoginModal onLoginSuccess={() => setCurrentTab('Admin')} />
+      <AdminLoginModal onLoginSuccess={() => setActivePage('Admin')} />
       <Toast />
 
-      {/* Footer */}
-      <Footer 
+      <Footer
         onSelectCategory={handleSelectCategory}
         onAdminClick={handleAdminClick}
       />
@@ -189,9 +185,11 @@ const MainAppContent = () => {
 
 export function App() {
   return (
-    <ShopProvider>
-      <MainAppContent />
-    </ShopProvider>
+    <ThemeProvider>
+      <ShopProvider>
+        <MainAppContent />
+      </ShopProvider>
+    </ThemeProvider>
   );
 }
 

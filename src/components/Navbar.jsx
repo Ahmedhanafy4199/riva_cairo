@@ -10,21 +10,28 @@ import {
   Wallet,
   Shirt,
   Award,
-  Crown
+  Crown,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useTheme } from '../context/ThemeContext';
 
-export const Navbar = ({ currentTab, setCurrentTab }) => {
-  const { 
-    cartItemCount, 
-    setIsCartOpen, 
-    isAdminLoggedIn, 
+export const Navbar = () => {
+  const {
+    cartItemCount,
+    setIsCartOpen,
+    isAdminLoggedIn,
     setIsAdminModalOpen,
     searchQuery,
     setSearchQuery,
     activeCategory,
-    setActiveCategory
+    setActiveCategory,
+    activePage,
+    setActivePage,
   } = useShop();
+
+  const { theme, toggleTheme } = useTheme();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,10 +45,10 @@ export const Navbar = ({ currentTab, setCurrentTab }) => {
 
   const handleCategoryClick = (catId) => {
     if (catId === 'Home') {
-      setCurrentTab('Home');
+      setActivePage('Home');
       setActiveCategory('All');
     } else {
-      setCurrentTab('Category');
+      setActivePage('Category');
       setActiveCategory(catId);
     }
     setMobileMenuOpen(false);
@@ -49,7 +56,7 @@ export const Navbar = ({ currentTab, setCurrentTab }) => {
 
   const handleAdminClick = () => {
     if (isAdminLoggedIn) {
-      setCurrentTab('Admin');
+      setActivePage('Admin');
     } else {
       setIsAdminModalOpen(true);
     }
@@ -90,8 +97,8 @@ export const Navbar = ({ currentTab, setCurrentTab }) => {
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navCategories.map((item) => {
               const Icon = item.icon;
-              const isActive = (currentTab === 'Home' && item.id === 'Home') || 
-                               (currentTab === 'Category' && activeCategory === item.id);
+              const isActive = (activePage === 'Home' && item.id === 'Home') ||
+                               (activePage === 'Category' && activeCategory === item.id);
               
               return (
                 <button
@@ -139,11 +146,20 @@ export const Navbar = ({ currentTab, setCurrentTab }) => {
               )}
             </button>
 
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Toggle Theme"
+            >
+              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            </button>
+
             {/* Admin Dashboard Access */}
             <button
               onClick={handleAdminClick}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border transition-all duration-200 ${
-                currentTab === 'Admin'
+                activePage === 'Admin'
                   ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20'
                   : isAdminLoggedIn
                     ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/30 hover:border-emerald-500/60'
@@ -194,8 +210,8 @@ export const Navbar = ({ currentTab, setCurrentTab }) => {
         <div className="md:hidden border-t border-slate-800/80 bg-slate-950/95 backdrop-blur-2xl px-4 py-4 space-y-2 animate-fadeIn">
           {navCategories.map((item) => {
             const Icon = item.icon;
-            const isActive = (currentTab === 'Home' && item.id === 'Home') || 
-                             (currentTab === 'Category' && activeCategory === item.id);
+            const isActive = (activePage === 'Home' && item.id === 'Home') ||
+                             (activePage === 'Category' && activeCategory === item.id);
             return (
               <button
                 key={item.id}
