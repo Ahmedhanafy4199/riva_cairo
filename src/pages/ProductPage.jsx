@@ -210,15 +210,15 @@ export const ProductPage = ({ onEditProduct }) => {
               <div className="grid grid-cols-3 gap-2 text-center text-[11px] text-slate-400">
                 <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                   <Truck className="w-4 h-4 text-amber-400" />
-                  <span>Express Shipping</span>
+                  <span className="text-xs font-medium text-white">Express Shipping</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                   <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  <span>Authentic Leather (جلد أصلي)</span>
+                  <span className="text-xs font-medium text-white">Authentic Leather (جلد أصلي)</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
                   <RotateCcw className="w-4 h-4 text-amber-400" />
-                  <span>15-Day Returns</span>
+                  <span className="text-xs font-medium text-white">15-Day Returns</span>
                 </div>
               </div>
             </div>

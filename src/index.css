@@ -106,3 +106,8 @@ html:not(.dark) .border-slate-800 {
 html:not(.dark) .border-slate-950\/80 {
   border-color: rgba(203,213,225,0.8) !important;
 }
+
+html:not(.dark) .text-white {
+  color: #1c1917 !important;
+}
+

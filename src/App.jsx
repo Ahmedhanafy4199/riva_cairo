@@ -13,6 +13,7 @@ import { ProductPage } from './pages/ProductPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { useShop } from './context/ShopContext';
+import { ScrollToTop } from './components/ScrollToTop';
 
 const MainAppContent = () => {
   const { isAdminLoggedIn } = useShop();
@@ -22,6 +23,7 @@ const MainAppContent = () => {
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />

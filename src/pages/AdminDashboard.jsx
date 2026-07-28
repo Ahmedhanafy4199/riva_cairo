@@ -51,8 +51,7 @@ export const AdminDashboard = () => {
     category: "Bags",
     price: "",
     originalPrice: "",
-    stock: "15",
-    purchaseSource: "",
+    purchasedQty: "0",
     image: "",
     images: [],
     description: "",
@@ -65,7 +64,25 @@ export const AdminDashboard = () => {
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
   const totalOrdersCount = orders.length;
   const totalProductsCount = products.length;
-  const outOfStockCount = products.filter((p) => (p.stock || 0) <= 2).length;
+
+  const getProductInventory = (product) => {
+    const purchasedQty = Number(product.purchasedQty || 0);
+
+    const soldQty = Number(getProductSoldCount(product.id, product.title) || 0);
+
+    const stock = Math.max(0, purchasedQty - soldQty);
+
+    return {
+      purchasedQty,
+      soldQty,
+      stock,
+    };
+  };
+
+  const outOfStockCount = products.filter((product) => {
+    const { stock } = getProductInventory(product);
+    return stock <= 2;
+  }).length;
 
   const filteredProducts = products.filter((p) => {
     const matchesCategory =
@@ -78,38 +95,38 @@ export const AdminDashboard = () => {
 
   const handleOpenAddForm = () => {
     setEditingProduct(null);
+
     setForm({
       title: "",
       category: "Bags",
       price: "",
       originalPrice: "",
-      stock: "15",
-      purchaseSource: "",
+      purchasedQty: "0",
       image: "",
       images: [],
       description: "",
       featured: false,
     });
+
     setUrlInput("");
     setActiveTab("add");
   };
 
   const handleStartEdit = (product) => {
     setEditingProduct(product);
+
     setForm({
-      title: product.title,
-      category: product.category,
-      price: product.price.toString(),
-      originalPrice: product.originalPrice
-        ? product.originalPrice.toString()
-        : "",
-      stock: (product.stock || 10).toString(),
-      purchaseSource: product.purchaseSource || "",
-      image: product.image,
+      title: product.title || "",
+      category: product.category || "Bags",
+      price: product.price?.toString() || "",
+      originalPrice: product.originalPrice?.toString() || "",
+      purchasedQty: (product.purchasedQty || 0).toString(),
+      image: product.image || "",
       images: product.images || (product.image ? [product.image] : []),
-      description: product.description,
+      description: product.description || "",
       featured: product.featured || false,
     });
+
     setUrlInput("");
     setActiveTab("add");
   };
@@ -201,32 +218,55 @@ export const AdminDashboard = () => {
     let mainImage = form.image;
     let allImages = form.images || [];
 
+    // Make sure there is a cover image
     if (allImages.length > 0 && !mainImage) {
       mainImage = allImages[0];
     }
+
+    // Make sure the cover image exists in the images array
     if (mainImage && allImages.length === 0) {
       allImages = [mainImage];
     }
 
-    if (!form.title || !form.price || !mainImage || !form.description) {
+    // Validate required fields
+    if (
+      !form.title.trim() ||
+      !form.price ||
+      !mainImage ||
+      !form.description.trim()
+    ) {
       alert(
         "Please fill in all required fields (Title, Price, at least one Image, Description).",
       );
       return;
     }
 
+    const purchasedQty = Math.max(0, parseInt(form.purchasedQty, 10) || 0);
+
+    // Keep the existing sold quantity when editing
+    const soldQty = editingProduct
+      ? Number(
+          getProductSoldCount(editingProduct.id, editingProduct.title) || 0,
+        )
+      : 0;
+
+    // Stock = Purchased - Sold
+    const stock = Math.max(0, purchasedQty - soldQty);
+
     const updatedProductData = {
-      title: form.title,
+      title: form.title.trim(),
       category: form.category,
       price: parseFloat(form.price),
       originalPrice: form.originalPrice
         ? parseFloat(form.originalPrice)
         : parseFloat(form.price) * 1.2,
-      stock: parseInt(form.stock, 10),
-      purchaseSource: form.purchaseSource || "",
+
+      purchasedQty,
+      stock,
+
       image: mainImage,
       images: allImages,
-      description: form.description,
+      description: form.description.trim(),
       featured: form.featured,
     };
 
@@ -315,7 +355,8 @@ export const AdminDashboard = () => {
               ${deliveredSalesRevenue.toFixed(2)}
             </div>
             <span className="text-[10px] text-emerald-400">
-              {deliveredOrdersCount} delivered order{deliveredOrdersCount !== 1 ? "s" : ""}
+              {deliveredOrdersCount} delivered order
+              {deliveredOrdersCount !== 1 ? "s" : ""}
             </span>
           </div>
           <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
@@ -467,10 +508,9 @@ export const AdminDashboard = () => {
                     <th className="px-6 py-4">Item</th>
                     <th className="px-6 py-4">Category</th>
                     <th className="px-6 py-4">Price</th>
-                    <th className="px-6 py-4">Stock</th>
+                    <th className="px-6 py-4">Purchased Qty</th>
                     <th className="px-6 py-4">Sold Qty</th>
-                    <th className="px-6 py-4">Purchase Source</th>
-                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4">Stock</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -478,7 +518,7 @@ export const AdminDashboard = () => {
                   {filteredProducts.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="6"
+                        colSpan="7"
                         className="px-6 py-12 text-center text-slate-500"
                       >
                         No products match your search/filter criteria.
@@ -518,34 +558,71 @@ export const AdminDashboard = () => {
                           ${p.price?.toFixed(2)}
                         </td>
 
+                        {/* Purchased Qty */}
                         <td className="px-6 py-4 font-mono">
-                          {p.stock || 15} units
+                          <span className="text-blue-400 font-bold">
+                            {p.purchasedQty || 0}
+                          </span>
+
+                          <span className="text-slate-500 text-[10px] ml-1">
+                            units
+                          </span>
                         </td>
 
+                        {/* Sold Qty */}
                         <td className="px-6 py-4 font-mono">
                           <span className="text-emerald-400 font-bold">
                             {getProductSoldCount(p.id, p.title)}
                           </span>
-                          <span className="text-slate-500 text-[10px] ml-1">sold</span>
-                        </td>
 
-                        <td className="px-6 py-4">
-                          <span className="text-[11px] text-slate-300">
-                            {p.purchaseSource || "—"}
+                          <span className="text-slate-500 text-[10px] ml-1">
+                            sold
                           </span>
                         </td>
 
-                        <td className="px-6 py-4">
+                        {/* Remaining Stock */}
+                        <td className="px-6 py-4 font-mono">
+                          {(() => {
+                            const purchased = Number(p.purchasedQty || 0);
+                            const sold = Number(
+                              getProductSoldCount(p.id, p.title) || 0,
+                            );
+
+                            const remaining = Math.max(0, purchased - sold);
+
+                            return (
+                              <>
+                                <span
+                                  className={
+                                    remaining === 0
+                                      ? "text-red-400 font-bold"
+                                      : remaining <= 5
+                                        ? "text-amber-400 font-bold"
+                                        : "text-slate-200 font-bold"
+                                  }
+                                >
+                                  {remaining}
+                                </span>
+
+                                <span className="text-slate-500 text-[10px] ml-1">
+                                  units
+                                </span>
+                              </>
+                            );
+                          })()}
+                        </td>
+
+                        {/* <td className="px-6 py-4">
                           {p.featured ? (
                             <span className="px-2 py-0.5 rounded text-[10px] bg-purple-950 text-purple-300 border border-purple-500/30">
                               Featured Luxe
                             </span>
                           ) : (
                             <span className="px-2 py-0.5 rounded text-[10px] bg-slate-950 text-slate-400">
-                              Standard
+                              Standardfff
                             </span>
                           )}
-                        </td>
+                        </td> */}
 
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
@@ -688,65 +765,120 @@ export const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Price, Stock & Purchase Source */}
+            {/* Price, Original Price & Purchased Quantity */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Price */}
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Price{" "}
+                  Price *
                 </label>
+
                 <input
                   type="number"
                   step="0.01"
+                  min="0"
                   required
                   placeholder="e.g. 250"
                   value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      price: e.target.value,
+                    })
+                  }
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-amber-400 font-bold font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
 
+              {/* Original Price */}
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Original Price{" "}
+                  Original Price
                 </label>
+
                 <input
                   type="number"
                   step="0.01"
+                  min="0"
                   placeholder="e.g. 300"
                   value={form.originalPrice}
                   onChange={(e) =>
-                    setForm({ ...form, originalPrice: e.target.value })
+                    setForm({
+                      ...form,
+                      originalPrice: e.target.value,
+                    })
                   }
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-400 font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
 
+              {/* Purchased Quantity */}
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Stock Quantity
+                  Purchased Quantity *
                 </label>
+
                 <input
                   type="number"
-                  placeholder="15"
-                  value={form.stock}
-                  onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                  min="0"
+                  required
+                  placeholder="e.g. 50"
+                  value={form.purchasedQty}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      purchasedQty: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-blue-400 font-bold font-mono focus:outline-none focus:border-amber-500"
                 />
+
+                <p className="mt-1 text-[10px] text-slate-500">
+                  Total quantity purchased from the supplier.
+                </p>
               </div>
 
+              {/* Remaining Stock - Preview */}
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Purchase Source (اشترينا من)
+                  Current Stock
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Tuscany Leather Supplier"
-                  value={form.purchaseSource}
-                  onChange={(e) =>
-                    setForm({ ...form, purchaseSource: e.target.value })
-                  }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
-                />
+
+                <div className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs font-bold font-mono">
+                  {(() => {
+                    const purchased = Number(form.purchasedQty || 0);
+
+                    const sold = editingProduct
+                      ? Number(
+                          getProductSoldCount(
+                            editingProduct.id,
+                            editingProduct.title,
+                          ) || 0,
+                        )
+                      : 0;
+
+                    const remaining = Math.max(0, purchased - sold);
+
+                    return (
+                      <span
+                        className={
+                          remaining === 0
+                            ? "text-red-400"
+                            : remaining <= 5
+                              ? "text-amber-400"
+                              : "text-emerald-400"
+                        }
+                      >
+                        {remaining} units
+                      </span>
+                    );
+                  })()}
+                </div>
+
+                <p className="mt-1 text-[10px] text-slate-500">
+                  Automatically calculated from purchased quantity minus sold
+                  quantity.
+                </p>
               </div>
             </div>
 
@@ -966,7 +1098,7 @@ export const AdminDashboard = () => {
                   {orders.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="6"
+                        colSpan="7"
                         className="px-6 py-12 text-center text-slate-500"
                       >
                         No orders recorded yet.
@@ -1042,7 +1174,6 @@ export const AdminDashboard = () => {
 
                             {openStatusOrder === order.id && (
                               <div className="absolute right-0 top-full mt-2 w-45 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
-
                                 {[
                                   {
                                     value: "Pending",
