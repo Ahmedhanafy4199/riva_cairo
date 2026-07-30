@@ -30,7 +30,7 @@ export const AdminDashboard = () => {
     addProduct,
     updateProduct,
     deleteProduct,
-    resetProductsToDefault,
+    // resetProductsToDefault,
     logoutAdmin,
     updateOrderStatus,
     getProductSoldCount,
@@ -308,14 +308,14 @@ export const AdminDashboard = () => {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button
+          {/* <button
             onClick={resetProductsToDefault}
             className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-700 hover:text-white text-xs font-medium transition-all"
             title="Reset default dataset"
           >
             <RotateCcw className="w-4 h-4 text-amber-400" />
             <span>Reset Products</span>
-          </button>
+          </button> */}
 
           <button
             onClick={logoutAdmin}
@@ -352,7 +352,7 @@ export const AdminDashboard = () => {
               Delivered Sales
             </span>
             <div className="text-2xl font-bold font-serif-brand text-emerald-400 mt-1">
-              ${deliveredSalesRevenue.toFixed(2)}
+              {deliveredSalesRevenue.toFixed(2)}
             </div>
             <span className="text-[10px] text-emerald-400">
               {deliveredOrdersCount} delivered order
@@ -521,7 +521,7 @@ export const AdminDashboard = () => {
                         colSpan="7"
                         className="px-6 py-12 text-center text-slate-500"
                       >
-                        No products match your search/filter criteria.
+                        No products match your search/filter.
                       </td>
                     </tr>
                   ) : (

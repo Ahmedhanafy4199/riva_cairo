@@ -7,7 +7,7 @@ export const ShopProvider = ({ children }) => {
   // Products state (persisted in LocalStorage)
   const [products, setProducts] = useState(() => {
     const saved = localStorage.getItem('riva_products');
-    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    return saved ? JSON.parse(saved) : [];
   });
 
   // Cart state (persisted in LocalStorage)
@@ -19,35 +19,7 @@ export const ShopProvider = ({ children }) => {
   // Orders state (persisted in LocalStorage)
   const [orders, setOrders] = useState(() => {
     const saved = localStorage.getItem('riva_orders');
-    return saved ? JSON.parse(saved) : [
-      {
-        id: 'ORD-9821',
-        customerName: 'Sarah Jenkins',
-        phone: '+1 (555) 234-5678',
-        address: '742 Evergreen Terrace, Suite 4B',
-        items: [
-          { title: 'Monaco Tuscan Leather Weekender Bag', price: 349, quantity: 1 }
-        ],
-        totalAmount: 349,
-        paymentMethod: 'Cash on Delivery',
-        status: 'Delivered',
-        date: '2026-07-20'
-      },
-      {
-        id: 'ORD-9822',
-        customerName: 'Marcus Aurelius',
-        phone: '+1 (555) 987-6543',
-        address: '12 Luxury Drive, Beverly Hills',
-        items: [
-          { title: 'Royal Bifold RFID Leather Wallet', price: 85, quantity: 2 },
-          { title: 'Tuscan Full-Grain Leather Dress Belt', price: 75, quantity: 1 }
-        ],
-        totalAmount: 245,
-        paymentMethod: 'Credit Card',
-        status: 'Processing',
-        date: '2026-07-22'
-      }
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
   // Admin Auth state
@@ -200,11 +172,11 @@ export const ShopProvider = ({ children }) => {
     showToast('Product deleted from inventory.', 'info');
   };
 
-  const resetProductsToDefault = () => {
-    setProducts(INITIAL_PRODUCTS);
-    localStorage.removeItem('riva_products');
-    showToast('Product catalog reset to default.', 'info');
-  };
+  // const resetProductsToDefault = () => {
+  //   setProducts(INITIAL_PRODUCTS);
+  //   localStorage.removeItem('riva_products');
+  //   showToast('Product catalog reset to default.', 'info');
+  // };
 
   // Place Order Handler
   const placeOrder = (customerDetails) => {
@@ -274,7 +246,7 @@ export const ShopProvider = ({ children }) => {
       addProduct,
       updateProduct,
       deleteProduct,
-      resetProductsToDefault,
+      // resetProductsToDefault,
       placeOrder,
       updateOrderStatus,
       cartItemCount,
