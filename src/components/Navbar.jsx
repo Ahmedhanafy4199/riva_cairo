@@ -69,7 +69,8 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 transition-all duration-300">
+    <>
+      <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
           {/* Logo */}
@@ -246,9 +247,43 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-800/80 bg-slate-950/98 backdrop-blur-2xl px-4 py-4 space-y-2 animate-fadeIn shadow-2xl">
+    </header>
+
+      {/* ── Mobile Nav Drawer — slides in from the right as a fixed overlay ── */}
+
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+          mobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Drawer Panel */}
+      <div
+        className={`fixed top-0 right-0 h-full w-full z-50 bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out md:hidden ${
+          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800/80 bg-slate-900/50 shrink-0">
+          <span className="font-serif-brand text-base font-bold text-slate-100 tracking-widest">
+            MENU
+          </span>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            aria-label="Close menu"
+          >
+            <LuX className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Nav Links */}
+        <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
           {navCategories.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -259,42 +294,40 @@ export const Navbar = () => {
               <button
                 key={item.id}
                 onClick={() => handleCategoryClick(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                   isActive
                     ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold"
                     : "text-slate-300 hover:bg-slate-900"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-amber-400" />
-                  <span>{item.label}</span>
-                </div>
-                <span className="text-xs text-slate-500">Explore</span>
+                <Icon className="w-5 h-5 text-amber-400 shrink-0" />
+                <span>{item.label}</span>
               </button>
             );
           })}
+        </nav>
 
-          <div className="pt-3 border-t border-slate-800">
-            <button
-              onClick={handleAdminClick}
-              className="relative w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-medium text-sm cursor-pointer"
-            >
-              {showRedDot && (
-                <span className="absolute top-2.5 right-3 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-slate-950"></span>
-                </span>
-              )}
-              <LuLock className="w-4 h-4" />
-              <span>
-                {isAdminLoggedIn
-                  ? "Go to Admin Dashboard"
-                  : "Owner / Admin Login"}
+        {/* Admin Button */}
+        <div className="px-4 py-4 border-t border-slate-800 shrink-0">
+          <button
+            onClick={handleAdminClick}
+            className="relative w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-medium text-sm cursor-pointer"
+          >
+            {showRedDot && (
+              <span className="absolute top-2.5 right-3 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-slate-950"></span>
               </span>
-            </button>
-          </div>
+            )}
+            <LuLock className="w-4 h-4" />
+            <span>
+              {isAdminLoggedIn
+                ? "Go to Admin Dashboard"
+                : "Owner / Admin Login"}
+            </span>
+          </button>
         </div>
-      )}
-    </header>
+      </div>
+    </>
   );
 };
