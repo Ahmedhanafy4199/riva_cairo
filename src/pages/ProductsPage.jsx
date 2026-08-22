@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import {
-  ShoppingBag,
-  Wallet,
-  Shirt,
-  Award,
-  Sparkles,
-  SlidersHorizontal,
-  Search,
-  Grid,
-  ListFilter,
-} from "lucide-react";
-import { useShop } from "../context/ShopContext";
+  LuShoppingBag,
+  LuWallet,
+  LuShirt,
+  LuAward,
+  LuSparkles,
+  LuSlidersHorizontal,
+  LuSearch,
+} from "react-icons/lu";
+import { useShop, normalizeCategory } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
 
 export const ProductsPage = ({ onEditProduct }) => {
@@ -20,6 +18,7 @@ export const ProductsPage = ({ onEditProduct }) => {
     setActiveCategory,
     searchQuery,
     setSearchQuery,
+    matchCategory,
   } = useShop();
 
   const [sortBy, setSortBy] = useState("featured");
@@ -30,31 +29,31 @@ export const ProductsPage = ({ onEditProduct }) => {
       title: "Complete Leather Collection",
       description:
         "Explore our full artisan leather range including handcrafted Bags, Wallets, Jackets, and Belts.",
-      icon: Sparkles,
+      icon: LuSparkles,
     },
     Bags: {
       title: "Handcrafted Leather Bags",
       description:
         "Full-grain Tuscan weekender bags, executive briefcases, daily satchels, and sleek backpacks.",
-      icon: ShoppingBag,
+      icon: LuShoppingBag,
     },
-    Wallet: {
+    Wallets: {
       title: "Wallets & Cardholders",
       description:
         "Slim RFID bifold wallets, long zip continentals, and minimalist money clips.",
-      icon: Wallet,
+      icon: LuWallet,
     },
-    Jacket: {
+    Jackets: {
       title: "Leather Jackets & Apparel",
       description:
         "Hand-tailored lambskin biker jackets, suede bombers, and shearling flight coats.",
-      icon: Shirt,
+      icon: LuShirt,
     },
-    Belt: {
+    Belts: {
       title: "Artisan Full-Grain Belts",
       description:
         "Reversible 35mm dress belts and hand-braided casual leather belts.",
-      icon: Award,
+      icon: LuAward,
     },
   };
 
@@ -63,8 +62,7 @@ export const ProductsPage = ({ onEditProduct }) => {
 
   // Filter products by Category & Search
   let filtered = products.filter((p) => {
-    const matchesCategory =
-      activeCategory === "All" || p.category === activeCategory;
+    const matchesCategory = matchCategory(p.category, activeCategory);
     const matchesSearch =
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -95,40 +93,40 @@ export const ProductsPage = ({ onEditProduct }) => {
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn pb-16">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn pb-12 sm:pb-16">
       {/* Category Banner Header */}
-      <div className="relative rounded-3xl overflow-hidden border border-slate-800 bg-linear-to-r from-slate-950 via-slate-900 to-slate-950 p-8 sm:p-12">
-        <div className="relative z-10 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
-            <MetaIcon className="w-4 h-4" />
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-linear-to-r from-slate-100 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-6 sm:p-10 md:p-12">
+        <div className="relative z-10 max-w-2xl space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[11px] sm:text-xs font-semibold uppercase tracking-wider">
+            <MetaIcon className="w-4 h-4 shrink-0" />
             <span>Category: {activeCategory}</span>
           </div>
 
-          <h1 className="font-serif-brand text-3xl sm:text-4xl font-bold text-slate-100">
+          <h1 className="font-serif-brand text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
             {currentMeta.title}
           </h1>
 
-          <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm font-light leading-relaxed">
             {currentMeta.description}
           </p>
         </div>
       </div>
 
       {/* Categories Bar & Filters */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-800">
         {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
-          {["All", "Bags", "Wallet", "Jacket", "Belt"].map((cat) => {
-            const isActive = activeCategory === cat;
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
+          {["All", "Bags", "Wallets", "Jackets", "Belts"].map((cat) => {
+            const isActive = normalizeCategory(activeCategory) === normalizeCategory(cat);
             const count =
               cat === "All"
                 ? products.length
-                : products.filter((p) => p.category === cat).length;
+                : products.filter((p) => matchCategory(p.category, cat)).length;
             return (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                   isActive
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                     : "bg-slate-950 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700"
@@ -136,9 +134,9 @@ export const ProductsPage = ({ onEditProduct }) => {
               >
                 <span>{cat}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
                     isActive
-                      ? "bg-slate-950/20 text-slate-950"
+                      ? "bg-slate-950/20 text-slate-950 font-bold"
                       : "bg-slate-900 text-slate-400"
                   }`}
                 >
@@ -150,9 +148,9 @@ export const ProductsPage = ({ onEditProduct }) => {
         </div>
 
         {/* Sort & Search */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 sm:w-60">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+          <div className="relative flex-1 sm:w-56 md:w-64">
+            <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
             <input
               type="text"
               placeholder="Search in this view..."
@@ -166,11 +164,10 @@ export const ProductsPage = ({ onEditProduct }) => {
             <button
               type="button"
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="flex items-center gap-2 bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-300 font-medium transition-all min-w-[180px] justify-between"
+              className="w-full sm:w-auto flex items-center gap-2 bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-300 font-medium transition-all min-w-40 sm:min-w-45 justify-between cursor-pointer"
             >
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
-
+                <LuSlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
                 <span>
                   {sortBy === "featured" && "Featured"}
                   {sortBy === "name-az" && "Name: A → Z"}
@@ -198,7 +195,7 @@ export const ProductsPage = ({ onEditProduct }) => {
             </button>
 
             {isSortOpen && (
-              <div className="absolute right-0 top-full mt-2 w-55 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-52 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-slate-950/40 overflow-hidden">
                 <div className="px-3 py-2 border-b border-slate-800">
                   <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500">
                     Sort Products
@@ -219,16 +216,15 @@ export const ProductsPage = ({ onEditProduct }) => {
                       setSortBy(option.value);
                       setIsSortOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 text-xs transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-xs transition-colors cursor-pointer ${
                       sortBy === option.value
                         ? "bg-amber-500/10 text-amber-400"
                         : "text-slate-300 hover:bg-slate-800 hover:text-white"
                     }`}
                   >
                     <span>{option.label}</span>
-
                     {sortBy === option.value && (
-                      <span className="text-amber-400 text-sm">✓</span>
+                      <span className="text-amber-400 text-sm font-bold">✓</span>
                     )}
                   </button>
                 ))}
@@ -240,11 +236,11 @@ export const ProductsPage = ({ onEditProduct }) => {
 
       {/* Products Grid */}
       {filtered.length === 0 ? (
-        <div className="py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800">
-          <div className="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
-            <ShoppingBag className="w-8 h-8" />
+        <div className="py-16 sm:py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800 px-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
+            <LuShoppingBag className="w-6 h-6 sm:w-8 sm:h-8" />
           </div>
-          <h3 className="font-serif-brand text-xl font-bold text-slate-300">
+          <h3 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-300">
             No items found
           </h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -256,13 +252,13 @@ export const ProductsPage = ({ onEditProduct }) => {
               setActiveCategory("All");
               setSearchQuery("");
             }}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors"
+            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
           >
             Clear Filters
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filtered.map((product) => (
             <ProductCard
               key={product.id}

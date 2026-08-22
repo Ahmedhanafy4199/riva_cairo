@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  ShoppingBag, 
-  Search, 
-  ShieldCheck, 
-  Lock, 
-  Menu, 
-  X, 
-  Sparkles,
-  Wallet,
-  Shirt,
-  Award,
-  Crown,
-  Moon,
-  Sun
-} from 'lucide-react';
-import { useShop } from '../context/ShopContext';
-import { useTheme } from '../context/ThemeContext';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  LuShoppingBag,
+  LuSearch,
+  LuShieldCheck,
+  LuLock,
+  LuMenu,
+  LuX,
+  LuSparkles,
+  LuWallet,
+  LuShirt,
+  LuAward,
+  LuCrown,
+  LuMoon,
+  LuSun,
+} from "react-icons/lu";
+import { useShop } from "../context/ShopContext";
+import { useTheme } from "../context/ThemeContext";
+import logoImage from "../assets/logo.png";
 
 export const Navbar = () => {
   const {
@@ -28,7 +29,10 @@ export const Navbar = () => {
     setSearchQuery,
     activeCategory,
     setActiveCategory,
+    hasUnreadOrders,
   } = useShop();
+
+  const showRedDot = Boolean(isAdminLoggedIn && hasUnreadOrders);
 
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -37,17 +41,17 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navCategories = [
-    { id: 'Home', label: 'Home', icon: Sparkles },
-    { id: 'Bags', label: 'Bags', icon: ShoppingBag },
-    { id: 'Wallet', label: 'Wallet', icon: Wallet },
-    { id: 'Jacket', label: 'Jacket', icon: Shirt },
-    { id: 'Belt', label: 'Belt', icon: Award },
+    { id: "Home", label: "Home", icon: LuSparkles },
+    { id: "Bags", label: "Bags", icon: LuShoppingBag },
+    { id: "Wallets", label: "Wallets", icon: LuWallet },
+    { id: "Jackets", label: "Jackets", icon: LuShirt },
+    { id: "Belts", label: "Belts", icon: LuAward },
   ];
 
   const handleCategoryClick = (catId) => {
-    if (catId === 'Home') {
-      setActiveCategory('All');
-      navigate('/');
+    if (catId === "Home") {
+      setActiveCategory("All");
+      navigate("/");
     } else {
       setActiveCategory(catId);
       navigate(`/category/${catId}`);
@@ -57,7 +61,7 @@ export const Navbar = () => {
 
   const handleAdminClick = () => {
     if (isAdminLoggedIn) {
-      navigate('/admin');
+      navigate("/admin");
     } else {
       setIsAdminModalOpen(true);
     }
@@ -66,30 +70,32 @@ export const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 transition-all duration-300">
-      {/* Top Banner */}
-      {/* <div className="bg-gradient-to-r from-slate-900 via-amber-950/40 to-slate-900 border-b border-amber-500/10 py-1.5 px-4 text-center text-xs tracking-wider text-amber-200/90 font-medium">
-        ✨ COMPLIMENTARY EXPRESS WORLDWIDE SHIPPING ON ORDERS OVER $200 | USE CODE <span className="text-amber-400 font-bold">LUXURY2026</span>
-      </div> */}
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
           {/* Logo */}
-          <div 
-            onClick={() => handleCategoryClick('Home')}
-            className="flex items-center gap-2.5 cursor-pointer group"
+          <div
+            onClick={() => handleCategoryClick("Home")}
+            className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group shrink-0"
           >
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 p-0.5 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Crown className="w-5 h-5 text-amber-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border border-[#D99A1A] p-0.5 shadow-lg shadow-[#D99A1A]/20 group-hover:scale-105 transition-transform duration-300 shrink-0">
+              <div className="w-full h-full rounded-[10px] overflow-hidden">
+                <img
+                  src={logoImage}
+                  alt="RIVA CAIRO"
+                  className="w-full h-full object-contain rounded-[10px] block"
+                />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="font-serif-brand text-xl sm:text-2xl font-bold tracking-widest text-white group-hover:text-amber-400 transition-colors">
-                RIVA <span className="text-amber-400 font-light">CAIRO</span>
-              </span>
-              <span className="text-[10px] tracking-[0.25em] text-slate-400 uppercase -mt-1">
-                Leather Atelier
+              <span
+                className={`font-serif-brand text-lg sm:text-2xl font-bold tracking-wider sm:tracking-widest transition-colors ${
+                  theme === "light"
+                    ? "text-slate-300 group-hover:text-amber-400"
+                    : "text-white group-hover:text-amber-400"
+                }`}
+              >
+                RIVA 
+                {/* <span className="text-amber-400 font-light">CAIRO</span> */}
               </span>
             </div>
           </div>
@@ -98,20 +104,24 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navCategories.map((item) => {
               const Icon = item.icon;
-              const isActive = (location.pathname === '/' && item.id === 'Home') ||
-                               (location.pathname.startsWith('/category/') && activeCategory === item.id);
-              
+              const isActive =
+                (location.pathname === "/" && item.id === "Home") ||
+                (location.pathname.startsWith("/category/") &&
+                  activeCategory === item.id);
+
               return (
                 <button
                   key={item.id}
                   onClick={() => handleCategoryClick(item.id)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 px-3 lg:px-3.5 py-2 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-sm shadow-amber-500/10'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900/60'
+                      ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-sm shadow-amber-500/10"
+                      : "text-slate-300 hover:text-white hover:bg-slate-900/60"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <Icon
+                    className={`w-4 h-4 ${isActive ? "text-amber-400" : "text-slate-400"}`}
+                  />
                   {item.label}
                 </button>
               );
@@ -119,29 +129,28 @@ export const Navbar = () => {
           </nav>
 
           {/* Actions & Utilities */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             {/* Search Input (Desktop) */}
             <div className="hidden lg:relative lg:flex items-center">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+              <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search leather goods..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-44 xl:w-56 bg-slate-900/80 border border-slate-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
+                className="w-40 xl:w-56 bg-slate-900/80 border border-slate-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
               />
             </div>
 
             {/* Cart Drawer Trigger */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400 hover:border-amber-500/30 transition-all duration-200 group"
+              className="relative p-2 sm:p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400 hover:border-amber-500/30 transition-all duration-200 group cursor-pointer shrink-0"
               aria-label="Shopping Cart"
             >
-              <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <LuShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-bold flex items-center justify-center shadow-md animate-pulse">
+                <span className="absolute -top-1 -right-1 min-w-4.5 h-4.5 sm:min-w-5 sm:h-5 px-1 rounded-full bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] sm:text-xs font-bold flex items-center justify-center shadow-md animate-pulse">
                   {cartItemCount}
                 </span>
               )}
@@ -150,32 +159,51 @@ export const Navbar = () => {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-2 sm:p-2.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-colors cursor-pointer shrink-0"
               title="Toggle Theme"
+              aria-label="Toggle Theme"
             >
-              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              {theme === "light" ? (
+                <LuMoon className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <LuSun className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
             </button>
 
             {/* Admin Dashboard Access */}
             <button
               onClick={handleAdminClick}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border transition-all duration-200 ${
-                location.pathname === '/admin'
-                  ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20'
+              className={`relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer shrink-0 ${
+                location.pathname === "/admin"
+                  ? "bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20"
                   : isAdminLoggedIn
-                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/30 hover:border-emerald-500/60'
-                    : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-amber-500/40 hover:text-amber-400'
+                    ? "bg-emerald-950/60 text-emerald-400 border-emerald-500/30 hover:border-emerald-500/60"
+                    : "bg-slate-900/80 text-slate-300 border-slate-800 hover:border-amber-500/40 hover:text-amber-400"
               }`}
-              title={isAdminLoggedIn ? "Access Admin Dashboard" : "Admin Login"}
+              title={
+                showRedDot
+                  ? `New client order(s) placed!`
+                  : isAdminLoggedIn
+                    ? "Access Admin Dashboard"
+                    : "Admin Login"
+              }
             >
+              {/* Red Order Notification Dot */}
+              {showRedDot && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3 z-10">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-slate-950"></span>
+                </span>
+              )}
+
               {isAdminLoggedIn ? (
                 <>
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <LuShieldCheck className="w-4 h-4 text-emerald-400" />
                   <span className="hidden sm:inline">Admin Panel</span>
                 </>
               ) : (
                 <>
-                  <Lock className="w-4 h-4 text-amber-400" />
+                  <LuLock className="w-4 h-4 text-amber-400" />
                   <span className="hidden sm:inline">Admin</span>
                 </>
               )}
@@ -184,17 +212,29 @@ export const Navbar = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 md:hidden rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
+              aria-label="Open mobile navigation"
+              className="relative p-2 md:hidden rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white cursor-pointer shrink-0"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {showRedDot && (
+                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border border-slate-950"></span>
+                </span>
+              )}
+
+              {mobileMenuOpen ? (
+                <LuX className="w-5 h-5" />
+              ) : (
+                <LuMenu className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Mobile Search Bar */}
-        <div className="lg:hidden pb-3 pt-1">
+        <div className="lg:hidden pb-3 pt-0.5">
           <div className="relative flex items-center">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3" />
+            <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
             <input
               type="text"
               placeholder="Search bags, wallets, jackets, belts..."
@@ -208,19 +248,21 @@ export const Navbar = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-800/80 bg-slate-950/95 backdrop-blur-2xl px-4 py-4 space-y-2 animate-fadeIn">
+        <div className="md:hidden border-t border-slate-800/80 bg-slate-950/98 backdrop-blur-2xl px-4 py-4 space-y-2 animate-fadeIn shadow-2xl">
           {navCategories.map((item) => {
             const Icon = item.icon;
-            const isActive = (location.pathname === '/' && item.id === 'Home') ||
-                             (location.pathname.startsWith('/category/') && activeCategory === item.id);
+            const isActive =
+              (location.pathname === "/" && item.id === "Home") ||
+              (location.pathname.startsWith("/category/") &&
+                activeCategory === item.id);
             return (
               <button
                 key={item.id}
                 onClick={() => handleCategoryClick(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  isActive 
-                    ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold' 
-                    : 'text-slate-300 hover:bg-slate-900'
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold"
+                    : "text-slate-300 hover:bg-slate-900"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -235,10 +277,20 @@ export const Navbar = () => {
           <div className="pt-3 border-t border-slate-800">
             <button
               onClick={handleAdminClick}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-medium text-sm"
+              className="relative w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-medium text-sm cursor-pointer"
             >
-              <Lock className="w-4 h-4" />
-              <span>{isAdminLoggedIn ? 'Go to Admin Dashboard' : 'Owner / Admin Login'}</span>
+              {showRedDot && (
+                <span className="absolute top-2.5 right-3 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-slate-950"></span>
+                </span>
+              )}
+              <LuLock className="w-4 h-4" />
+              <span>
+                {isAdminLoggedIn
+                  ? "Go to Admin Dashboard"
+                  : "Owner / Admin Login"}
+              </span>
             </button>
           </div>
         </div>

@@ -15,24 +15,34 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { useShop } from './context/ShopContext';
 import { ScrollToTop } from './components/ScrollToTop';
 
-const MainAppContent = () => {
-  const { isAdminLoggedIn } = useShop();
+const AdminRouteGuard = () => {
+  const { isAdmin, isAuthLoading } = useShop();
 
+  if (isAuthLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3 text-slate-400">
+        <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+        <span className="text-xs font-mono">Verifying owner credentials...</span>
+      </div>
+    );
+  }
+
+  return isAdmin ? <AdminDashboard /> : <Navigate to="/" replace />;
+};
+
+const MainAppContent = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8">
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route path="/product/:productId" element={<ProductPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route
-            path="/admin"
-            element={isAdminLoggedIn ? <AdminDashboard /> : <Navigate to="/" replace />}
-          />
+          <Route path="/admin" element={<AdminRouteGuard />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

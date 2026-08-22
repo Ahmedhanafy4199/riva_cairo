@@ -1,77 +1,98 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, Eye, Star, Trash2, Edit3, Sparkles } from 'lucide-react';
-import { useShop } from '../context/ShopContext';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  LuShoppingBag,
+  LuEye,
+  LuTrash2,
+  LuPencil,
+} from "react-icons/lu";
+import { useShop } from "../context/ShopContext";
 
 export const ProductCard = ({ product, onEdit }) => {
-  const { addToCart, isAdminLoggedIn, deleteProduct } = useShop();
+  const { addToCart, isAdminLoggedIn, deleteProduct, getProductStock } =
+    useShop();
   const navigate = useNavigate();
 
+  const stock = getProductStock
+    ? getProductStock(product)
+    : (product.stock ?? 99);
+  const isOutOfStock = stock <= 0;
+
   return (
-    <div className="group relative bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col">
-      
+    <div className="group relative bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col h-full">
       {/* Image Container */}
-      <div className="relative aspect-square w-full overflow-hidden bg-slate-950">
+      <div className="relative aspect-square w-full overflow-hidden bg-slate-950 cursor-pointer"
+         title="Quick View"
+         onClick={() => navigate(`/product/${product.id}`)}
+      >
         <img
           src={product.image}
           alt={product.title}
-          className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
         {/* Category Tag */}
-        <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30">
+        <span className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-500/30">
           {product.category}
         </span>
 
-        {/* Featured Tag */}
-        {/* {product.featured && (
-          <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950 flex items-center gap-1 shadow-md">
-            <Sparkles className="w-3 h-3 fill-slate-950" />
-            LUXE
+        {/* Out of Stock Badge */}
+        {isOutOfStock && (
+          <span className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
+            Out of Stock
           </span>
-        )} */}
+        )}
 
-        {/* Hover Quick Actions */}
-        <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] bg-slate-950/40">
-          <button
-            onClick={() => navigate(`/product/${product.id}`)}
-            className="p-3 rounded-full bg-slate-900/90 text-slate-200 hover:text-amber-400 hover:bg-slate-900 border border-slate-700/80 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
-            title="Quick View"
-          >
-            <Eye className="w-5 h-5" />
-          </button>
-          
-          <button
-            onClick={() => addToCart(product)}
-            className="p-3 rounded-full bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-lg shadow-amber-500/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75"
-            title="Add to Cart"
-          >
-            <ShoppingBag className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Hover Quick Actions (Desktop / Hover) */}
+        {!isOutOfStock && (
+          <div className="hidden sm:flex absolute inset-0 items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] bg-slate-950/40">
+            <button
+              onClick={() => navigate(`/product/${product.id}`)}
+              className="p-3 rounded-full bg-slate-900/90 text-slate-200 hover:text-amber-400 hover:bg-slate-900 border border-slate-700/80 shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 cursor-pointer"
+              title="Quick View"
+              aria-label="Quick View"
+            >
+              <LuEye className="w-5 h-5" />
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product);
+              }}
+              className="p-3 rounded-full bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-lg shadow-amber-500/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 cursor-pointer"
+              title="Add to Cart"
+              aria-label="Add to Cart"
+            >
+              <LuShoppingBag className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* Admin Badges & Actions */}
         {isAdminLoggedIn && (
-          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 z-10 bg-slate-950/90 p-1.5 rounded-xl border border-amber-500/40 backdrop-blur-md">
-            <span className="text-[10px] text-amber-300 font-mono pl-2">Admin Control</span>
-            <div className="flex items-center gap-1">
+          <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1.5 z-10 bg-slate-950/95 p-1.5 rounded-xl border border-amber-500/40 backdrop-blur-md">
+            <span className="text-[10px] text-amber-300 font-mono pl-1.5 truncate">
+              Admin
+            </span>
+            <div className="flex items-center gap-1 shrink-0">
               {onEdit && (
                 <button
                   onClick={() => onEdit(product)}
-                  className="p-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-amber-400 hover:bg-slate-700"
+                  className="p-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-amber-400 hover:bg-slate-700 cursor-pointer"
                   title="Edit Product"
                 >
-                  <Edit3 className="w-3.5 h-3.5" />
+                  <LuPencil className="w-3.5 h-3.5" />
                 </button>
               )}
               <button
                 onClick={() => deleteProduct(product.id)}
-                className="p-1.5 rounded-lg bg-red-950/80 text-red-400 hover:bg-red-900 hover:text-white"
+                className="p-1.5 rounded-lg bg-red-950/80 text-red-400 hover:bg-red-900 hover:text-white cursor-pointer"
                 title="Delete Product"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <LuTrash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -79,51 +100,49 @@ export const ProductCard = ({ product, onEdit }) => {
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-col grow justify-between bg-slate-900/40">
+      <div className="p-4 sm:p-5 flex flex-col grow justify-between bg-slate-900/40">
         <div>
-          {/* Rating */}
-          {/* <div className="flex items-center gap-1.5 mb-2 text-xs text-amber-400">
-            <div className="flex items-center">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            </div>
-            <span className="font-semibold text-slate-200">{product.rating || 5.0}</span>
-            <span className="text-slate-500 text-[11px]">({product.reviewsCount || 12})</span>
-          </div> */}
-
           {/* Title */}
-          <h3 
+          <h3
             onClick={() => navigate(`/product/${product.id}`)}
-            className="font-sans font-semibold text-slate-100 text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
+            className="font-sans font-semibold text-slate-100 text-sm sm:text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
           >
             {product.title}
           </h3>
 
           {/* Description preview */}
-          <p className="text-xs text-slate-400 line-clamp-2 mt-1.5 font-light leading-relaxed">
+          <p className="text-xs text-slate-400 line-clamp-2 mt-1 font-light leading-relaxed">
             {product.description}
           </p>
         </div>
 
         {/* Price & Add to Cart button */}
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-          <div>
-            <div className="text-lg font-bold text-amber-400 font-serif-brand">
+        <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-base sm:text-lg font-bold text-amber-400 font-serif-brand truncate">
               {product.price?.toFixed(2)}
             </div>
             {product.originalPrice && product.originalPrice > product.price && (
-              <div className="text-xs text-slate-500 line-through -mt-1">
+              <div className="text-[11px] sm:text-xs text-slate-500 line-through -mt-1 truncate">
                 {product.originalPrice?.toFixed(2)}
               </div>
             )}
           </div>
 
-          <button
-            onClick={() => addToCart(product)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-amber-500 text-slate-200 hover:text-slate-950 text-xs font-semibold border border-slate-700 hover:border-amber-400 transition-all duration-200 group/btn shadow-md"
-          >
-            <ShoppingBag className="w-3.5 h-3.5 group-hover/btn:scale-110 transition-transform" />
-            <span>Add to Cartt</span>
-          </button>
+          {isOutOfStock ? (
+            <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-900 text-red-400 text-[11px] sm:text-xs font-semibold border border-red-900/60 cursor-not-allowed select-none shrink-0">
+              <LuShoppingBag className="w-3.5 h-3.5" />
+              <span>غير متوفر</span>
+            </span>
+          ) : (
+            <button
+              onClick={() => addToCart(product)}
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-amber-500 text-slate-200 hover:text-slate-950 text-[11px] sm:text-xs font-semibold border border-slate-700 hover:border-amber-400 transition-all duration-200 group/btn shadow-md cursor-pointer shrink-0"
+            >
+              <LuShoppingBag className="w-3.5 h-3.5 group-hover/btn:scale-110 transition-transform" />
+              <span>Add to Cart</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

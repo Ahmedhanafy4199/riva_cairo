@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   body {
@@ -9,12 +10,26 @@
   }
 }
 
+/* ── Global Pointer Cursor ── */
+button,
+a,
+select,
+label[for],
+[role="button"],
+[role="link"],
+[role="tab"],
+[role="option"],
+[role="menuitem"],
+summary {
+  cursor: pointer;
+}
+
 /* Custom Utilities */
 .glass-panel {
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .gold-gradient-text {
@@ -42,6 +57,7 @@
   background: #f59e0b;
 }
 
+/* Light Mode Comprehensive Theme Overrides */
 html:not(.dark) {
   color-scheme: light;
 }
@@ -51,63 +67,181 @@ html:not(.dark) body {
   color: #0f172a;
 }
 
-html:not(.dark) .bg-slate-950 {
+/* Background Overrides for Light Mode */
+html:not(.dark) [class*="bg-slate-950"] {
   background-color: #f8fafc !important;
 }
 
-html:not(.dark) .bg-slate-950\/95 {
-  background-color: rgba(248,250,252,0.95) !important;
-}
-
-html:not(.dark) .bg-slate-900 {
+html:not(.dark) [class*="bg-slate-900"] {
   background-color: #ffffff !important;
 }
 
-html:not(.dark) .bg-slate-900\/80 {
-  background-color: rgba(255,255,255,0.8) !important;
+html:not(.dark) [class*="bg-slate-800"] {
+  background-color: #f1f5f9 !important;
 }
 
-html:not(.dark) .bg-slate-900\/60 {
-  background-color: rgba(255,255,255,0.6) !important;
+/* Hover States in Light Mode */
+html:not(.dark) [class*="hover:bg-slate-800"]:hover {
+  background-color: #e2e8f0 !important;
 }
 
-html:not(.dark) .bg-slate-900\/90 {
-  background-color: rgba(255,255,255,0.9) !important;
+html:not(.dark) [class*="hover:bg-slate-700"]:hover {
+  background-color: #cbd5e1 !important;
 }
 
-html:not(.dark) .text-slate-100 {
+html:not(.dark) [class*="hover:bg-slate-900"]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Glass Panel in Light Mode */
+html:not(.dark) .glass-panel {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+/* Text Colors in Light Mode */
+html:not(.dark) [class*="text-slate-100"] {
   color: #0f172a !important;
 }
 
-html:not(.dark) .text-slate-200 {
+html:not(.dark) [class*="text-slate-200"] {
+  color: #1e293b !important;
+}
+
+html:not(.dark) [class*="text-slate-300"] {
   color: #334155 !important;
 }
 
-html:not(.dark) .text-slate-300 {
+html:not(.dark) [class*="text-slate-400"] {
   color: #475569 !important;
 }
 
-html:not(.dark) .text-slate-400 {
+html:not(.dark) [class*="text-slate-500"] {
   color: #64748b !important;
 }
 
-html:not(.dark) .text-slate-500 {
-  color: #64748b !important;
+/* Accent Color Contrast Justifications in Light Mode */
+
+html:not(.dark) .text-amber-400 {
+  color: #d97706 !important;
 }
 
-html:not(.dark) .border-slate-900 {
+html:not(.dark) .text-amber-400:hover {
+  color: #b45309 !important;
+}
+html:not(.dark) .text-amber-300 {
+  color: #b45309 !important;
+}
+
+html:not(.dark) .text-emerald-400 {
+  color: #059669 !important;
+}
+
+html:not(.dark) .text-blue-400 {
+  color: #2563eb !important;
+}
+
+html:not(.dark) .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+html:not(.dark) .text-red-400 {
+  color: #dc2626 !important;
+}
+
+html:not(.dark) .text-red-300 {
+  color: #b91c1c !important;
+}
+
+/* Borders & Dividers in Light Mode */
+html:not(.dark) [class*="border-slate-900"],
+html:not(.dark) [class*="border-slate-800"],
+html:not(.dark) [class*="border-slate-700"] {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) [class*="divide-slate-800"] > * + * {
+  border-color: #e2e8f0 !important;
+}
+
+/* Badges & Alert Panels in Light Mode */
+html:not(.dark) .bg-emerald-950,
+html:not(.dark) [class*="bg-emerald-950"] {
+  background-color: #dcfce7 !important;
+  color: #15803d !important;
+  border-color: #86efac !important;
+}
+
+html:not(.dark) .bg-red-950,
+html:not(.dark) [class*="bg-red-950"] {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+  border-color: #fca5a5 !important;
+}
+
+html:not(.dark) .bg-purple-950,
+html:not(.dark) [class*="bg-purple-950"] {
+  background-color: #f3e8ff !important;
+  color: #7e22ce !important;
+  border-color: #d8b4fe !important;
+}
+
+/* Form Inputs & Controls in Light Mode */
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
 
-html:not(.dark) .border-slate-800 {
-  border-color: #cbd5e1 !important;
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94a3b8 !important;
 }
 
-html:not(.dark) .border-slate-950\/80 {
-  border-color: rgba(203,213,225,0.8) !important;
+/* Scrollbar Track & Thumb in Light Mode */
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
 }
 
-html:not(.dark) .text-white {
-  color: #1c1917 !important;
+/* ── Dark Mode: Soften pure-black shadows to slate ── */
+html.dark [class*="shadow-black"] {
+  --tw-shadow-color: rgb(15 23 42 / 0.35) !important;
 }
 
+/* ── Light Mode: text-white → dark text ── */
+html:not(.dark) [class~="text-white"] {
+  color: #0f172a !important;
+}
+
+html:not(.dark) [class*="hover:text-white"]:hover {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .group:hover [class*="group-hover:text-white"] {
+  color: #1e293b !important;
+}
+
+/* ── Light Mode: Additional Border Unification ── */
+html:not(.dark) [class*="border-slate-600"] {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) [class*="border-red-900"] {
+  border-color: #fecaca !important;
+}
+
+/* ── Light Mode: Soften black shadows to slate ── */
+html:not(.dark) [class*="shadow-black"] {
+  --tw-shadow-color: rgb(148 163 184 / 0.15) !important;
+}

@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft,
-  ShoppingBag,
-  ShieldCheck,
-  Truck,
-  RotateCcw,
-  Plus,
-  Minus,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
-} from 'lucide-react';
-import { useShop } from '../context/ShopContext';
+  LuArrowLeft,
+  LuShoppingBag,
+  LuShieldCheck,
+  LuTruck,
+  LuRotateCcw,
+  LuPlus,
+  LuMinus,
+  LuChevronLeft,
+  LuChevronRight,
+  LuSparkles,
+} from 'react-icons/lu';
+import { useShop, matchCategory } from '../context/ShopContext';
 import { ProductCard } from '../components/ProductCard';
 
 export const ProductPage = ({ onEditProduct }) => {
-  const { products, addToCart } = useShop();
+  const { products, addToCart, getProductStock, showToast } = useShop();
   const { productId } = useParams();
   const navigate = useNavigate();
 
@@ -27,13 +27,13 @@ export const ProductPage = ({ onEditProduct }) => {
 
   if (!product) {
     return (
-      <div className="py-20 text-center space-y-4">
+      <div className="py-20 text-center space-y-4 px-4">
         <h2 className="font-serif-brand text-2xl font-bold text-slate-300">
           Product not found
         </h2>
         <button
           onClick={() => navigate(-1)}
-          className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors"
+          className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
         >
           Go Back
         </button>
@@ -51,10 +51,24 @@ export const ProductPage = ({ onEditProduct }) => {
   const activeImage = images[activeImageIndex] || images[0];
 
   const relatedProducts = products
-    .filter((p) => p.id !== product.id && p.category === product.category)
+    .filter((p) => p.id !== product.id && matchCategory(p.category, product.category))
     .slice(0, 4);
 
+  const stock = getProductStock ? getProductStock(product) : (product.stock ?? 99);
+  const isOutOfStock = stock <= 0;
+
+  const handleIncrement = () => {
+    if (quantity >= stock) {
+      if (typeof showToast === 'function') {
+        showToast(`عفواً، المتاح في المخزون هو ${stock} قطع فقط!`, 'error');
+      }
+      return;
+    }
+    setQuantity(quantity + 1);
+  };
+
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     addToCart(product, quantity);
     setQuantity(1);
   };
@@ -68,65 +82,65 @@ export const ProductPage = ({ onEditProduct }) => {
   };
 
   return (
-    <div className="space-y-12 animate-fadeIn pb-16">
+    <div className="space-y-8 sm:space-y-12 animate-fadeIn pb-12 sm:pb-16">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-sm text-slate-400 hover:text-amber-400 transition-colors group"
+        className="flex items-center gap-2 text-xs sm:text-sm text-slate-400 hover:text-amber-400 transition-colors group cursor-pointer"
       >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        <LuArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         <span>Back to Collection</span>
       </button>
 
-      {/* Product Details */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* Gallery */}
-          <div className="relative bg-slate-950 flex flex-col" style={{ minHeight: '360px' }}>
-            <div className="relative flex-1 overflow-hidden" style={{ minHeight: '300px' }}>
+      {/* Product Details Card */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          {/* Gallery Section */}
+          <div className="relative bg-slate-950 flex flex-col min-h-70 sm:min-h-95 md:min-h-110">
+            <div className="relative flex-1 overflow-hidden min-h-65 sm:min-h-85 max-h-125">
               <img
                 key={activeImage}
                 src={activeImage}
                 alt={product.title}
-                className="w-full h-full object-cover transition-opacity duration-300"
-                style={{ minHeight: '300px' }}
+                className="w-full h-full object-cover object-center transition-opacity duration-300 min-h-65 sm:min-h-85"
               />
               <div className="absolute inset-0 bg-linear-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
 
-              <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold uppercase bg-slate-950/80 text-amber-400 border border-amber-500/30 z-10">
+              <span className="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold uppercase bg-slate-950/80 text-amber-400 border border-amber-500/30 z-10 backdrop-blur-sm">
                 {product.category}
               </span>
 
               {images.length > 1 && (
                 <>
-                  <span className="absolute bottom-4 right-4 px-2.5 py-1 rounded-full text-[10px] font-mono bg-slate-950/80 text-slate-300 border border-slate-700 z-10">
+                  <span className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] font-mono bg-slate-950/80 text-slate-300 border border-slate-700 z-10">
                     {activeImageIndex + 1} / {images.length}
                   </span>
                   <button
                     onClick={handlePrev}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-950/70 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 transition-all shadow-lg"
+                    className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 p-1.5 sm:p-2 rounded-full bg-slate-950/70 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 transition-all shadow-lg cursor-pointer"
                     aria-label="Previous image"
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <LuChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={handleNext}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-slate-950/70 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 transition-all shadow-lg"
+                    className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 p-1.5 sm:p-2 rounded-full bg-slate-950/70 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 transition-all shadow-lg cursor-pointer"
                     aria-label="Next image"
                   >
-                    <ChevronRight className="w-5 h-5" />
+                    <LuChevronRight className="w-5 h-5" />
                   </button>
                 </>
               )}
             </div>
 
+            {/* Thumbnail Strip */}
             {images.length > 1 && (
-              <div className="flex items-center gap-2 px-4 py-3 bg-slate-950/80 border-t border-slate-800/70 overflow-x-auto scrollbar-none">
+              <div className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-950/80 border-t border-slate-800/70 overflow-x-auto scrollbar-none">
                 {images.map((src, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`shrink-0 w-14 h-14 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                    className={`shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer ${
                       idx === activeImageIndex
                         ? 'border-amber-500 ring-2 ring-amber-500/25 shadow-lg shadow-amber-500/10'
                         : 'border-slate-800 hover:border-slate-600 opacity-70 hover:opacity-100'
@@ -140,85 +154,101 @@ export const ProductPage = ({ onEditProduct }) => {
             )}
           </div>
 
-          {/* Details */}
-          <div className="p-6 md:p-8 flex flex-col justify-between">
+          {/* Details Section */}
+          <div className="p-5 sm:p-7 md:p-8 flex flex-col justify-between space-y-6">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-medium">
-                  In Stock ({product.stock || 12})
-                </span>
-              </div>
-
-              <h1 className="font-serif-brand text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">
-                {product.title}
-              </h1>
-
-              <div className="flex items-baseline gap-3 mb-5">
-                <span className="text-3xl font-bold text-amber-400 font-serif-brand">
-                  ${product.price?.toFixed(2)}
-                </span>
-                {product.originalPrice && product.originalPrice > product.price && (
-                  <span className="text-base text-slate-500 line-through">
-                    ${product.originalPrice?.toFixed(2)}
+                {isOutOfStock ? (
+                  <span className="text-[11px] sm:text-xs text-red-400 bg-red-950/80 border border-red-500/30 px-2.5 py-0.5 rounded-full font-medium">
+                    غير متوفر — Out of Stock
+                  </span>
+                ) : (
+                  <span className="text-[11px] sm:text-xs text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-medium">
+                    In Stock 
                   </span>
                 )}
               </div>
 
-              <p className="text-sm text-slate-300 font-light leading-relaxed mb-6 border-t border-b border-slate-800 py-4">
+              <h1 className="font-serif-brand text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 sm:mb-3 leading-tight">
+                {product.title}
+              </h1>
+
+              <div className="flex items-baseline gap-3 mb-4 sm:mb-5">
+                <span className="text-2xl sm:text-3xl font-bold text-amber-400 font-serif-brand">
+                  {product.price?.toFixed(2)}
+                </span>
+                {product.originalPrice && product.originalPrice > product.price && (
+                  <span className="text-sm sm:text-base text-slate-500 line-through">
+                    {product.originalPrice?.toFixed(2)}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed mb-5 border-t border-b border-slate-800 py-3.5 sm:py-4">
                 {product.description}
               </p>
 
-              <div className="mb-5">
-                <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
+              {/* Quantity Selector */}
+              <div className="mb-4">
+                <label className="block text-[11px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">
                   Quantity
                 </label>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-slate-700 bg-slate-950 rounded-xl p-1">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center border border-slate-700 bg-slate-950 rounded-xl p-0.5 sm:p-1">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                      className="p-1.5 sm:p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                      aria-label="Decrease quantity"
                     >
-                      <Minus className="w-4 h-4" />
+                      <LuMinus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
-                    <span className="w-12 text-center text-slate-100 font-bold font-mono">{quantity}</span>
+                    <span className="w-10 sm:w-12 text-center text-slate-100 font-bold font-mono text-sm sm:text-base">{quantity}</span>
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                      onClick={handleIncrement}
+                      disabled={isOutOfStock || quantity >= stock}
+                      className="p-1.5 sm:p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                      aria-label="Increase quantity"
                     >
-                      <Plus className="w-4 h-4" />
+                      <LuPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
                   </div>
                   <span className="text-xs text-slate-400">
                     Total:{' '}
-                    <span className="text-amber-400 font-semibold">
-                      ${(product.price * quantity).toFixed(2)}
+                    <span className="text-amber-400 font-semibold font-mono">
+                      {(product.price * quantity).toFixed(2)}
                     </span>
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-slate-800">
+            {/* Action Buttons & Value Props */}
+            <div className="space-y-4 pt-3 border-t border-slate-800">
               <button
                 onClick={handleAddToCart}
-                className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all duration-300"
+                disabled={isOutOfStock}
+                className={`w-full flex items-center justify-center gap-2 py-3.5 sm:py-4 px-6 rounded-2xl font-bold text-sm sm:text-base shadow-xl transition-all duration-300 cursor-pointer ${
+                  isOutOfStock
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none'
+                    : 'bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500'
+                }`}
               >
-                <ShoppingBag className="w-5 h-5" />
-                <span>Add to Shopping Cart</span>
+                <LuShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>{isOutOfStock ? 'غير متوفر' : 'Add to Shopping Cart'}</span>
               </button>
 
-              <div className="grid grid-cols-3 gap-2 text-center text-[11px] text-slate-400">
-                <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <Truck className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-medium text-white">Express Shipping</span>
+              <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2 text-center text-[10px] sm:text-[11px] text-slate-400">
+                <div className="flex flex-row min-[420px]:flex-col items-center justify-center gap-1.5 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+                  <LuTruck className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="font-medium text-white">Express Shipping</span>
                 </div>
-                <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-medium text-white">Authentic Leather (جلد أصلي)</span>
+                <div className="flex flex-row min-[420px]:flex-col items-center justify-center gap-1.5 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+                  <LuShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="font-medium text-white">Authentic Leather</span>
                 </div>
-                <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <RotateCcw className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-medium text-white">15-Day Returns</span>
+                <div className="flex flex-row min-[420px]:flex-col items-center justify-center gap-1.5 p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+                  <LuRotateCcw className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="font-medium text-white">15-Day Returns</span>
                 </div>
               </div>
             </div>
@@ -228,11 +258,11 @@ export const ProductPage = ({ onEditProduct }) => {
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <section className="space-y-6 pt-4 border-t border-slate-900">
+        <section className="space-y-5 sm:space-y-6 pt-4 border-t border-slate-900">
           <div className="flex items-end justify-between">
             <div>
-              <span className="text-xs font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+              <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
+                <LuSparkles className="w-3.5 h-3.5 shrink-0" />
                 You May Also Like
               </span>
               <h2 className="font-serif-brand text-xl sm:text-2xl font-bold text-slate-100 mt-1">
@@ -241,7 +271,7 @@ export const ProductPage = ({ onEditProduct }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {relatedProducts.map((related) => (
               <ProductCard key={related.id} product={related} onEdit={onEditProduct} />
             ))}

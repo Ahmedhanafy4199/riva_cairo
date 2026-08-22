@@ -1,26 +1,28 @@
 import React, { useState } from "react";
 import {
-  Plus,
-  Edit3,
-  Trash2,
-  Package,
-  DollarSign,
-  ShoppingBag,
-  LogOut,
-  RotateCcw,
-  Search,
-  Filter,
-  CheckCircle2,
-  Clock,
-  Truck,
-  Image as ImageIcon,
-  Sparkles,
-  ShieldCheck,
-  ChevronDown,
-  Upload,
-  Link,
-  TrendingUp,
-} from "lucide-react";
+  LuPlus as Plus,
+  LuPencil as Edit3,
+  LuTrash2 as Trash2,
+  LuPackage as Package,
+  LuDollarSign as DollarSign,
+  LuShoppingBag as ShoppingBag,
+  LuLogOut as LogOut,
+  LuRotateCcw as RotateCcw,
+  LuSearch as Search,
+  LuFilter as Filter,
+  LuCircleCheck as CheckCircle2,
+  LuClock as Clock,
+  LuTruck as Truck,
+  LuImage as ImageIcon,
+  LuSparkles as Sparkles,
+  LuShieldCheck as ShieldCheck,
+  LuChevronDown as ChevronDown,
+  LuUpload as Upload,
+  LuLink as Link,
+  LuTrendingUp as TrendingUp,
+  LuBarcode as Barcode,
+  LuTrendingUpDown as TrendingUpDown,
+} from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
 
 export const AdminDashboard = () => {
@@ -30,25 +32,34 @@ export const AdminDashboard = () => {
     addProduct,
     updateProduct,
     deleteProduct,
-    // resetProductsToDefault,
+    user,
     logoutAdmin,
     updateOrderStatus,
     getProductSoldCount,
     deliveredSalesRevenue,
     deliveredOrdersCount,
+    markOrdersAsSeen,
   } = useShop();
 
   const [activeTab, setActiveTab] = useState("inventory"); // 'inventory', 'add', 'orders'
+
+  React.useEffect(() => {
+    if (activeTab === "orders") {
+      markOrdersAsSeen();
+    }
+  }, [activeTab, markOrdersAsSeen]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [filterCategory, setFilterCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [openStatusOrder, setOpenStatusOrder] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State for Add / Edit
   const [form, setForm] = useState({
     title: "",
     category: "Bags",
+    barcode: "",
     price: "",
     originalPrice: "",
     purchasedQty: "0",
@@ -89,7 +100,8 @@ export const AdminDashboard = () => {
       filterCategory === "All" || p.category === filterCategory;
     const matchesSearch =
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchTerm.toLowerCase());
+      p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.barcode && p.barcode.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -99,6 +111,7 @@ export const AdminDashboard = () => {
     setForm({
       title: "",
       category: "Bags",
+      barcode: "",
       price: "",
       originalPrice: "",
       purchasedQty: "0",
@@ -118,6 +131,7 @@ export const AdminDashboard = () => {
     setForm({
       title: product.title || "",
       category: product.category || "Bags",
+      barcode: product.barcode || "",
       price: product.price?.toString() || "",
       originalPrice: product.originalPrice?.toString() || "",
       purchasedQty: (product.purchasedQty || 0).toString(),
@@ -133,32 +147,31 @@ export const AdminDashboard = () => {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    const readPromises = files.map((file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-      });
+    const validFiles = files.filter((file) => {
+      if (!file.type.startsWith("image/")) {
+        alert(`File "${file.name}" is not a valid image.`);
+        return false;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`File "${file.name}" exceeds the maximum allowed limit of 10MB.`);
+        return false;
+      }
+      return true;
     });
 
-    Promise.all(readPromises)
-      .then((base64Images) => {
-        setForm((prev) => {
-          const currentImages = prev.images || [];
-          const newImages = [...currentImages, ...base64Images];
-          return {
-            ...prev,
-            images: newImages,
-            image: prev.image || base64Images[0] || "",
-          };
-        });
-      })
-      .catch((err) => {
-        console.error("Error reading files:", err);
-        alert("Failed to read some files. Please check the file formats.");
-      });
+    if (validFiles.length === 0) return;
+
+    setForm((prev) => {
+      const currentImages = prev.images || [];
+      const newImages = [...currentImages, ...validFiles];
+      return {
+        ...prev,
+        images: newImages,
+        image: prev.image || newImages[0] || "",
+      };
+    });
   };
+
 
   const handleAddUrl = () => {
     if (!urlInput.trim()) return;
@@ -212,7 +225,7 @@ export const AdminDashboard = () => {
     });
   };
 
-  const handleSubmitForm = (e) => {
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
 
     let mainImage = form.image;
@@ -256,6 +269,7 @@ export const AdminDashboard = () => {
     const updatedProductData = {
       title: form.title.trim(),
       category: form.category,
+      barcode: form.barcode.trim() || `RC-${(form.category || "PRD").substring(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
       price: parseFloat(form.price),
       originalPrice: form.originalPrice
         ? parseFloat(form.originalPrice)
@@ -270,56 +284,55 @@ export const AdminDashboard = () => {
       featured: form.featured,
     };
 
-    if (editingProduct) {
-      updateProduct({
-        ...editingProduct,
-        ...updatedProductData,
-      });
-    } else {
-      addProduct(updatedProductData);
-    }
+    setIsSubmitting(true);
+    try {
+      let result;
+      if (editingProduct) {
+        result = await updateProduct({
+          ...editingProduct,
+          ...updatedProductData,
+        });
+      } else {
+        result = await addProduct(updatedProductData);
+      }
 
-    setEditingProduct(null);
-    setActiveTab("inventory");
+      // Only navigate back if the operation succeeded
+      if (result !== null && result !== false) {
+        setEditingProduct(null);
+        setActiveTab("inventory");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn pb-16">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn pb-12 sm:pb-16">
       {/* Admin Top Header */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/10 shrink-0">
-            <ShieldCheck className="w-7 h-7" />
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-xl">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/10 shrink-0">
+            <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30">
-                Authorized Owner Access
+              <span className="text-[11px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30">
+                Authorized Owner Access ({user?.email || "Admin"})
               </span>
             </div>
-            <h1 className="font-serif-brand text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            <h1 className="font-serif-brand text-xl sm:text-2xl md:text-3xl font-bold text-slate-100 mt-1">
               Riva Cairo Admin Portal
             </h1>
-            <p className="text-xs text-slate-400">
-              Manage your bags, wallets, jackets, belts inventory and client
-              orders
+            <p className="text-[11px] sm:text-xs text-slate-400">
+              Manage your bags, wallets, jackets, belts inventory and client orders
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* <button
-            onClick={resetProductsToDefault}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-700 hover:text-white text-xs font-medium transition-all"
-            title="Reset default dataset"
-          >
-            <RotateCcw className="w-4 h-4 text-amber-400" />
-            <span>Reset Products</span>
-          </button> */}
-
           <button
             onClick={logoutAdmin}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-950/60 border border-red-500/30 hover:border-red-500 text-red-300 hover:text-white text-xs font-semibold transition-all"
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-950/60 border border-red-500/30 hover:border-red-500 text-red-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -328,98 +341,97 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Analytics Cards Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-5">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-slate-400">
               Total Revenue
             </span>
-            <div className="text-2xl font-bold font-serif-brand text-amber-400 mt-1">
-              ${totalRevenue.toFixed(2)}
+            <div className="text-xl sm:text-2xl font-bold font-serif-brand text-amber-400 mt-1">
+              {totalRevenue.toFixed(2)}
             </div>
             <span className="text-[10px] text-emerald-400">
               All client orders
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-            <DollarSign className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-emerald-500/20 flex items-center justify-between">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900/60 border border-emerald-500/20 flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-slate-400">
               Delivered Sales
             </span>
-            <div className="text-2xl font-bold font-serif-brand text-emerald-400 mt-1">
-              {deliveredSalesRevenue.toFixed(2)}
+            <div className="text-xl sm:text-2xl font-bold font-serif-brand text-emerald-400 mt-1">
+              {(deliveredSalesRevenue || 0).toFixed(2)}
             </div>
             <span className="text-[10px] text-emerald-400">
-              {deliveredOrdersCount} delivered order
-              {deliveredOrdersCount !== 1 ? "s" : ""}
+              {deliveredOrdersCount || 0} delivered order{deliveredOrdersCount !== 1 ? "s" : ""}
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-            <TrendingUp className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shrink-0">
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-slate-400">
               Total Orders
             </span>
-            <div className="text-2xl font-bold font-serif-brand text-slate-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-serif-brand text-slate-100 mt-1">
               {totalOrdersCount}
             </div>
             <span className="text-[10px] text-slate-500">Live order queue</span>
           </div>
-          <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
-            <ShoppingBag className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0">
+            <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-slate-400">
               Active Inventory
             </span>
-            <div className="text-2xl font-bold font-serif-brand text-slate-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-serif-brand text-slate-100 mt-1">
               {totalProductsCount} Items
             </div>
             <span className="text-[10px] text-slate-500">
               Bags, Wallets, Jackets, Belts
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
-            <Package className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 shrink-0">
+            <Package className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+        <div className="p-4 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-slate-400">
               Low Stock Warning
             </span>
-            <div className="text-2xl font-bold font-serif-brand text-slate-100 mt-1">
+            <div className="text-xl sm:text-2xl font-bold font-serif-brand text-slate-100 mt-1">
               {outOfStockCount} Items
             </div>
             <span className="text-[10px] text-amber-400">
               Requires restocking
             </span>
           </div>
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-            <Sparkles className="w-6 h-6" />
+          <div className="p-2.5 sm:p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
         </div>
       </div>
 
       {/* Admin Navigation Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-        <div className="flex items-center gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-800 pb-4">
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800 overflow-x-auto scrollbar-none max-w-full">
           <button
             onClick={() => setActiveTab("inventory")}
-            className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === "inventory"
                 ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                 : "text-slate-400 hover:text-white"
@@ -430,7 +442,7 @@ export const AdminDashboard = () => {
 
           <button
             onClick={handleOpenAddForm}
-            className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === "add"
                 ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                 : "text-slate-400 hover:text-white"
@@ -441,7 +453,7 @@ export const AdminDashboard = () => {
 
           <button
             onClick={() => setActiveTab("orders")}
-            className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === "orders"
                 ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                 : "text-slate-400 hover:text-white"
@@ -454,7 +466,7 @@ export const AdminDashboard = () => {
         {activeTab === "inventory" && (
           <button
             onClick={handleOpenAddForm}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all"
+            className="flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all cursor-pointer shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Item</span>
@@ -464,11 +476,11 @@ export const AdminDashboard = () => {
 
       {/* TAB 1: INVENTORY MANAGEMENT */}
       {activeTab === "inventory" && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Filters & Search */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-800">
             <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Filter by product name..."
@@ -478,8 +490,8 @@ export const AdminDashboard = () => {
               />
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
-              <span className="text-xs text-slate-400 flex items-center gap-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0">
                 <Filter className="w-3.5 h-3.5 text-amber-400" />
                 Category:
               </span>
@@ -487,7 +499,7 @@ export const AdminDashboard = () => {
                 <button
                   key={cat}
                   onClick={() => setFilterCategory(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 cursor-pointer ${
                     filterCategory === cat
                       ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
                       : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
@@ -506,11 +518,12 @@ export const AdminDashboard = () => {
                 <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
                   <tr>
                     <th className="px-6 py-4">Item</th>
+                    <th className="px-6 py-4">Barcode</th>
                     <th className="px-6 py-4">Category</th>
                     <th className="px-6 py-4">Price</th>
                     <th className="px-6 py-4">Purchased Qty</th>
-                    <th className="px-6 py-4">Sold Qty</th>
-                    <th className="px-6 py-4">Stock</th>
+                    <th className="px-6 py-4">Sold</th>
+                    <th className="px-6 py-4">Qty Stock</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -518,7 +531,7 @@ export const AdminDashboard = () => {
                   {filteredProducts.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="8"
                         className="px-6 py-12 text-center text-slate-500"
                       >
                         No products match your search/filter.
@@ -548,6 +561,14 @@ export const AdminDashboard = () => {
                           </div>
                         </td>
 
+                        {/* Barcode */}
+                        <td className="px-6 py-4 font-mono">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                            {/* <Barcode className="w-3.5 h-3.5 text-amber-400 shrink-0" /> */}
+                            {p.barcode || `RC-${(p.category || 'PRD').substring(0, 3).toUpperCase()}-001`}
+                          </span>
+                        </td>
+
                         <td className="px-6 py-4">
                           <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
                             {p.category}
@@ -555,7 +576,7 @@ export const AdminDashboard = () => {
                         </td>
 
                         <td className="px-6 py-4 font-mono font-bold text-amber-400">
-                          ${p.price?.toFixed(2)}
+                          {p.price?.toFixed(2)}
                         </td>
 
                         {/* Purchased Qty */}
@@ -718,7 +739,7 @@ export const AdminDashboard = () => {
                 </button>
 
                 {isCategoryOpen && (
-                  <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
+                  <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-slate-950/40 overflow-hidden">
                     <div className="px-4 py-2.5 border-b border-slate-800">
                       <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
                         Select Category
@@ -763,6 +784,24 @@ export const AdminDashboard = () => {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Barcode Input */}
+            <div>
+              <label className=" text-xs font-medium text-slate-300 mb-1 flex items-center gap-1.5">
+                {/* <Barcode className="w-3.5 h-3.5 text-amber-400 shrink-0" /> */}
+                <span>Barcode / SKU Code</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. RC-BAG-001 or 89340219801"
+                value={form.barcode}
+                onChange={(e) => setForm({ ...form, barcode: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-amber-400 font-mono font-semibold focus:outline-none focus:border-amber-500"
+              />
+              {/* <p className="mt-1 text-[10px] text-slate-500">
+                Enter product barcode or internal SKU for inventory tracking (Auto-generated if left blank).
+              </p> */}
             </div>
 
             {/* Price, Original Price & Purchased Quantity */}
@@ -886,10 +925,10 @@ export const AdminDashboard = () => {
             <div className="space-y-4">
               <label className="block text-xs font-medium text-slate-300 mb-1">
                 Product Images *{" "}
-                <span className="text-slate-500">
+                {/* <span className="text-slate-500">
                   (Upload from device or add URLs. First image is the main
                   cover)
-                </span>
+                </span> */}
               </label>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -912,7 +951,7 @@ export const AdminDashboard = () => {
                 </div>
 
                 {/* URL Input */}
-                <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 flex flex-col justify-between min-h-[120px]">
+                {/* <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 flex flex-col justify-between min-h-[120px]">
                   <div className="space-y-2">
                     <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
                       <Link className="w-3.5 h-3.5 text-amber-400" />
@@ -933,7 +972,7 @@ export const AdminDashboard = () => {
                   >
                     Add URL Image
                   </button>
-                </div>
+                </div> */}
               </div>
 
               {/* Sample Presets */}
@@ -977,6 +1016,12 @@ export const AdminDashboard = () => {
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
                     {form.images.map((imgSrc, index) => {
+                      const displaySrc =
+                        typeof imgSrc === "string"
+                          ? imgSrc
+                          : imgSrc instanceof File
+                          ? URL.createObjectURL(imgSrc)
+                          : "";
                       const isCover =
                         form.image === imgSrc || (index === 0 && !form.image);
                       return (
@@ -989,7 +1034,7 @@ export const AdminDashboard = () => {
                           }`}
                         >
                           <img
-                            src={imgSrc}
+                            src={displaySrc}
                             alt={`Gallery ${index}`}
                             className="w-full h-full object-cover"
                           />
@@ -1064,11 +1109,20 @@ export const AdminDashboard = () => {
 
             <button
               type="submit"
-              className="w-full py-4 rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-xl shadow-amber-500/20"
+              disabled={isSubmitting}
+              className="w-full py-4 rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {editingProduct
-                ? "Save Product Changes"
-                : "Publish Product to Store"}
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  <span>{editingProduct ? "Saving Changes..." : "Uploading & Publishing..."}</span>
+                </>
+              ) : (
+                <span>{editingProduct ? "Save Product Changes" : "Publish Product to Store"}</span>
+              )}
             </button>
           </form>
         </div>
@@ -1076,13 +1130,20 @@ export const AdminDashboard = () => {
 
       {/* TAB 3: CLIENT ORDERS MANAGEMENT */}
       {activeTab === "orders" && (
-        <div className="space-y-6">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-slate-800 font-serif-brand font-bold text-slate-200">
+        <div className="space-y-6 relative">
+          {openStatusOrder !== null && (
+            <div
+              className="fixed inset-0 z-30 bg-transparent"
+              onClick={() => setOpenStatusOrder(null)}
+            />
+          )}
+
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl">
+            <div className="p-4 border-b border-slate-800 font-serif-brand font-bold text-slate-200 rounded-t-2xl">
               Recent Client Orders ({orders.length})
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-h-[320px] pb-32">
               <table className="w-full text-left text-xs text-slate-300">
                 <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
                   <tr>
@@ -1105,10 +1166,14 @@ export const AdminDashboard = () => {
                       </td>
                     </tr>
                   ) : (
-                    orders.map((order) => (
+                    orders.map((order, orderIdx) => (
                       <tr
                         key={order.id}
-                        className="hover:bg-slate-800/40 transition-colors"
+                        className={`transition-colors ${
+                          openStatusOrder === order.id
+                            ? "relative z-50 bg-slate-800/60"
+                            : "relative z-1 hover:bg-slate-800/40"
+                        }`}
                       >
                         <td className="px-6 py-4 font-mono font-bold text-amber-400">
                           {order.id}
@@ -1143,7 +1208,7 @@ export const AdminDashboard = () => {
                           {order.totalAmount?.toFixed(2)}
                         </td>
                         <td className="px-6 py-4">
-                          <div className="relative inline-block min-w-36.25">
+                          <div className={`relative inline-block min-w-36.25 ${openStatusOrder === order.id ? "z-50" : "z-10"}`}>
                             <button
                               type="button"
                               onClick={() =>
@@ -1173,7 +1238,13 @@ export const AdminDashboard = () => {
                             </button>
 
                             {openStatusOrder === order.id && (
-                              <div className="absolute right-0 top-full mt-2 w-45 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-black/40 overflow-hidden">
+                              <div
+                                className={`absolute right-0 w-45 z-50 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl shadow-slate-950 overflow-hidden ${
+                                  orders.length > 3 && orderIdx >= orders.length - 2
+                                    ? "bottom-full mb-2"
+                                    : "top-full mt-2"
+                                }`}
+                              >
                                 {[
                                   {
                                     value: "Pending",
