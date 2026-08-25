@@ -114,8 +114,6 @@ export const migrateLocalStorageToSupabase = async () => {
           price: parseFloat(prod.price),
           original_price: prod.originalPrice ? parseFloat(prod.originalPrice) : null,
           purchased_qty: parseInt(prod.purchasedQty || 0, 10),
-          sold: parseInt(prod.sold || 0, 10),
-          qty_stock: parseInt(prod.qtyStock ?? prod.stock ?? Math.max(0, (prod.purchasedQty || 0) - (prod.sold || 0)), 10),
           featured: Boolean(prod.featured),
           description: prod.description || '',
           rating: prod.rating ? parseFloat(prod.rating) : 5.0,

@@ -43,10 +43,9 @@ export const CheckoutPage = () => {
     try {
       const order = await placeOrder(form);
       if (order) {
-        // Redirect directly to Home page
-        navigate('/', { replace: true });
+        setConfirmedOrder(order);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to place order. Please try again.');
     } finally {
       setIsSubmitting(false);

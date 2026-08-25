@@ -132,7 +132,7 @@ export const ProductCard = ({ product, onEdit }) => {
           {isOutOfStock ? (
             <span className="flex items-center justify-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-slate-900 text-red-400 text-[10px] sm:text-xs font-semibold border border-red-900/60 cursor-not-allowed select-none shrink-0 w-full min-[380px]:w-auto">
               <LuShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span className="truncate">غير متوفر</span>
+              <span className="truncate">غير متوفر — Out of Stock</span>
             </span>
           ) : (
             <button

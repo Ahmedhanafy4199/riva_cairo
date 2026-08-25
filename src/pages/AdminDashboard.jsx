@@ -1206,7 +1206,7 @@ export const AdminDashboard = () => {
                           className={`w-full flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold border bg-slate-950 transition-all cursor-pointer ${
                             order.status === "Delivered"
                               ? "text-emerald-400 border-emerald-500/30"
-                              : order.status === "Shipped"
+                              : order.status === "Processing"
                                 ? "text-blue-400 border-blue-500/30"
                                 : "text-amber-400 border-amber-500/30"
                           }`}
@@ -1234,8 +1234,8 @@ export const AdminDashboard = () => {
                                 color: "amber",
                               },
                               {
-                                value: "Shipped",
-                                label: "Shipped",
+                                value: "Processing",
+                                label: "Processing",
                                 color: "blue",
                               },
                               {
@@ -1365,7 +1365,7 @@ export const AdminDashboard = () => {
                               className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-xs font-semibold border bg-slate-950 transition-all duration-200 focus:outline-none cursor-pointer ${
                                 order.status === "Delivered"
                                   ? "text-emerald-400 border-emerald-500/30 hover:border-emerald-500/60"
-                                  : order.status === "Shipped"
+                                  : order.status === "Processing"
                                     ? "text-blue-400 border-blue-500/30 hover:border-blue-500/60"
                                     : "text-amber-400 border-amber-500/30 hover:border-amber-500/60"
                               }`}
@@ -1397,8 +1397,8 @@ export const AdminDashboard = () => {
                                     color: "amber",
                                   },
                                   {
-                                    value: "Shipped",
-                                    label: "Shipped",
+                                    value: "Processing",
+                                    label: "Processing",
                                     color: "blue",
                                   },
                                   {

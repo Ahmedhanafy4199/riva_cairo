@@ -99,6 +99,7 @@ export const CartDrawer = () => {
                   const availableStock = getProductStock
                     ? getProductStock(item)
                     : (item.qtyStock ?? item.stock ?? 99);
+                  const isOutOfStock = availableStock <= 0;
                   const isAtStockLimit = item.quantity >= availableStock;
 
                   return (
@@ -149,17 +150,22 @@ export const CartDrawer = () => {
                             </span>
                             <button
                               onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
-                              disabled={isAtStockLimit}
+                              disabled={isOutOfStock || isAtStockLimit}
                               className={`p-1 rounded transition-colors ${
                                 isAtStockLimit
                                   ? 'opacity-30 cursor-not-allowed text-slate-600'
                                   : 'text-slate-400 hover:text-white cursor-pointer'
                               }`}
                               aria-label="Increase quantity"
-                              title={isAtStockLimit ? 'Stock limit reached' : 'Increase quantity'}
+                              title={isOutOfStock ? 'Out of Stock' : isAtStockLimit ? 'Stock limit reached' : 'Increase quantity'}
                             >
                               <LuPlus className="w-3 h-3" />
                             </button>
+                            {isOutOfStock && (
+                              <span className="ml-1 text-[9px] font-semibold text-red-400 whitespace-nowrap">
+                                Out of Stock
+                              </span>
+                            )}
                           </div>
 
                           <span className="text-sm font-bold text-amber-400 font-serif-brand font-mono">

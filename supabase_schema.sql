@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS public.products (
     price NUMERIC(10, 2) NOT NULL,
     original_price NUMERIC(10, 2),
     purchased_qty INTEGER DEFAULT 0,
+    sold INTEGER NOT NULL DEFAULT 0,
+    qty_stock INTEGER NOT NULL DEFAULT 0,
     featured BOOLEAN DEFAULT FALSE,
     description TEXT,
     rating NUMERIC(3, 2) DEFAULT 5.0,
@@ -65,6 +67,20 @@ CREATE TABLE IF NOT EXISTS public.products (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Inventory counters are database-derived from order history.
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS sold INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS qty_stock INTEGER NOT NULL DEFAULT 0;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_products_sold_non_negative') THEN
+        ALTER TABLE public.products ADD CONSTRAINT chk_products_sold_non_negative CHECK (sold >= 0);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_products_qty_stock_non_negative') THEN
+        ALTER TABLE public.products ADD CONSTRAINT chk_products_qty_stock_non_negative CHECK (qty_stock >= 0);
+    END IF;
+END $$;
 
 -- Ensure barcode is unique if table already exists
 DO $$
@@ -114,6 +130,107 @@ CREATE TABLE IF NOT EXISTS public.order_items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON public.order_items(order_id);
+
+-- Recalculate inventory counters from authoritative order rows.
+CREATE OR REPLACE FUNCTION public.refresh_product_inventory(p_product_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $$
+BEGIN
+    UPDATE public.products AS p
+    SET
+          sold = COALESCE((
+            SELECT SUM(oi.quantity)
+            FROM public.order_items AS oi
+            JOIN public.orders AS o ON o.id = oi.order_id
+            WHERE oi.product_id = p.id
+              AND o.status IN ('Pending', 'Processing', 'Delivered')
+        ), 0),
+        qty_stock = GREATEST(0, COALESCE(p.purchased_qty, 0) - COALESCE((
+            SELECT SUM(oi.quantity)
+            FROM public.order_items AS oi
+            JOIN public.orders AS o ON o.id = oi.order_id
+            WHERE oi.product_id = p.id
+              AND o.status IN ('Pending', 'Processing', 'Delivered')
+        ), 0)),
+        updated_at = NOW()
+    WHERE p.id = p_product_id;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.refresh_product_inventory(UUID) FROM PUBLIC;
+
+CREATE OR REPLACE FUNCTION public.sync_product_inventory_from_order()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $$
+DECLARE
+    affected_product_id UUID;
+BEGIN
+    IF TG_TABLE_NAME = 'products' THEN
+        PERFORM public.refresh_product_inventory(NEW.id);
+    ELSIF TG_TABLE_NAME = 'order_items' THEN
+        IF TG_OP <> 'DELETE' THEN
+            PERFORM public.refresh_product_inventory(NEW.product_id);
+        END IF;
+        IF TG_OP <> 'INSERT' AND OLD.product_id IS DISTINCT FROM NEW.product_id THEN
+            PERFORM public.refresh_product_inventory(OLD.product_id);
+        END IF;
+    ELSE
+        FOR affected_product_id IN
+            SELECT DISTINCT oi.product_id
+            FROM public.order_items AS oi
+            WHERE oi.order_id = COALESCE(NEW.id, OLD.id)
+              AND oi.product_id IS NOT NULL
+        LOOP
+            PERFORM public.refresh_product_inventory(affected_product_id);
+        END LOOP;
+    END IF;
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.sync_product_inventory_from_order() FROM PUBLIC;
+
+DROP TRIGGER IF EXISTS sync_product_inventory_after_order_item ON public.order_items;
+CREATE TRIGGER sync_product_inventory_after_order_item
+    AFTER INSERT OR UPDATE OR DELETE ON public.order_items
+    FOR EACH ROW EXECUTE FUNCTION public.sync_product_inventory_from_order();
+
+DROP TRIGGER IF EXISTS sync_product_inventory_after_order_status ON public.orders;
+CREATE TRIGGER sync_product_inventory_after_order_status
+    AFTER UPDATE OF status OR DELETE ON public.orders
+    FOR EACH ROW EXECUTE FUNCTION public.sync_product_inventory_from_order();
+
+DROP TRIGGER IF EXISTS sync_product_inventory_after_product_change ON public.products;
+CREATE TRIGGER sync_product_inventory_after_product_change
+    AFTER INSERT OR UPDATE OF purchased_qty ON public.products
+    FOR EACH ROW EXECUTE FUNCTION public.sync_product_inventory_from_order();
+
+-- Backfill counters when this migration is applied to an existing database.
+UPDATE public.products AS p
+SET
+    sold = COALESCE((
+        SELECT SUM(oi.quantity)
+        FROM public.order_items AS oi
+        JOIN public.orders AS o ON o.id = oi.order_id
+        WHERE oi.product_id = p.id
+          AND o.status IN ('Pending', 'Processing', 'Delivered')
+    ), 0),
+    qty_stock = GREATEST(0, COALESCE(p.purchased_qty, 0) - COALESCE((
+        SELECT SUM(oi.quantity)
+        FROM public.order_items AS oi
+        JOIN public.orders AS o ON o.id = oi.order_id
+        WHERE oi.product_id = p.id
+          AND o.status IN ('Pending', 'Processing', 'Delivered')
+    ), 0));
 
 -- ============================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES — HARDENED PRODUCTION RULES

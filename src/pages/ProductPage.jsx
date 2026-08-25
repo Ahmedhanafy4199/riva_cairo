@@ -206,6 +206,7 @@ export const ProductPage = ({ onEditProduct }) => {
                     <button
                       onClick={handleIncrement}
                       disabled={isOutOfStock || quantity >= stock}
+                      title={isOutOfStock ? 'Out of Stock' : quantity >= stock ? 'Stock limit reached' : 'Increase quantity'}
                       className="p-1.5 sm:p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                       aria-label="Increase quantity"
                     >

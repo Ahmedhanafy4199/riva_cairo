@@ -352,7 +352,7 @@ export const ShopProvider = ({ children }) => {
   // ----------------------------------------------------
   const getProductSoldCount = (productId, productTitle) => {
     return orders
-      .filter((o) => o.status === "Delivered")
+      .filter((o) => ["Pending", "Processing", "Delivered"].includes(o.status))
       .reduce((total, order) => {
         const item = (order.items || []).find(
           (i) => i.id === productId || i.title === productTitle,
@@ -561,12 +561,6 @@ export const ShopProvider = ({ children }) => {
       }
 
       const purchasedQty = parseInt(newProduct.purchasedQty || 0, 10);
-      const sold = parseInt(newProduct.sold || 0, 10);
-      const qtyStock = parseInt(
-        newProduct.stock ?? newProduct.qtyStock ?? Math.max(0, purchasedQty - sold),
-        10
-      );
-
       const productData = {
         title: newProduct.title,
         category: newProduct.category,
@@ -576,8 +570,6 @@ export const ShopProvider = ({ children }) => {
           ? parseFloat(newProduct.originalPrice)
           : parseFloat(newProduct.price) * 1.2,
         purchased_qty: purchasedQty,
-        sold: sold,
-        qty_stock: qtyStock,
         featured: newProduct.featured || false,
         description: newProduct.description || "",
         rating: 5.0,
@@ -719,13 +711,6 @@ export const ShopProvider = ({ children }) => {
       }
 
       const purchasedQty = parseInt(updatedProduct.purchasedQty || 0, 10);
-      const sold = Number(
-        updatedProduct.sold !== undefined
-          ? updatedProduct.sold
-          : getProductSoldCount(updatedProduct.id, updatedProduct.title) || 0
-      );
-      const qtyStock = Math.max(0, purchasedQty - sold);
-
       // 1. Update products table row
       const { error: prodError } = await supabase
         .from("products")
@@ -738,8 +723,6 @@ export const ShopProvider = ({ children }) => {
             ? parseFloat(updatedProduct.originalPrice)
             : parseFloat(updatedProduct.price) * 1.2,
           purchased_qty: purchasedQty,
-          sold: sold,
-          qty_stock: qtyStock,
           featured: Boolean(updatedProduct.featured),
           description: updatedProduct.description.trim(),
           updated_at: new Date().toISOString(),
@@ -905,7 +888,12 @@ export const ShopProvider = ({ children }) => {
         return null;
       }
 
-      if (!orderResult || !orderResult.order_id) {
+      if (
+        !orderResult?.success ||
+        !orderResult.order_id ||
+        orderResult.total_amount === undefined ||
+        !orderResult.status
+      ) {
         showToast("Unexpected error creating order. Please contact support.", "error");
         return null;
       }
@@ -941,6 +929,7 @@ export const ShopProvider = ({ children }) => {
       if (isAdmin) {
         await fetchOrders();
       }
+      await fetchProducts();
 
       clearCart();
       setIsCartOpen(false);
@@ -967,6 +956,7 @@ export const ShopProvider = ({ children }) => {
       }
 
       await fetchOrders();
+      await fetchProducts();
       showToast(`Order status updated to "${status}"`, "success");
       return true;
     } catch (err) {
