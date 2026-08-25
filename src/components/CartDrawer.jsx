@@ -12,6 +12,7 @@ export const CartDrawer = () => {
     updateCartQuantity,
     cartSubtotal,
     clearCart,
+    getProductStock,
   } = useShop();
   const navigate = useNavigate();
 
@@ -94,65 +95,81 @@ export const CartDrawer = () => {
                   </button>
                 </div>
               ) : (
-                cart.map((item) => (
-                  <div 
-                    key={item.id}
-                    className="flex gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 transition-colors"
-                  >
-                    <img 
-                      src={item.image} 
-                      alt={item.title} 
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover bg-slate-950 shrink-0"
-                    />
+                cart.map((item) => {
+                  const availableStock = getProductStock
+                    ? getProductStock(item)
+                    : (item.qtyStock ?? item.stock ?? 99);
+                  const isAtStockLimit = item.quantity >= availableStock;
 
-                    <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-xs font-semibold text-slate-200 line-clamp-1">
-                            {item.title}
-                          </h4>
-                          <button
-                            onClick={() => removeFromCart(item.id)}
-                            className="text-slate-500 hover:text-red-400 p-1 cursor-pointer shrink-0"
-                            title="Remove"
-                            aria-label="Remove item"
-                          >
-                            <LuTrash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <span className="text-[10px] text-amber-400 font-medium uppercase tracking-wider">
-                          {item.category}
-                        </span>
-                      </div>
+                  return (
+                    <div 
+                      key={item.id}
+                      className="flex gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 transition-colors"
+                    >
+                      <img 
+                        src={item.image} 
+                        alt={item.title} 
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover bg-slate-950 shrink-0"
+                      />
 
-                      <div className="flex items-end justify-between mt-2">
-                        <div className="flex items-center border border-slate-800 bg-slate-950 rounded-lg p-0.5">
-                          <button
-                            onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
-                            className="p-1 text-slate-400 hover:text-white cursor-pointer"
-                            aria-label="Decrease quantity"
-                          >
-                            <LuMinus className="w-3 h-3" />
-                          </button>
-                          <span className="w-6 text-center text-xs font-mono font-bold text-slate-200">
-                            {item.quantity}
+                      <div className="flex-1 flex flex-col justify-between min-w-0">
+                        <div>
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="text-xs font-semibold text-slate-200 line-clamp-1">
+                              {item.title}
+                            </h4>
+                            <button
+                              onClick={() => removeFromCart(item.id)}
+                              className="text-slate-500 hover:text-red-400 p-1 cursor-pointer shrink-0"
+                              title="Remove"
+                              aria-label="Remove item"
+                            >
+                              <LuTrash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          <span className="text-[10px] text-amber-400 font-medium uppercase tracking-wider">
+                            {item.category}
                           </span>
-                          <button
-                            onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
-                            className="p-1 text-slate-400 hover:text-white cursor-pointer"
-                            aria-label="Increase quantity"
-                          >
-                            <LuPlus className="w-3 h-3" />
-                          </button>
                         </div>
 
-                        <span className="text-sm font-bold text-amber-400 font-serif-brand font-mono">
-                          {(item.price * item.quantity).toFixed(2)}
-                        </span>
+                        <div className="flex items-end justify-between mt-2">
+                          <div className="flex items-center border border-slate-800 bg-slate-950 rounded-lg p-0.5">
+                            <button
+                              onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                              className="p-1 text-slate-400 hover:text-white cursor-pointer"
+                              aria-label="Decrease quantity"
+                            >
+                              <LuMinus className="w-3 h-3" />
+                            </button>
+                            <span 
+                              data-testid="cart-item-qty"
+                              className="w-6 text-center text-xs font-mono font-bold text-slate-200"
+                            >
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
+                              disabled={isAtStockLimit}
+                              className={`p-1 rounded transition-colors ${
+                                isAtStockLimit
+                                  ? 'opacity-30 cursor-not-allowed text-slate-600'
+                                  : 'text-slate-400 hover:text-white cursor-pointer'
+                              }`}
+                              aria-label="Increase quantity"
+                              title={isAtStockLimit ? 'Stock limit reached' : 'Increase quantity'}
+                            >
+                              <LuPlus className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          <span className="text-sm font-bold text-amber-400 font-serif-brand font-mono">
+                            {(item.price * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 

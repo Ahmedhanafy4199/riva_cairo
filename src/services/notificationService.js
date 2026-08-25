@@ -4,7 +4,7 @@
  */
 
 // Default Owner Info (Can be overridden by .env variables)
-const DEFAULT_OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL || "ahmedhanafy289@gmail.com";
+const DEFAULT_OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL || "riva.cairo@gmail.com";
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || "";
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "";
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "";

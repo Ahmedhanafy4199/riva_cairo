@@ -19,7 +19,7 @@ export const ProductCard = ({ product, onEdit }) => {
   const isOutOfStock = stock <= 0;
 
   return (
-    <div className="group relative bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col h-full">
+    <div className="group relative bg-slate-900/60 border border-slate-800/80 rounded-xl sm:rounded-2xl overflow-hidden hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 flex flex-col h-full">
       {/* Image Container */}
       <div className="relative aspect-square w-full overflow-hidden bg-slate-950 cursor-pointer"
          title="Quick View"
@@ -34,13 +34,13 @@ export const ProductCard = ({ product, onEdit }) => {
         <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
         {/* Category Tag */}
-        <span className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-500/30">
+        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-semibold tracking-wider uppercase bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-500/30">
           {product.category}
         </span>
 
         {/* Out of Stock Badge */}
         {isOutOfStock && (
-          <span className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-white text-[8px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
             Out of Stock
           </span>
         )}
@@ -73,26 +73,26 @@ export const ProductCard = ({ product, onEdit }) => {
 
         {/* Admin Badges & Actions */}
         {isAdminLoggedIn && (
-          <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1.5 z-10 bg-slate-950/95 p-1.5 rounded-xl border border-amber-500/40 backdrop-blur-md">
-            <span className="text-[10px] text-amber-300 font-mono pl-1.5 truncate">
+          <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-1 z-10 bg-slate-950/95 p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-amber-500/40 backdrop-blur-md">
+            <span className="text-[9px] sm:text-[10px] text-amber-300 font-mono pl-1 truncate">
               Admin
             </span>
             <div className="flex items-center gap-1 shrink-0">
               {onEdit && (
                 <button
                   onClick={() => onEdit(product)}
-                  className="p-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-amber-400 hover:bg-slate-700 cursor-pointer"
+                  className="p-1 sm:p-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-amber-400 hover:bg-slate-700 cursor-pointer"
                   title="Edit Product"
                 >
-                  <LuPencil className="w-3.5 h-3.5" />
+                  <LuPencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </button>
               )}
               <button
                 onClick={() => deleteProduct(product.id)}
-                className="p-1.5 rounded-lg bg-red-950/80 text-red-400 hover:bg-red-900 hover:text-white cursor-pointer"
+                className="p-1 sm:p-1.5 rounded-lg bg-red-950/80 text-red-400 hover:bg-red-900 hover:text-white cursor-pointer"
                 title="Delete Product"
               >
-                <LuTrash2 className="w-3.5 h-3.5" />
+                <LuTrash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
             </div>
           </div>
@@ -100,47 +100,47 @@ export const ProductCard = ({ product, onEdit }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5 flex flex-col grow justify-between bg-slate-900/40">
+      <div className="p-3 sm:p-4 md:p-5 flex flex-col grow justify-between bg-slate-900/40">
         <div>
           {/* Title */}
           <h3
             onClick={() => navigate(`/product/${product.id}`)}
-            className="font-sans font-semibold text-slate-100 text-sm sm:text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
+            className="font-sans font-semibold text-slate-100 text-xs sm:text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
           >
             {product.title}
           </h3>
 
           {/* Description preview */}
-          <p className="text-xs text-slate-400 line-clamp-2 mt-1 font-light leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-slate-400 line-clamp-2 mt-0.5 sm:mt-1 font-light leading-relaxed">
             {product.description}
           </p>
         </div>
 
         {/* Price & Add to Cart button */}
-        <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+        <div className="mt-2.5 sm:mt-3.5 pt-2 sm:pt-3 border-t border-slate-800/80 flex flex-col min-[380px]:flex-row min-[380px]:items-center justify-between gap-1.5 sm:gap-2">
           <div className="min-w-0">
-            <div className="text-base sm:text-lg font-bold text-amber-400 font-serif-brand truncate">
+            <div className="text-sm sm:text-base md:text-lg font-bold text-amber-400 font-serif-brand truncate">
               {product.price?.toFixed(2)}
             </div>
             {product.originalPrice && product.originalPrice > product.price && (
-              <div className="text-[11px] sm:text-xs text-slate-500 line-through -mt-1 truncate">
+              <div className="text-[10px] sm:text-xs text-slate-500 line-through -mt-0.5 sm:-mt-1 truncate">
                 {product.originalPrice?.toFixed(2)}
               </div>
             )}
           </div>
 
           {isOutOfStock ? (
-            <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-900 text-red-400 text-[11px] sm:text-xs font-semibold border border-red-900/60 cursor-not-allowed select-none shrink-0">
-              <LuShoppingBag className="w-3.5 h-3.5" />
-              <span>غير متوفر</span>
+            <span className="flex items-center justify-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-slate-900 text-red-400 text-[10px] sm:text-xs font-semibold border border-red-900/60 cursor-not-allowed select-none shrink-0 w-full min-[380px]:w-auto">
+              <LuShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span className="truncate">غير متوفر</span>
             </span>
           ) : (
             <button
               onClick={() => addToCart(product)}
-              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-amber-500 text-slate-200 hover:text-slate-950 text-[11px] sm:text-xs font-semibold border border-slate-700 hover:border-amber-400 transition-all duration-200 group/btn shadow-md cursor-pointer shrink-0"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-slate-800 hover:bg-amber-500 text-slate-200 hover:text-slate-950 text-[10px] sm:text-xs font-semibold border border-slate-700 hover:border-amber-400 transition-all duration-200 group/btn shadow-md cursor-pointer shrink-0 w-full min-[380px]:w-auto"
             >
-              <LuShoppingBag className="w-3.5 h-3.5 group-hover/btn:scale-110 transition-transform" />
-              <span>Add to Cart</span>
+              <LuShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/btn:scale-110 transition-transform" />
+              <span className="truncate">Add to Cart</span>
             </button>
           )}
         </div>

@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies & Build outputs
 node_modules
 dist
 dist-ssr
@@ -21,8 +22,17 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
+
 # Environment variables
 .env
 .env.*
 !.env.example
 
+# Playwright & Test Artifacts
+playwright-report/
+blob-report/
+test-results/
+.playwright-artifacts-*/
+
+# Dynamic Test Screenshots
+*.png

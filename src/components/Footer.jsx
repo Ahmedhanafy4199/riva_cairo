@@ -80,8 +80,8 @@ export const Footer = () => {
   };
 
   const copyEmailToClipboard = () => {
-    navigator.clipboard.writeText("info@rivacairo.com");
-    showToast("Email address info@rivacairo.com copied to clipboard!", "info");
+    navigator.clipboard.writeText("riva.cairo@gmail.com");
+    showToast("Email address riva.cairo@gmail.com copied to clipboard!", "info");
   };
 
   const careInstructionsList = [
@@ -127,7 +127,7 @@ export const Footer = () => {
     },
     {
       icon: LuMail,
-      text: "If you want to exchange or refund your order please contact us on info@rivacairo.com",
+      text: "If you want to exchange or refund your order please contact us on riva.cairo@gmail.com",
       ar: "لطلب الاستبدال أو الإرجاع يرجى التواصل عبر البريد الإلكتروني",
     },
     {
@@ -188,6 +188,12 @@ export const Footer = () => {
               <div className="flex flex-col">
                 <Link
                   to="/"
+                  onClick={() => {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "smooth",
+                    });
+                  }}
                   className={`font-serif-brand text-xl sm:text-2xl font-bold tracking-widest transition-colors ${
                     theme === "light"
                       ? "text-slate-300 hover:text-amber-400"
@@ -209,7 +215,7 @@ export const Footer = () => {
             {/* Social Links */}
             <div className="flex items-center gap-3 pt-2">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/riva.cairo?igsi=MXF4aDY1dmh5NzFlMw%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -220,7 +226,7 @@ export const Footer = () => {
                 </svg>
               </a>
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/riva.cairo?rdid=YHijmHLOpuJp6Tzf&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F19LQXtB2Ne%2F#"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -231,7 +237,7 @@ export const Footer = () => {
                 </svg>
               </a>
               <a
-                href="https://wa.me/+201122646249"
+                href="https://wa.me/201037650495"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -403,6 +409,12 @@ export const Footer = () => {
             <span>© 2026,</span>
             <Link
               to="/"
+              onClick={() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }}
               className="text-slate-200 font-bold hover:text-amber-400 transition-colors"
             >
               RIVA CAIRO
@@ -545,7 +557,7 @@ export const Footer = () => {
                 <LuMail className="w-4 h-4 text-amber-400 shrink-0" />
                 <span className="text-xs">
                   For inquiries:{" "}
-                  <strong className="text-white">info@rivacairo.com</strong>
+                  <strong className="text-white">riva.cairo@gmail.com</strong>
                 </span>
               </div>
               <button

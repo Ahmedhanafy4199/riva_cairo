@@ -159,6 +159,10 @@ DROP POLICY IF EXISTS "Public Read Products" ON public.products;
 DROP POLICY IF EXISTS "Public Insert Products" ON public.products;
 DROP POLICY IF EXISTS "Public Update Products" ON public.products;
 DROP POLICY IF EXISTS "Public Delete Products" ON public.products;
+DROP POLICY IF EXISTS "Admin Read Products" ON public.products;
+DROP POLICY IF EXISTS "Admin Insert Products" ON public.products;
+DROP POLICY IF EXISTS "Admin Update Products" ON public.products;
+DROP POLICY IF EXISTS "Admin Delete Products" ON public.products;
 
 CREATE POLICY "Public Read Products" ON public.products
     FOR SELECT USING (true);
@@ -179,6 +183,10 @@ DROP POLICY IF EXISTS "Public Read Product Images" ON public.product_images;
 DROP POLICY IF EXISTS "Public Insert Product Images" ON public.product_images;
 DROP POLICY IF EXISTS "Public Update Product Images" ON public.product_images;
 DROP POLICY IF EXISTS "Public Delete Product Images" ON public.product_images;
+DROP POLICY IF EXISTS "Admin Read Product Images" ON public.product_images;
+DROP POLICY IF EXISTS "Admin Insert Product Images" ON public.product_images;
+DROP POLICY IF EXISTS "Admin Update Product Images" ON public.product_images;
+DROP POLICY IF EXISTS "Admin Delete Product Images" ON public.product_images;
 
 CREATE POLICY "Public Read Product Images" ON public.product_images
     FOR SELECT USING (true);
@@ -193,52 +201,322 @@ CREATE POLICY "Admin Delete Product Images" ON public.product_images
     FOR DELETE USING (public.is_admin());
 
 -- ------------------------------------------------------------
--- ORDERS POLICIES
+-- ORDERS & ORDER ITEMS INTEGRITY CONSTRAINTS
+-- ------------------------------------------------------------
+DO $$
+BEGIN
+    -- Orders constraints
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_orders_total_positive') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT chk_orders_total_positive CHECK (total_amount >= 0);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_orders_valid_status') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT chk_orders_valid_status 
+            CHECK (status IN ('Pending', 'Processing', 'Delivered', 'Cancelled'));
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_orders_name_not_empty') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT chk_orders_name_not_empty 
+            CHECK (length(trim(customer_name)) >= 2 AND length(trim(customer_name)) <= 100);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_orders_phone_not_empty') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT chk_orders_phone_not_empty 
+            CHECK (length(trim(phone)) >= 8 AND length(trim(phone)) <= 25);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_orders_payment_method') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT chk_orders_payment_method 
+            CHECK (payment_method IN ('Cash on Delivery'));
+    END IF;
+
+    -- Order items constraints
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_order_items_price_non_negative') THEN
+        ALTER TABLE public.order_items ADD CONSTRAINT chk_order_items_price_non_negative CHECK (price >= 0);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_order_items_quantity_range') THEN
+        ALTER TABLE public.order_items ADD CONSTRAINT chk_order_items_quantity_range 
+            CHECK (quantity >= 1 AND quantity <= 100);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_order_items_title_not_empty') THEN
+        ALTER TABLE public.order_items ADD CONSTRAINT chk_order_items_title_not_empty 
+            CHECK (length(trim(title)) > 0);
+    END IF;
+END $$;
+
+-- ------------------------------------------------------------
+-- ORDERS POLICIES (HARDENED - ZERO UNVALIDATED PUBLIC INSERTS)
 -- ------------------------------------------------------------
 DROP POLICY IF EXISTS "Public Read Orders" ON public.orders;
 DROP POLICY IF EXISTS "Public Insert Orders" ON public.orders;
 DROP POLICY IF EXISTS "Public Update Orders" ON public.orders;
 DROP POLICY IF EXISTS "Public Delete Orders" ON public.orders;
+DROP POLICY IF EXISTS "Admin Read Orders" ON public.orders;
+DROP POLICY IF EXISTS "Admin Insert Orders" ON public.orders;
+DROP POLICY IF EXISTS "Admin Update Orders" ON public.orders;
+DROP POLICY IF EXISTS "Admin Delete Orders" ON public.orders;
 
--- Only Admins can view orders
+-- Direct table operations on orders are restricted to Admins
 CREATE POLICY "Admin Read Orders" ON public.orders
     FOR SELECT USING (public.is_admin());
 
--- Anonymous/Guest customers can create (place) orders during checkout
-CREATE POLICY "Public Insert Orders" ON public.orders
-    FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin Insert Orders" ON public.orders
+    FOR INSERT WITH CHECK (public.is_admin());
 
--- Only Admins can update order status
 CREATE POLICY "Admin Update Orders" ON public.orders
     FOR UPDATE USING (public.is_admin());
 
--- Only Admins can delete orders
 CREATE POLICY "Admin Delete Orders" ON public.orders
     FOR DELETE USING (public.is_admin());
 
 -- ------------------------------------------------------------
--- ORDER ITEMS POLICIES
+-- ORDER ITEMS POLICIES (HARDENED - ZERO UNVALIDATED PUBLIC INSERTS)
 -- ------------------------------------------------------------
 DROP POLICY IF EXISTS "Public Read Order Items" ON public.order_items;
 DROP POLICY IF EXISTS "Public Insert Order Items" ON public.order_items;
 DROP POLICY IF EXISTS "Public Update Order Items" ON public.order_items;
 DROP POLICY IF EXISTS "Public Delete Order Items" ON public.order_items;
+DROP POLICY IF EXISTS "Admin Read Order Items" ON public.order_items;
+DROP POLICY IF EXISTS "Admin Insert Order Items" ON public.order_items;
+DROP POLICY IF EXISTS "Admin Update Order Items" ON public.order_items;
+DROP POLICY IF EXISTS "Admin Delete Order Items" ON public.order_items;
 
--- Only Admins can view order items
+-- Direct table operations on order_items are restricted to Admins
 CREATE POLICY "Admin Read Order Items" ON public.order_items
     FOR SELECT USING (public.is_admin());
 
--- Anonymous/Guest customers can insert order items when placing an order
-CREATE POLICY "Public Insert Order Items" ON public.order_items
-    FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin Insert Order Items" ON public.order_items
+    FOR INSERT WITH CHECK (public.is_admin());
 
--- Only Admins can update order items
 CREATE POLICY "Admin Update Order Items" ON public.order_items
     FOR UPDATE USING (public.is_admin());
 
--- Only Admins can delete order items
 CREATE POLICY "Admin Delete Order Items" ON public.order_items
     FOR DELETE USING (public.is_admin());
+
+-- ============================================================
+-- ATOMIC & AUTHORITATIVE ORDER CREATION RPC (ZERO CLIENT TRUST)
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION public.create_order(
+    p_customer_name TEXT,
+    p_phone TEXT,
+    p_address TEXT,
+    p_city TEXT DEFAULT '',
+    p_payment_method TEXT DEFAULT 'Cash on Delivery',
+    p_items JSONB DEFAULT '[]'::JSONB
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $$
+DECLARE
+    v_order_id UUID := gen_random_uuid();
+    v_item RECORD;
+    v_product RECORD;
+    v_subtotal NUMERIC(10, 2) := 0.00;
+    v_shipping NUMERIC(10, 2) := 0.00;
+    v_total_amount NUMERIC(10, 2) := 0.00;
+    v_item_count INTEGER := 0;
+    v_clean_name TEXT;
+    v_clean_phone TEXT;
+    v_clean_address TEXT;
+    v_clean_city TEXT;
+    v_clean_payment TEXT;
+    v_available_stock INTEGER;
+    v_committed_qty INTEGER;
+BEGIN
+    -- 1. Sanitize & Validate Customer Fields
+    v_clean_name := trim(p_customer_name);
+    v_clean_phone := trim(p_phone);
+    v_clean_address := trim(p_address);
+    v_clean_city := COALESCE(trim(p_city), '');
+    v_clean_payment := COALESCE(trim(p_payment_method), 'Cash on Delivery');
+
+    IF v_clean_name IS NULL OR length(v_clean_name) < 2 OR length(v_clean_name) > 100 THEN
+        RAISE EXCEPTION 'Invalid customer name. Must be between 2 and 100 characters.';
+    END IF;
+
+    IF v_clean_phone IS NULL OR length(v_clean_phone) < 8 OR length(v_clean_phone) > 25 THEN
+        RAISE EXCEPTION 'Invalid phone number. Must be between 8 and 25 characters.';
+    END IF;
+
+    IF v_clean_address IS NULL OR length(v_clean_address) < 3 OR length(v_clean_address) > 300 THEN
+        RAISE EXCEPTION 'Invalid delivery address. Must be between 3 and 300 characters.';
+    END IF;
+
+    IF length(v_clean_city) > 100 THEN
+        RAISE EXCEPTION 'City name exceeds maximum allowed length of 100 characters.';
+    END IF;
+
+    IF v_clean_payment <> 'Cash on Delivery' THEN
+        RAISE EXCEPTION 'Unsupported payment method: %. Only Cash on Delivery is accepted.', v_clean_payment;
+    END IF;
+
+    -- 2. Validate Items Array
+    IF p_items IS NULL OR jsonb_typeof(p_items) <> 'array' OR jsonb_array_length(p_items) = 0 THEN
+        RAISE EXCEPTION 'Order must contain at least one product item.';
+    END IF;
+
+    IF jsonb_array_length(p_items) > 50 THEN
+        RAISE EXCEPTION 'Order item limit exceeded (Maximum 50 line items allowed).';
+    END IF;
+
+    -- 3. Temporary table to normalize and aggregate duplicate product_ids
+    CREATE TEMPORARY TABLE temp_order_items (
+        product_id UUID PRIMARY KEY,
+        quantity INTEGER NOT NULL,
+        title TEXT,
+        price NUMERIC(10, 2),
+        category TEXT
+    ) ON COMMIT DROP;
+
+    -- Insert aggregated items into temp table
+    BEGIN
+        INSERT INTO temp_order_items (product_id, quantity)
+        SELECT 
+            (elem->>'product_id')::UUID AS product_id,
+            SUM((elem->>'quantity')::INTEGER) AS quantity
+        FROM jsonb_array_elements(p_items) AS elem
+        WHERE (elem->>'product_id') IS NOT NULL
+        GROUP BY (elem->>'product_id')::UUID;
+    EXCEPTION WHEN OTHERS THEN
+        RAISE EXCEPTION 'Malformed order items payload. Please provide valid product_id and quantity values.';
+    END;
+
+    IF (SELECT COUNT(*) FROM temp_order_items) = 0 THEN
+        RAISE EXCEPTION 'Order must contain at least one valid product item.';
+    END IF;
+
+    -- 4. Process Each Item: Lock row, Verify Stock, Read Authoritative Data
+    FOR v_item IN SELECT product_id, quantity FROM temp_order_items
+    LOOP
+        IF v_item.quantity < 1 OR v_item.quantity > 100 THEN
+            RAISE EXCEPTION 'Invalid total quantity for product %: must be between 1 and 100.', v_item.product_id;
+        END IF;
+
+        -- Lock product row exclusively to serialize concurrent checkouts
+        SELECT 
+            p.id, 
+            p.title, 
+            p.price, 
+            p.category, 
+            COALESCE(p.purchased_qty, 0) AS purchased_qty
+        INTO v_product
+        FROM public.products p
+        WHERE p.id = v_item.product_id
+        FOR UPDATE OF p;
+
+        IF v_product.id IS NULL THEN
+            RAISE EXCEPTION 'Product with ID % does not exist or is no longer available.', v_item.product_id;
+        END IF;
+
+        -- Calculate committed quantity from non-cancelled orders
+        SELECT COALESCE(SUM(oi.quantity), 0)
+        INTO v_committed_qty
+        FROM public.order_items oi
+        JOIN public.orders o ON oi.order_id = o.id
+        WHERE oi.product_id = v_item.product_id
+          AND o.status IN ('Pending', 'Processing', 'Delivered');
+
+        v_available_stock := GREATEST(0, v_product.purchased_qty - v_committed_qty);
+
+        IF v_item.quantity > v_available_stock THEN
+            RAISE EXCEPTION 'Insufficient stock for "%" (Requested: %, Available: %)', 
+                v_product.title, v_item.quantity, v_available_stock;
+        END IF;
+
+        -- Update temp table with authoritative product details
+        UPDATE temp_order_items
+        SET 
+            title = v_product.title,
+            price = v_product.price,
+            category = COALESCE(v_product.category, '')
+        WHERE product_id = v_item.product_id;
+
+        -- Accumulate subtotal
+        v_subtotal := v_subtotal + (v_product.price * v_item.quantity);
+        v_item_count := v_item_count + v_item.quantity;
+    END LOOP;
+
+    -- 5. Server-Side Shipping Calculation
+    -- Business rule: Orders >= 200 EGP qualify for FREE delivery, otherwise 15 EGP
+    IF v_subtotal >= 200.00 THEN
+        v_shipping := 0.00;
+    ELSE
+        v_shipping := 15.00;
+    END IF;
+
+    v_total_amount := v_subtotal + v_shipping;
+
+    -- 6. Insert Order Record (Strictly Pending status and server-calculated total)
+    INSERT INTO public.orders (
+        id,
+        customer_name,
+        phone,
+        address,
+        city,
+        total_amount,
+        payment_method,
+        status,
+        created_at
+    ) VALUES (
+        v_order_id,
+        v_clean_name,
+        v_clean_phone,
+        v_clean_address,
+        v_clean_city,
+        v_total_amount,
+        v_clean_payment,
+        'Pending',
+        NOW()
+    );
+
+    -- 7. Insert Order Items Records
+    INSERT INTO public.order_items (
+        order_id,
+        product_id,
+        title,
+        price,
+        quantity,
+        category,
+        created_at
+    )
+    SELECT 
+        v_order_id,
+        product_id,
+        title,
+        price,
+        quantity,
+        category,
+        NOW()
+    FROM temp_order_items;
+
+    -- 8. Return Authoritative Order Payload
+    RETURN jsonb_build_object(
+        'success', true,
+        'order_id', v_order_id,
+        'status', 'Pending',
+        'subtotal', v_subtotal,
+        'shipping', v_shipping,
+        'total_amount', v_total_amount,
+        'item_count', v_item_count,
+        'customer_name', v_clean_name,
+        'phone', v_clean_phone,
+        'address', v_clean_address,
+        'city', v_clean_city,
+        'payment_method', v_clean_payment,
+        'created_at', NOW()
+    );
+END;
+$$;
+
+-- Revoke all permissions from PUBLIC and grant solely to anon and authenticated
+REVOKE ALL ON FUNCTION public.create_order(TEXT, TEXT, TEXT, TEXT, TEXT, JSONB) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.create_order(TEXT, TEXT, TEXT, TEXT, TEXT, JSONB) TO anon, authenticated;
 
 -- ============================================================
 -- STORAGE BUCKET HARDENING FOR PRODUCT IMAGES
@@ -250,18 +528,22 @@ VALUES (
     'product-images',
     true,
     10485760, -- 10MB limit
-    ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/avif', 'image/bmp', 'image/tiff']
+    ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/bmp', 'image/tiff']
 )
 ON CONFLICT (id) DO UPDATE SET
     public = true,
     file_size_limit = 10485760,
-    allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/avif', 'image/bmp', 'image/tiff'];
+    allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/bmp', 'image/tiff'];
 
 -- Drop legacy permissive storage policies
 DROP POLICY IF EXISTS "Public Access Storage Product Images Read" ON storage.objects;
 DROP POLICY IF EXISTS "Public Access Storage Product Images Insert" ON storage.objects;
 DROP POLICY IF EXISTS "Public Access Storage Product Images Update" ON storage.objects;
 DROP POLICY IF EXISTS "Public Access Storage Product Images Delete" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Access Storage Product Images Read" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Access Storage Product Images Insert" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Access Storage Product Images Update" ON storage.objects;
+DROP POLICY IF EXISTS "Admin Access Storage Product Images Delete" ON storage.objects;
 
 -- Storage RLS Policies
 CREATE POLICY "Public Access Storage Product Images Read"
@@ -286,3 +568,4 @@ USING (bucket_id = 'product-images' AND public.is_admin());
 -- To promote an existing user to Admin in Supabase:
 -- UPDATE public.profiles SET role = 'admin' WHERE email = 'admin@rivacairo.com';
 -- ============================================================
+

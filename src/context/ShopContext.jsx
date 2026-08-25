@@ -8,7 +8,6 @@ import React, {
 import { supabase } from "../lib/supabase";
 import {
   uploadImageToStorage,
-  migrateLocalStorageToSupabase,
 } from "../lib/migration";
 import { notifyOwnerOfNewOrder } from "../services/notificationService";
 
@@ -301,13 +300,9 @@ export const ShopProvider = ({ children }) => {
     }
   }, []);
 
-  // Initialize data on mount & run migration if needed
+  // Initialize data on mount
   useEffect(() => {
     const initData = async () => {
-      // Safe migration check from localStorage
-      if (localStorage.getItem("riva_products")) {
-        await migrateLocalStorageToSupabase();
-      }
       await fetchProducts();
     };
     initData();
@@ -879,103 +874,81 @@ export const ShopProvider = ({ children }) => {
   };
 
   // ----------------------------------------------------
-  // ORDER MANAGEMENT (SUPABASE)
+  // ORDER MANAGEMENT (SUPABASE AUTHORITATIVE RPC)
   // ----------------------------------------------------
   const placeOrder = async (customerDetails) => {
     if (cart.length === 0) return null;
 
     try {
-      const totalAmount = cart.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0,
+      // Map cart items into minimal schema: ONLY product_id and quantity
+      const itemsPayload = cart.map((item) => ({
+        product_id: item.id,
+        quantity: parseInt(item.quantity, 10) || 1,
+      }));
+
+      // Invoke PostgreSQL SECURITY DEFINER RPC create_order
+      const { data: orderResult, error: rpcError } = await supabase.rpc(
+        "create_order",
+        {
+          p_customer_name: customerDetails.name,
+          p_phone: customerDetails.phone,
+          p_address: customerDetails.address,
+          p_city: customerDetails.city || "",
+          p_payment_method: customerDetails.paymentMethod || "Cash on Delivery",
+          p_items: itemsPayload,
+        }
       );
 
-      let insertedOrder = null;
-
-      // 1. Try inserting order to Supabase
-      try {
-        const { data, error: orderError } = await supabase
-          .from("orders")
-          .insert({
-            customer_name: customerDetails.name,
-            phone: customerDetails.phone,
-            address: customerDetails.address,
-            city: customerDetails.city || "",
-            total_amount: totalAmount,
-            payment_method: customerDetails.paymentMethod || "Cash on Delivery",
-            status: "Pending",
-          })
-          .select()
-          .single();
-
-        if (orderError) {
-          console.error("❌ Supabase order insert error:", orderError);
-          showToast(`Database error saving order: ${orderError.message}`, "error");
-        }
-
-        if (!orderError && data) {
-          insertedOrder = data;
-
-          // Insert order items
-          const orderItemsToInsert = cart.map((item) => {
-            const isUuid = typeof item.id === 'string' && 
-              /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.id);
-            const isNumber = typeof item.id === 'number' || (typeof item.id === 'string' && /^\d+$/.test(item.id));
-
-            return {
-              order_id: data.id,
-              product_id: (isUuid || isNumber) ? item.id : null,
-              title: item.title,
-              price: parseFloat(item.price),
-              quantity: parseInt(item.quantity, 10),
-              category: item.category || "",
-            };
-          });
-
-          const { error: itemsError } = await supabase.from("order_items").insert(orderItemsToInsert);
-          if (itemsError) {
-            console.error("❌ Supabase order items insert error:", itemsError);
-          }
-          await fetchOrders();
-        }
-      } catch (dbErr) {
-        console.error("Supabase DB order insert exception:", dbErr);
+      if (rpcError) {
+        console.error("❌ RPC Order placement error:", rpcError);
+        showToast(rpcError.message || "Failed to place order. Please try again.", "error");
+        return null;
       }
 
-      // Fallback local order creation if DB is offline / not returning data
-      if (!insertedOrder) {
-        insertedOrder = {
-          id: `ORD-${Date.now().toString().slice(-6)}`,
-          customerName: customerDetails.name,
-          customer_name: customerDetails.name,
-          phone: customerDetails.phone,
-          address: customerDetails.address,
-          city: customerDetails.city || "",
-          totalAmount: totalAmount,
-          total_amount: totalAmount,
-          paymentMethod: customerDetails.paymentMethod || "Cash on Delivery",
-          status: "Pending",
-          created_at: new Date().toISOString(),
-          items: [...cart],
-        };
-        // Add to local state orders
-        setOrders((prev) => [insertedOrder, ...prev]);
+      if (!orderResult || !orderResult.order_id) {
+        showToast("Unexpected error creating order. Please contact support.", "error");
+        return null;
       }
+
+      // Construct authoritative confirmed order structure from server response
+      const verifiedTotal = parseFloat(orderResult.total_amount);
+      const confirmedOrder = {
+        id: orderResult.order_id,
+        customerName: orderResult.customer_name,
+        customer_name: orderResult.customer_name,
+        phone: orderResult.phone,
+        address: orderResult.address,
+        city: orderResult.city || "",
+        totalAmount: verifiedTotal,
+        total_amount: verifiedTotal,
+        subtotal: parseFloat(orderResult.subtotal),
+        shipping: parseFloat(orderResult.shipping),
+        paymentMethod: orderResult.payment_method || "Cash on Delivery",
+        status: orderResult.status || "Pending",
+        createdAt: orderResult.created_at || new Date().toISOString(),
+        date: new Date(orderResult.created_at || Date.now()).toISOString().split("T")[0],
+        items: [...cart],
+      };
 
       // Set unread orders notification flag
       setHasUnreadOrders(true);
       localStorage.setItem("riva_unread_orders", JSON.stringify(true));
 
-      // Send Email notification to store owner
-      await notifyOwnerOfNewOrder(insertedOrder, cart);
+      // Trigger store owner email notification with authoritative server total
+      await notifyOwnerOfNewOrder(confirmedOrder, cart);
+
+      // Re-fetch orders if admin is logged in
+      if (isAdmin) {
+        await fetchOrders();
+      }
 
       clearCart();
       setIsCartOpen(false);
       showToast(`Order placed successfully! Thank you.`, "success");
-      return insertedOrder;
+      return confirmedOrder;
     } catch (err) {
       console.error("Error in placeOrder:", err);
-      showToast("Error placing order.", "error");
+      showToast("Error placing order. Please check your connection.", "error");
       return null;
     }
   };

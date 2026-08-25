@@ -1,0 +1,86 @@
+[
+  {
+    "testNum": 1,
+    "name": "Direct INSERT into public.orders as anon",
+    "status": "PASS",
+    "detail": "Blocked by PostgreSQL RLS: [42501] new row violates row-level security policy for table \"orders\""
+  },
+  {
+    "testNum": 2,
+    "name": "Direct INSERT into public.order_items as anon",
+    "status": "PASS",
+    "detail": "Blocked by PostgreSQL RLS: [42501] new row violates row-level security policy for table \"order_items\""
+  },
+  {
+    "testNum": 3,
+    "name": "Direct INSERT into orders with negative total_amount (-500)",
+    "status": "PASS",
+    "detail": "Blocked by PostgreSQL RLS: new row violates row-level security policy for table \"orders\""
+  },
+  {
+    "testNum": 4,
+    "name": "Direct INSERT into orders with status = Delivered",
+    "status": "PASS",
+    "detail": "Blocked by PostgreSQL RLS: new row violates row-level security policy for table \"orders\""
+  },
+  {
+    "testNum": 5,
+    "name": "Direct INSERT into order_items with tampered price = 1",
+    "status": "PASS",
+    "detail": "Blocked by PostgreSQL RLS: new row violates row-level security policy for table \"order_items\""
+  },
+  {
+    "testNum": 6,
+    "name": "RPC create_order with quantity = 0",
+    "status": "PASS",
+    "detail": "Rejected by RPC: Invalid total quantity for product 5e485442-1583-41bd-9100-23101866baea: must be between 1 and 100."
+  },
+  {
+    "testNum": 7,
+    "name": "RPC create_order with quantity = -5",
+    "status": "PASS",
+    "detail": "Rejected by RPC: Invalid total quantity for product 5e485442-1583-41bd-9100-23101866baea: must be between 1 and 100."
+  },
+  {
+    "testNum": 8,
+    "name": "RPC create_order with quantity = 101 (> 100 limit)",
+    "status": "PASS",
+    "detail": "Rejected by RPC: Invalid total quantity for product 5e485442-1583-41bd-9100-23101866baea: must be between 1 and 100."
+  },
+  {
+    "testNum": 9,
+    "name": "RPC create_order with nonexistent product UUID",
+    "status": "PASS",
+    "detail": "Rejected by RPC: Product with ID 00000000-0000-0000-0000-000000000000 does not exist or is no longer available."
+  },
+  {
+    "testNum": 10,
+    "name": "RPC create_order with empty items array []",
+    "status": "PASS",
+    "detail": "Rejected by RPC: Order must contain at least one product item."
+  },
+  {
+    "testNum": 11,
+    "name": "RPC create_order ignores forged price/title/category fields",
+    "status": "PASS",
+    "detail": "Stock check active on product (Insufficient stock for \"test1\" (Requested: 1, Available: 0))"
+  },
+  {
+    "testNum": 14,
+    "name": "Cross-order item injection: Direct insert to existing order_id",
+    "status": "PASS",
+    "detail": "Blocked by PostgreSQL RLS: new row violates row-level security policy for table \"order_items\""
+  },
+  {
+    "testNum": 15,
+    "name": "Guest UPDATE on public.orders",
+    "status": "PASS",
+    "detail": "Blocked by RLS (0 rows updated)"
+  },
+  {
+    "testNum": 16,
+    "name": "Guest DELETE on public.orders",
+    "status": "PASS",
+    "detail": "Blocked by RLS (0 rows deleted)"
+  }
+]
