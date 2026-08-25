@@ -2,9 +2,7 @@
 -- RIVA CAIRO SUPABASE HARDENED DATABASE & STORAGE SCHEMA
 -- Production-Grade Security Hardening & Auth Migration
 -- ============================================================
--- Execute this script in your Supabase SQL Editor:
--- Supabase Dashboard -> SQL Editor -> New Query -> Run
--- ============================================================
+
 
 -- 1. Enable UUID Extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
