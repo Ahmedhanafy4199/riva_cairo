@@ -112,7 +112,7 @@ export const ProductPage = ({ onEditProduct }) => {
 
               {images.length > 1 && (
                 <>
-                  <span className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] font-mono bg-slate-950/80 text-slate-300 border border-slate-700 z-10">
+                  <span className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] font-serif-brand bg-slate-950/80 text-slate-300 border border-slate-700 z-10">
                     {activeImageIndex + 1} / {images.length}
                   </span>
                   <button
@@ -202,7 +202,7 @@ export const ProductPage = ({ onEditProduct }) => {
                     >
                       <LuMinus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
-                    <span className="w-10 sm:w-12 text-center text-slate-100 font-bold font-mono text-sm sm:text-base">{quantity}</span>
+                    <span className="w-10 sm:w-12 text-center text-slate-100 font-bold font-serif-brand text-sm sm:text-base">{quantity}</span>
                     <button
                       onClick={handleIncrement}
                       disabled={isOutOfStock || quantity >= stock}
@@ -215,7 +215,7 @@ export const ProductPage = ({ onEditProduct }) => {
                   </div>
                   <span className="text-xs text-slate-400">
                     Total:{' '}
-                    <span className="text-amber-400 font-semibold font-mono">
+                    <span className="text-amber-400 font-semibold font-serif-brand">
                       {(product.price * quantity).toFixed(2)}
                     </span>
                   </span>

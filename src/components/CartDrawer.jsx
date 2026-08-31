@@ -144,7 +144,7 @@ export const CartDrawer = () => {
                             </button>
                             <span 
                               data-testid="cart-item-qty"
-                              className="w-6 text-center text-xs font-mono font-bold text-slate-200"
+                              className="w-6 text-center text-xs font-serif-brand font-bold text-slate-200"
                             >
                               {item.quantity}
                             </span>
@@ -168,7 +168,7 @@ export const CartDrawer = () => {
                             )}
                           </div>
 
-                          <span className="text-sm font-bold text-amber-400 font-serif-brand font-mono">
+                          <span className="text-sm font-bold text-amber-400 font-serif-brand font-serif-brand">
                             {(item.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
@@ -185,7 +185,7 @@ export const CartDrawer = () => {
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between text-slate-400">
                     <span>Subtotal</span>
-                    <span className="text-slate-200 font-mono">{cartSubtotal.toFixed(2)}</span>
+                    <span className="text-slate-200 font-serif-brand">{cartSubtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Estimated Shipping</span>

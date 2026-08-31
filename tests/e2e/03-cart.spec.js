@@ -170,13 +170,13 @@ test.describe('08 – Cart Quantity', () => {
     await page.locator('button:has-text("Add to Cart")').first().click();
     await page.waitForTimeout(600);
     await openCart(page);
-    const subtotalBefore = await page.locator('text=Subtotal').locator('..').locator('span.font-mono').innerText();
+    const subtotalBefore = await page.locator('text=Subtotal').locator('..').locator('span.font-serif-brand').innerText();
     const plusBtn = page.locator('[aria-label="Increase quantity"]').first();
     const isDisabled = await plusBtn.isDisabled();
     if (!isDisabled) {
       await plusBtn.click();
       await page.waitForTimeout(400);
-      const subtotalAfter = await page.locator('text=Subtotal').locator('..').locator('span.font-mono').innerText();
+      const subtotalAfter = await page.locator('text=Subtotal').locator('..').locator('span.font-serif-brand').innerText();
       expect(parseFloat(subtotalAfter)).toBeGreaterThan(parseFloat(subtotalBefore));
     } else {
       expect(parseFloat(subtotalBefore)).toBeGreaterThan(0);

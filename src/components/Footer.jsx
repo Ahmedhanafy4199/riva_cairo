@@ -387,7 +387,7 @@ export const Footer = () => {
                   <span className="text-base shrink-0">
                     {selectedRegion.flag}
                   </span>
-                  <span className="font-mono font-semibold text-amber-400 shrink-0">
+                  <span className="font-serif-brand font-semibold text-amber-400 shrink-0">
                     {selectedRegion.code}
                   </span>
                   <span className="text-slate-500">|</span>
@@ -707,7 +707,7 @@ export const Footer = () => {
                         <div className="text-xs font-semibold">
                           {region.name}
                         </div>
-                        <div className="text-[10px] text-slate-400 font-mono">
+                        <div className="text-[10px] text-slate-400 font-serif-brand">
                           {region.code} • {region.symbol}
                         </div>
                       </div>

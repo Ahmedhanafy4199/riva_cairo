@@ -134,7 +134,7 @@ export const ProductsPage = ({ onEditProduct }) => {
               >
                 <span>{cat}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-serif-brand ${
                     isActive
                       ? "bg-slate-950/20 text-slate-950 font-bold"
                       : "bg-slate-900 text-slate-400"

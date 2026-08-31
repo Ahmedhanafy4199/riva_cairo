@@ -109,7 +109,7 @@ export const CheckoutPage = () => {
               </h2>
               <p className="text-xs text-slate-400 mt-1">
                 Order Reference Code:{' '}
-                <span className="font-mono text-amber-400 font-bold">{confirmedOrder.id}</span>
+                <span className="font-serif-brand text-amber-400 font-bold">{confirmedOrder.id}</span>
               </p>
             </div>
 
@@ -122,7 +122,7 @@ export const CheckoutPage = () => {
               </div>
               <div className="flex justify-between text-slate-400 border-b border-slate-800 pb-2">
                 <span>Contact Phone</span>
-                <span className="text-slate-200 font-mono">{confirmedOrder.phone}</span>
+                <span className="text-slate-200 font-serif-brand">{confirmedOrder.phone}</span>
               </div>
               <div className="flex justify-between text-slate-400 border-b border-slate-800 pb-2">
                 <span>Payment Method</span>
@@ -175,7 +175,7 @@ export const CheckoutPage = () => {
                       <p className="text-xs text-slate-200 line-clamp-1">{item.title}</p>
                       <p className="text-[10px] text-slate-500">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-xs font-bold text-amber-400 font-mono shrink-0">
+                    <span className="text-xs font-bold text-amber-400 font-serif-brand shrink-0">
                       {(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -283,7 +283,7 @@ export const CheckoutPage = () => {
             <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
               <div className="flex justify-between text-slate-400">
                 <span>Items ({cart.length})</span>
-                <span className="font-mono text-slate-200">{cartSubtotal.toFixed(2)}</span>
+                <span className="font-serif-brand text-slate-200">{cartSubtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Delivery Fee</span>

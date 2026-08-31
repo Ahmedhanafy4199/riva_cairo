@@ -74,7 +74,7 @@ export const ProductCard = ({ product, onEdit }) => {
         {/* Admin Badges & Actions */}
         {isAdminLoggedIn && (
           <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-1 z-10 bg-slate-950/95 p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-amber-500/40 backdrop-blur-md">
-            <span className="text-[9px] sm:text-[10px] text-amber-300 font-mono pl-1 truncate">
+            <span className="text-[9px] sm:text-[10px] text-amber-300 font-serif-brand pl-1 truncate">
               Admin
             </span>
             <div className="flex items-center gap-1 shrink-0">
@@ -105,7 +105,7 @@ export const ProductCard = ({ product, onEdit }) => {
           {/* Title */}
           <h3
             onClick={() => navigate(`/product/${product.id}`)}
-            className="font-sans font-semibold text-slate-100 text-xs sm:text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
+            className="font-serif-brand font-semibold text-slate-100 text-xs sm:text-base line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
           >
             {product.title}
           </h3>

@@ -532,7 +532,7 @@ export const AdminDashboard = () => {
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
                             {p.category}
                           </span>
-                          <span className="px-2 py-0.5 rounded-lg text-[9px] font-mono font-semibold bg-slate-950 text-amber-400/90 border border-slate-800">
+                          <span className="px-2 py-0.5 rounded-lg text-[9px] font-serif-brand font-semibold bg-slate-950 text-amber-400/90 border border-slate-800">
                             {p.barcode || `RC-${(p.category || "PRD").substring(0, 3).toUpperCase()}-001`}
                           </span>
                         </div>
@@ -540,7 +540,7 @@ export const AdminDashboard = () => {
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-800/80 text-center font-mono">
+                    <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-800/80 text-center font-serif-brand">
                       <div className="bg-slate-950/80 p-1.5 rounded-lg border border-slate-800">
                         <span className="text-[9px] text-slate-500 block">Price</span>
                         <span className="text-xs font-bold text-amber-400">
@@ -638,8 +638,8 @@ export const AdminDashboard = () => {
                           </td>
 
                           {/* Barcode */}
-                          <td className="px-6 py-4 font-mono">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                          <td className="px-6 py-4 font-serif-brand">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold font-serif-brand bg-amber-500/10 text-amber-400 border border-amber-500/30">
                               {p.barcode ||
                                 `RC-${(p.category || "PRD").substring(0, 3).toUpperCase()}-001`}
                             </span>
@@ -651,12 +651,12 @@ export const AdminDashboard = () => {
                             </span>
                           </td>
 
-                          <td className="px-6 py-4 font-mono font-bold text-amber-400">
+                          <td className="px-6 py-4 font-serif-brand font-bold text-amber-400">
                             {p.price?.toFixed(2)}
                           </td>
 
                           {/* Purchased Qty */}
-                          <td className="px-6 py-4 font-mono">
+                          <td className="px-6 py-4 font-serif-brand">
                             <span className="text-blue-400 font-bold">
                               {p.purchasedQty || 0}
                             </span>
@@ -666,7 +666,7 @@ export const AdminDashboard = () => {
                           </td>
 
                           {/* Sold Qty */}
-                          <td className="px-6 py-4 font-mono">
+                          <td className="px-6 py-4 font-serif-brand">
                             <span className="text-emerald-400 font-bold">
                               {sold}
                             </span>
@@ -676,7 +676,7 @@ export const AdminDashboard = () => {
                           </td>
 
                           {/* Remaining Stock */}
-                          <td className="px-6 py-4 font-mono">
+                          <td className="px-6 py-4 font-serif-brand">
                             <span
                               className={
                                 remaining === 0
@@ -844,7 +844,7 @@ export const AdminDashboard = () => {
                 placeholder="e.g. RC-BAG-001 or 89340219801"
                 value={form.barcode}
                 onChange={(e) => setForm({ ...form, barcode: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-amber-400 font-mono font-semibold focus:outline-none focus:border-amber-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-amber-400 font-serif-brand font-semibold focus:outline-none focus:border-amber-500"
               />
             </div>
 
@@ -868,7 +868,7 @@ export const AdminDashboard = () => {
                       price: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-amber-400 font-bold font-mono focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-amber-400 font-bold font-serif-brand focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -889,7 +889,7 @@ export const AdminDashboard = () => {
                       originalPrice: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-slate-400 font-mono focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-slate-400 font-serif-brand focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -910,7 +910,7 @@ export const AdminDashboard = () => {
                       purchasedQty: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-blue-400 font-bold font-mono focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-blue-400 font-bold font-serif-brand focus:outline-none focus:border-amber-500"
                 />
                 <p className="mt-1 text-[10px] text-slate-500">
                   Total quantity purchased from the supplier.
@@ -922,7 +922,7 @@ export const AdminDashboard = () => {
                 <label className="block text-xs font-medium text-slate-300 mb-1">
                   Current Stock Preview
                 </label>
-                <div className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs font-bold font-mono">
+                <div className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs font-bold font-serif-brand">
                   {(() => {
                     const purchased = Number(form.purchasedQty || 0);
                     const sold = editingProduct
@@ -1037,7 +1037,7 @@ export const AdminDashboard = () => {
                           )}
 
                           {/* Number Badge */}
-                          <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-slate-900/90 text-[9px] text-slate-300 flex items-center justify-center border border-slate-700 font-mono">
+                          <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-slate-900/90 text-[9px] text-slate-300 flex items-center justify-center border border-slate-700 font-serif-brand">
                             {index + 1}
                           </span>
                         </div>
@@ -1136,13 +1136,13 @@ export const AdminDashboard = () => {
                   <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
                     <div>
                       <span className="text-[10px] text-slate-500">Order ID</span>
-                      <div className="font-mono font-bold text-amber-400 text-xs sm:text-sm">
+                      <div className="font-serif-brand font-bold text-amber-400 text-xs sm:text-sm">
                         {order.id}
                       </div>
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] text-slate-500">Total</span>
-                      <div className="font-mono font-bold text-slate-100 text-sm sm:text-base">
+                      <div className="font-serif-brand font-bold text-slate-100 text-sm sm:text-base">
                         {order.totalAmount?.toFixed(2)}
                       </div>
                     </div>
@@ -1158,7 +1158,7 @@ export const AdminDashboard = () => {
                         <LuPhone className="w-3 h-3 text-amber-400 shrink-0" />
                         <a
                           href={`tel:${order.phone}`}
-                          className="hover:text-amber-400 font-mono underline"
+                          className="hover:text-amber-400 font-serif-brand underline"
                         >
                           {order.phone}
                         </a>
@@ -1184,7 +1184,7 @@ export const AdminDashboard = () => {
                         className="text-[11px] text-slate-300 flex items-center justify-between"
                       >
                         <span className="truncate">{item.title}</span>
-                        <span className="font-mono text-amber-400 font-semibold shrink-0 ml-2">
+                        <span className="font-serif-brand text-amber-400 font-semibold shrink-0 ml-2">
                           x{item.quantity}
                         </span>
                       </div>
@@ -1315,14 +1315,14 @@ export const AdminDashboard = () => {
                             : "relative z-1 hover:bg-slate-800/40"
                         }`}
                       >
-                        <td className="px-6 py-4 font-mono font-bold text-amber-400">
+                        <td className="px-6 py-4 font-serif-brand font-bold text-amber-400">
                           {order.id}
                         </td>
                         <td className="px-6 py-4 font-semibold text-slate-200">
                           {order.customerName}
                         </td>
                         <td className="px-6 py-4">
-                          <div className="font-mono text-[11px] text-slate-300">
+                          <div className="font-serif-brand text-[11px] text-slate-300">
                             {order.phone}
                           </div>
                           <div className="text-[10px] text-slate-400">
@@ -1344,7 +1344,7 @@ export const AdminDashboard = () => {
                             ))}
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-mono font-bold text-slate-100">
+                        <td className="px-6 py-4 font-serif-brand font-bold text-slate-100">
                           {order.totalAmount?.toFixed(2)}
                         </td>
                         <td className="px-6 py-4">

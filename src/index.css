@@ -2,11 +2,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  html,
+  body,
+  #root,
+  * {
+    font-family: 'Assistant', sans-serif;
   }
+
   h1, h2, h3, .font-serif-brand {
-    font-family: 'Cinzel', serif;
+    font-family: 'Assistant', sans-serif;
   }
 }
 

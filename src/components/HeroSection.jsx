@@ -127,7 +127,7 @@ export const HeroSection = ({ onSelectCategory }) => {
                     <span className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-950/80 border border-slate-800 text-amber-400 backdrop-blur-md">
                       <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
                     </span>
-                    <span className="text-[10px] sm:text-xs font-mono font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-950/80 text-amber-300 border border-amber-500/30">
+                    <span className="text-[10px] sm:text-xs font-serif-brand font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-950/80 text-amber-300 border border-amber-500/30">
                       {cat.count} Items
                     </span>
                   </div>
