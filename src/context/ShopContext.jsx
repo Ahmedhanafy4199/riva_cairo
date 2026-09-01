@@ -64,10 +64,32 @@ export const ShopProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Recently Viewed State
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    const saved = localStorage.getItem("riva_recently_viewed");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const addRecentlyViewed = useCallback((product) => {
+    if (!product || !product.id) return;
+    setRecentlyViewed((prev) => {
+      const filtered = prev.filter((p) => p.id !== product.id);
+      const updated = [product, ...filtered].slice(0, 8);
+      localStorage.setItem("riva_recently_viewed", JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const clearRecentlyViewed = useCallback(() => {
+    setRecentlyViewed([]);
+    localStorage.removeItem("riva_recently_viewed");
+  }, []);
+
   // UI States
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -989,6 +1011,11 @@ export const ShopProvider = ({ children }) => {
         setSearchQuery,
         isCartOpen,
         setIsCartOpen,
+        isSearchOpen,
+        setIsSearchOpen,
+        recentlyViewed,
+        addRecentlyViewed,
+        clearRecentlyViewed,
         isAdminModalOpen,
         setIsAdminModalOpen,
         isAdmin,

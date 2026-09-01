@@ -97,7 +97,7 @@ export const HeroSection = ({ onSelectCategory }) => {
       <section className="space-y-6">
         <div className="flex items-end justify-between">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 ">
               Curated Catalog
             </span>
             <h2 className="font-serif-brand text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
@@ -120,24 +120,24 @@ export const HeroSection = ({ onSelectCategory }) => {
                   alt={cat.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                {/* <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" /> */}
 
                 <div className="absolute inset-0 p-3.5 sm:p-6 flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
+                  {/* <div className="flex items-center justify-between">
                     <span className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-950/80 border border-slate-800 text-amber-400 backdrop-blur-md">
                       <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
                     </span>
                     <span className="text-[10px] sm:text-xs font-serif-brand font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-950/80 text-amber-300 border border-amber-500/30">
                       {cat.count} Items
                     </span>
-                  </div>
+                  </div> */}
 
-                  <div>
+                  {/* <div>
                     <div className="flex items-center gap-1 text-xs text-amber-400 font-semibold mt-2.5 group-hover:translate-x-1 transition-transform">
                       <span>Shop {cat.id}</span>
                       <LuArrowRight className="w-3.5 h-3.5" />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             );

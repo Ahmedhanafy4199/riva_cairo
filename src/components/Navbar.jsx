@@ -14,6 +14,7 @@ import {
   LuCrown,
   LuMoon,
   LuSun,
+  LuUser,
 } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
 import { useTheme } from "../context/ThemeContext";
@@ -23,6 +24,7 @@ export const Navbar = () => {
   const {
     cartItemCount,
     setIsCartOpen,
+    setIsSearchOpen,
     isAdminLoggedIn,
     setIsAdminModalOpen,
     searchQuery,
@@ -41,21 +43,36 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navCategories = [
-    { id: "Home", label: "Home", icon: LuSparkles },
-    { id: "Bags", label: "Bags", icon: LuShoppingBag },
-    { id: "Wallets", label: "Wallets", icon: LuWallet },
-    { id: "Jackets", label: "Jackets", icon: LuShirt },
-    { id: "Belts", label: "Belts", icon: LuAward },
+    { id: "Home", label: "Home", type: "nav", path: "/", icon: LuSparkles },
+    { id: "Products", label: "Products", type: "nav", path: "/category/All", icon: LuShirt },
+    { id: "Refund", label: "Refund/Exchange policy", type: "modal", modal: "returns", icon: LuAward },
+    { id: "Shipping", label: "Shipping Policy", type: "modal", modal: "shipping", icon: LuWallet },
+    { id: "Contact", label: "Contact us", type: "contact", icon: LuCrown },
   ];
 
-  const handleCategoryClick = (catId) => {
-    if (catId === "Home") {
-      setActiveCategory("All");
-      navigate("/");
-    } else {
-      setActiveCategory(catId);
-      navigate(`/category/${catId}`);
+  const handleCategoryClick = (itemOrId) => {
+    const item = typeof itemOrId === "string"
+      ? navCategories.find((n) => n.id === itemOrId)
+      : itemOrId;
+
+    if (!item) {
+      setMobileMenuOpen(false);
+      return;
     }
+
+    if (item.type === "nav") {
+      setActiveCategory("All");
+      if (item.id === "Home") {
+        navigate("/");
+      } else {
+        navigate("/category/All");
+      }
+    } else if (item.type === "modal") {
+      window.dispatchEvent(new CustomEvent("open-footer-modal", { detail: item.modal }));
+    } else if (item.type === "contact") {
+      window.open("https://wa.me/201037650495", "_blank");
+    }
+
     setMobileMenuOpen(false);
   };
 
@@ -116,28 +133,23 @@ export const Navbar = () => {
             {/* Desktop Nav Links */}
             <nav
               aria-label="Desktop Navigation"
-              className="hidden md:flex items-center space-x-1 lg:space-x-2"
+              className="hidden md:flex items-center space-x-4 lg:space-x-6 text-xs lg:text-sm font-normal"
             >
               {navCategories.map((item) => {
-                const Icon = item.icon;
                 const isActive =
                   (location.pathname === "/" && item.id === "Home") ||
-                  (location.pathname.startsWith("/category/") &&
-                    activeCategory === item.id);
+                  (location.pathname.startsWith("/category/") && item.id === "Products");
 
                 return (
                   <button
                     key={item.id}
-                    onClick={() => handleCategoryClick(item.id)}
-                    className={`flex items-center gap-2 px-3 lg:px-3.5 py-2 rounded-full text-xs lg:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                    onClick={() => handleCategoryClick(item)}
+                    className={`transition-colors cursor-pointer ${
                       isActive
-                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-sm shadow-amber-500/10"
-                        : "text-slate-300 hover:text-white hover:bg-slate-900/60"
+                        ? "text-slate-900 dark:text-white font-medium"
+                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
-                    <Icon
-                      className={`w-4 h-4 ${isActive ? "text-amber-400" : "text-slate-400"}`}
-                    />
                     {item.label}
                   </button>
                 );
@@ -145,28 +157,43 @@ export const Navbar = () => {
             </nav>
 
             {/* Actions & Utilities */}
-            <div className="flex items-center gap-1.5 sm:gap-2.5">
-              {/* Search Input (Desktop) */}
-              <div className="hidden lg:relative lg:flex items-center">
-                <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search leather goods..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-40 xl:w-56 bg-slate-900/80 border border-slate-800 rounded-full pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition-all"
-                />
-              </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Search Trigger Button (Opens Search Modal matching Image 2) */}
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 text-slate-700 dark:text-slate-200 hover:text-amber-500 transition-colors cursor-pointer shrink-0"
+                aria-label="Search"
+                title="Search products"
+              >
+                <LuSearch className="w-5 h-5 sm:w-5 sm:h-5" />
+              </button>
+
+              {/* Account / User Trigger Button */}
+              <button
+                onClick={handleAdminClick}
+                className="p-2 text-slate-700 dark:text-slate-200 hover:text-amber-500 transition-colors cursor-pointer shrink-0 relative"
+                aria-label="Account"
+                title={isAdminLoggedIn ? "Admin Panel" : "Admin Login"}
+              >
+                <LuUser className="w-5 h-5 sm:w-5 sm:h-5" />
+                {showRedDot && (
+                  <span className="absolute top-1 right-1 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
+                )}
+              </button>
 
               {/* Cart Drawer Trigger */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 sm:p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:text-amber-400 hover:border-amber-500/30 transition-all duration-200 group cursor-pointer shrink-0"
+                className="relative p-2 text-slate-700 dark:text-slate-200 hover:text-amber-500 transition-colors cursor-pointer shrink-0"
                 aria-label="Shopping Cart"
+                title="Shopping Bag"
               >
-                <LuShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                <LuShoppingBag className="w-5 h-5 sm:w-5 sm:h-5" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-4.5 h-4.5 sm:min-w-5 sm:h-5 px-1 rounded-full bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] sm:text-xs font-bold flex items-center justify-center shadow-md animate-pulse">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 text-[10px] font-bold flex items-center justify-center">
                     {cartItemCount}
                   </span>
                 )}
@@ -175,7 +202,7 @@ export const Navbar = () => {
               {/* Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="p-2 sm:p-2.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 border border-transparent hover:border-slate-700 transition-colors cursor-pointer shrink-0"
+                className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer shrink-0"
                 title="Toggle Theme"
                 aria-label="Toggle Theme"
               >
@@ -248,7 +275,7 @@ export const Navbar = () => {
           </div>
 
           {/* Mobile Search Bar */}
-          <div className="lg:hidden pb-3 pt-0.5">
+          {/* <div className="lg:hidden pb-3 pt-0.5">
             <div className="relative flex items-center">
               <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
               <input
@@ -259,7 +286,7 @@ export const Navbar = () => {
                 className="w-full bg-slate-900/90 border border-slate-800 rounded-full pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </header>
 

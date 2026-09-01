@@ -32,6 +32,16 @@ export const Footer = () => {
   // Active modal state: 'care' | 'returns' | 'shipping' | 'currency' | null
   const [activeModal, setActiveModal] = useState(null);
 
+  React.useEffect(() => {
+    const handleOpenModal = (e) => {
+      if (e.detail) {
+        setActiveModal(e.detail);
+      }
+    };
+    window.addEventListener("open-footer-modal", handleOpenModal);
+    return () => window.removeEventListener("open-footer-modal", handleOpenModal);
+  }, []);
+
   // Currency & Region state
   const [selectedRegion, setSelectedRegion] = useState({
     code: "EGP",

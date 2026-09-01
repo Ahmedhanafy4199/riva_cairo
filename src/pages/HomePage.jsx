@@ -28,7 +28,7 @@ export const HomePage = ({ onEditProduct }) => {
       <section className="space-y-4 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-800/80 pb-3 sm:pb-4 gap-2 sm:gap-3">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 flex items-center gap-1.5">
               <LuSparkles className="w-3.5 h-3.5 shrink-0" />
               Handcrafted Selection
             </span>

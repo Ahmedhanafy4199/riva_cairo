@@ -34,9 +34,9 @@ export const ProductCard = ({ product, onEdit }) => {
         <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
         {/* Category Tag */}
-        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-semibold tracking-wider uppercase bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-500/30">
+        {/* <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-semibold tracking-wider uppercase bg-slate-950/85 backdrop-blur-md text-amber-400 border border-amber-500/30">
           {product.category}
-        </span>
+        </span> */}
 
         {/* Out of Stock Badge */}
         {isOutOfStock && (
@@ -111,9 +111,9 @@ export const ProductCard = ({ product, onEdit }) => {
           </h3>
 
           {/* Description preview */}
-          <p className="text-[11px] sm:text-xs text-slate-400 line-clamp-2 mt-0.5 sm:mt-1 font-light leading-relaxed">
+          {/* <p className="text-[11px] sm:text-xs text-slate-400 line-clamp-2 mt-0.5 sm:mt-1 font-light leading-relaxed">
             {product.description}
-          </p>
+          </p> */}
         </div>
 
         {/* Price & Add to Cart button */}
@@ -129,7 +129,7 @@ export const ProductCard = ({ product, onEdit }) => {
             )}
           </div>
 
-          {isOutOfStock ? (
+          {/* {isOutOfStock ? (
             <span className="flex items-center justify-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-slate-900 text-red-400 text-[10px] sm:text-xs font-semibold border border-red-900/60 cursor-not-allowed select-none shrink-0 w-full min-[380px]:w-auto">
               <LuShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span className="truncate">غير متوفر — Out of Stock</span>
@@ -142,7 +142,7 @@ export const ProductCard = ({ product, onEdit }) => {
               <LuShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/btn:scale-110 transition-transform" />
               <span className="truncate">Add to Cart</span>
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </div>

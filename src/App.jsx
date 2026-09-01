@@ -7,6 +7,7 @@ import { Footer } from './components/Footer';
 import { Toast } from './components/Toast';
 import { CartDrawer } from './components/CartDrawer';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { SearchModal } from './components/SearchModal';
 import { HomePage } from './pages/HomePage';
 import { CategoryPage } from './pages/CategoryPage';
 import { ProductPage } from './pages/ProductPage';
@@ -48,6 +49,7 @@ const MainAppContent = () => {
       </main>
 
       <CartDrawer />
+      <SearchModal />
       <AdminLoginModal />
       <Toast />
 
