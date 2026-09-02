@@ -559,10 +559,10 @@ BEGIN
 
     -- 5. Server-Side Shipping Calculation
     -- Business rule: Orders >= 200 EGP qualify for FREE delivery, otherwise 15 EGP
-    IF v_subtotal >= 200.00 THEN
+    IF v_subtotal >= 3000.00 THEN
         v_shipping := 0.00;
     ELSE
-        v_shipping := 15.00;
+        v_shipping := 50.00;
     END IF;
 
     v_total_amount := v_subtotal + v_shipping;

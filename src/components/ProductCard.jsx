@@ -43,9 +43,9 @@ export const ProductCard = ({ product, onEdit }) => {
           </span>
         )}
 
-        {/* Out of Stock Badge */}
+        {/* Sold Out Badge */}
         {isOutOfStock && (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-[8px] sm:text-[10px] font-bold tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
             Sold Out
           </span>
         )}

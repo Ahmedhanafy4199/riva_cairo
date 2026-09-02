@@ -18,7 +18,7 @@ export const CartDrawer = () => {
 
   if (!isCartOpen) return null;
 
-  const freeShippingThreshold = 200;
+  const freeShippingThreshold = 3000;
   const shippingProgress = Math.min(100, (cartSubtotal / freeShippingThreshold) * 100);
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartSubtotal);
 
@@ -157,13 +157,13 @@ export const CartDrawer = () => {
                                   : 'text-slate-400 hover:text-white cursor-pointer'
                               }`}
                               aria-label="Increase quantity"
-                              title={isOutOfStock ? 'Out of Stock' : isAtStockLimit ? 'Stock limit reached' : 'Increase quantity'}
+                              title={isOutOfStock ? 'Sold Out' : isAtStockLimit ? 'Stock limit reached' : 'Increase quantity'}
                             >
                               <LuPlus className="w-3 h-3" />
                             </button>
                             {isOutOfStock && (
                               <span className="ml-1 text-[9px] font-semibold text-red-400 whitespace-nowrap">
-                                Out of Stock
+                                Sold Out
                               </span>
                             )}
                           </div>
@@ -190,13 +190,13 @@ export const CartDrawer = () => {
                   <div className="flex justify-between text-slate-400">
                     <span>Estimated Shipping</span>
                     <span className="text-emerald-400 font-medium">
-                      {remainingForFreeShipping === 0 ? 'FREE' : '15.00'}
+                      {remainingForFreeShipping === 0 ? 'FREE' : '50.00'}
                     </span>
                   </div>
                   <div className="flex justify-between text-base font-bold text-slate-100 pt-2 border-t border-slate-800">
                     <span>Total Amount</span>
                     <span className="text-amber-400 font-serif-brand text-lg sm:text-xl">
-                      {(cartSubtotal + (remainingForFreeShipping === 0 ? 0 : 15)).toFixed(2)}
+                      {(cartSubtotal + (remainingForFreeShipping === 0 ? 0 : 50)).toFixed(2)}
                     </span>
                   </div>
                 </div>

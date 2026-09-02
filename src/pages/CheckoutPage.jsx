@@ -27,7 +27,7 @@ export const CheckoutPage = () => {
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [error, setError] = useState('');
 
-  const shippingFee = cartSubtotal >= 200 ? 0 : 15;
+  const shippingFee = cartSubtotal >= 3000 ? 0 : 50;
   const totalAmount = cartSubtotal + shippingFee;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -292,7 +292,7 @@ export const CheckoutPage = () => {
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Delivery Fee</span>
-                <span className="text-emerald-400">{shippingFee === 0 ? 'FREE' : '15.00'}</span>
+                <span className="text-emerald-400">{shippingFee === 0 ? 'FREE' : '50.00'}</span>
               </div>
               <div className="flex justify-between text-sm font-bold text-slate-100 pt-2 border-t border-slate-200 dark:border-slate-800">
                 <span>Order Total</span>
