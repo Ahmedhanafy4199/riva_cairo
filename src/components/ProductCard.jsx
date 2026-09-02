@@ -10,7 +10,7 @@ export const ProductCard = ({ product, onEdit }) => {
 
   const stock = getProductStock
     ? getProductStock(product)
-    : (product.stock ?? 99);
+    : (product.qtyStock ?? product.qty_stock ?? product.stock ?? 0);
   const isOutOfStock = stock <= 0;
 
   return (
@@ -46,7 +46,7 @@ export const ProductCard = ({ product, onEdit }) => {
         {/* Out of Stock Badge */}
         {isOutOfStock && (
           <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
-            Out of Stock
+            Sold Out
           </span>
         )}
 

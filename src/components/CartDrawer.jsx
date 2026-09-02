@@ -98,7 +98,7 @@ export const CartDrawer = () => {
                 cart.map((item) => {
                   const availableStock = getProductStock
                     ? getProductStock(item)
-                    : (item.qtyStock ?? item.stock ?? 99);
+                    : (item.qtyStock ?? item.qty_stock ?? item.stock ?? 0);
                   const isOutOfStock = availableStock <= 0;
                   const isAtStockLimit = item.quantity >= availableStock;
 

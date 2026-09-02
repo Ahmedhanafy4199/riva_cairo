@@ -165,9 +165,9 @@ export const AdminDashboard = () => {
   const totalProductsCount = products.length;
 
   const getProductInventory = (product) => {
-    const purchasedQty = Number(product.purchasedQty || 0);
-    const soldQty = Number(getProductSoldCount(product.id, product.title) || 0);
-    const stock = Math.max(0, purchasedQty - soldQty);
+    const purchasedQty = Number(product.purchasedQty ?? product.purchased_qty ?? 0);
+    const soldQty = Number(product.sold ?? 0);
+    const stock = Number(product.qtyStock ?? product.qty_stock ?? product.stock ?? 0);
 
     return {
       purchasedQty,
@@ -333,15 +333,7 @@ export const AdminDashboard = () => {
     }
 
     const purchasedQty = Math.max(0, parseInt(form.purchasedQty, 10) || 0);
-
-    // Keep the existing sold quantity when editing
-    const soldQty = editingProduct
-      ? Number(
-          getProductSoldCount(editingProduct.id, editingProduct.title) || 0,
-        )
-      : 0;
-
-    // Stock = Purchased - Sold
+    const soldQty = editingProduct ? Number(editingProduct.sold || 0) : 0;
     const stock = Math.max(0, purchasedQty - soldQty);
 
     const updatedProductData = {
@@ -356,6 +348,8 @@ export const AdminDashboard = () => {
         : parseFloat(form.price) * 1.2,
 
       purchasedQty,
+      sold: soldQty,
+      qtyStock: stock,
       stock,
 
       image: mainImage,
@@ -606,9 +600,11 @@ export const AdminDashboard = () => {
               </div>
             ) : (
               paginatedProducts.map((p) => {
-                const purchased = Number(p.purchasedQty || 0);
-                const sold = Number(getProductSoldCount(p.id, p.title) || 0);
-                const remaining = Math.max(0, purchased - sold);
+                const {
+                  purchasedQty: purchased,
+                  soldQty: sold,
+                  stock: remaining,
+                } = getProductInventory(p);
 
                 return (
                   <div
@@ -725,11 +721,11 @@ export const AdminDashboard = () => {
                     </tr>
                   ) : (
                     paginatedProducts.map((p) => {
-                      const purchased = Number(p.purchasedQty || 0);
-                      const sold = Number(
-                        getProductSoldCount(p.id, p.title) || 0,
-                      );
-                      const remaining = Math.max(0, purchased - sold);
+                      const {
+                        purchasedQty: purchased,
+                        soldQty: sold,
+                        stock: remaining,
+                      } = getProductInventory(p);
 
                       return (
                         <tr

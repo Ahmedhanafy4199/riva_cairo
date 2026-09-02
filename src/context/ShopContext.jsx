@@ -218,10 +218,8 @@ export const ShopProvider = ({ children }) => {
           const imageUrls = sortedImages.map((img) => img.image_url);
 
           const purchasedQty = parseInt(p.purchased_qty || 0, 10);
-          const sold = p.sold !== undefined && p.sold !== null ? parseInt(p.sold, 10) : 0;
-          const qtyStock = p.qty_stock !== undefined && p.qty_stock !== null 
-            ? parseInt(p.qty_stock, 10) 
-            : Math.max(0, purchasedQty - sold);
+          const sold = parseInt(p.sold || 0, 10);
+          const qtyStock = parseInt(p.qty_stock !== undefined && p.qty_stock !== null ? p.qty_stock : 0, 10);
 
           return {
             id: p.id,
@@ -373,24 +371,21 @@ export const ShopProvider = ({ children }) => {
   // INVENTORY & METRICS CALCULATIONS
   // ----------------------------------------------------
   const getProductSoldCount = (productId, productTitle) => {
-    return orders
-      .filter((o) => ["Pending", "Processing", "Delivered"].includes(o.status))
-      .reduce((total, order) => {
-        const item = (order.items || []).find(
-          (i) => i.id === productId || i.title === productTitle,
-        );
-        return total + (item ? item.quantity || 0 : 0);
-      }, 0);
+    const p = products.find(
+      (prod) => prod.id === productId || (productTitle && prod.title === productTitle)
+    );
+    return p ? (parseInt(p.sold, 10) || 0) : 0;
   };
 
   const getProductStock = (product) => {
     if (!product) return 0;
-    const purchased = parseInt(
-      product.purchasedQty ?? product.purchased_qty ?? product.stock ?? 0,
-      10,
-    );
-    const sold = getProductSoldCount(product.id, product.title);
-    return Math.max(0, purchased - sold);
+
+    // Retrieve latest product data from products state if available
+    const liveProduct = products.find((p) => p.id === product.id) || product;
+    const stockVal =
+      liveProduct.qtyStock ?? liveProduct.qty_stock ?? liveProduct.stock ?? 0;
+
+    return Math.max(0, parseInt(stockVal, 10) || 0);
   };
 
   const deliveredSalesRevenue = (orders || [])
@@ -583,6 +578,12 @@ export const ShopProvider = ({ children }) => {
       }
 
       const purchasedQty = parseInt(newProduct.purchasedQty || 0, 10);
+      const sold = parseInt(newProduct.sold || 0, 10);
+      const qtyStock =
+        newProduct.qtyStock !== undefined && newProduct.qtyStock !== null
+          ? parseInt(newProduct.qtyStock, 10)
+          : Math.max(0, purchasedQty - sold);
+
       const productData = {
         title: newProduct.title,
         category: newProduct.category,
@@ -592,6 +593,8 @@ export const ShopProvider = ({ children }) => {
           ? parseFloat(newProduct.originalPrice)
           : parseFloat(newProduct.price) * 1.2,
         purchased_qty: purchasedQty,
+        sold: sold,
+        qty_stock: qtyStock,
         featured: newProduct.featured || false,
         description: newProduct.description || "",
         rating: 5.0,
@@ -692,6 +695,9 @@ export const ShopProvider = ({ children }) => {
           ? parseFloat(data.original_price)
           : parseFloat(data.price) * 1.2,
         purchasedQty: parseInt(data.purchased_qty || 0, 10),
+        sold: parseInt(data.sold || 0, 10),
+        qtyStock: parseInt(data.qty_stock !== undefined && data.qty_stock !== null ? data.qty_stock : 0, 10),
+        stock: parseInt(data.qty_stock !== undefined && data.qty_stock !== null ? data.qty_stock : 0, 10),
         featured: Boolean(data.featured),
         description: data.description || "",
         rating: data.rating ? parseFloat(data.rating) : 5.0,
@@ -733,6 +739,12 @@ export const ShopProvider = ({ children }) => {
       }
 
       const purchasedQty = parseInt(updatedProduct.purchasedQty || 0, 10);
+      const sold = parseInt(updatedProduct.sold || 0, 10);
+      const qtyStock =
+        updatedProduct.qtyStock !== undefined && updatedProduct.qtyStock !== null
+          ? parseInt(updatedProduct.qtyStock, 10)
+          : Math.max(0, purchasedQty - sold);
+
       // 1. Update products table row
       const { error: prodError } = await supabase
         .from("products")
@@ -745,6 +757,8 @@ export const ShopProvider = ({ children }) => {
             ? parseFloat(updatedProduct.originalPrice)
             : parseFloat(updatedProduct.price) * 1.2,
           purchased_qty: purchasedQty,
+          sold: sold,
+          qty_stock: qtyStock,
           featured: Boolean(updatedProduct.featured),
           description: updatedProduct.description.trim(),
           updated_at: new Date().toISOString(),

@@ -94,7 +94,7 @@ export const ProductPage = ({ onEditProduct }) => {
 
   const stock = getProductStock
     ? getProductStock(product)
-    : (product.stock ?? 99);
+    : (product.qtyStock ?? product.qty_stock ?? product.stock ?? 0);
   const isOutOfStock = stock <= 0;
 
   const handleIncrement = () => {
@@ -337,13 +337,14 @@ export const ProductPage = ({ onEditProduct }) => {
               <div className="flex items-center border border-slate-300 dark:border-slate-700 rounded-full px-3 py-1 bg-slate-50 dark:bg-slate-900">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer p-1"
+                  disabled={isOutOfStock || quantity <= 1}
+                  className="text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors disabled:opacity-30 cursor-pointer p-1"
                   aria-label="Decrease quantity"
                 >
                   <LuMinus className="w-3.5 h-3.5" />
                 </button>
                 <span className="w-8 text-center text-sm font-semibold text-slate-900 dark:text-slate-100 font-mono">
-                  {quantity}
+                  {isOutOfStock ? 0 : quantity}
                 </span>
                 <button
                   onClick={handleIncrement}
