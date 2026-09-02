@@ -226,7 +226,7 @@ export const Navbar = () => {
               >
                 <LuShoppingBag className="w-5 h-5" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-950 dark:bg-amber-500  dark:text-slate-950 text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-900 dark:bg-amber-500 dark:text-slate-950 text-[10px] font-bold flex items-center justify-center">
                     {cartItemCount}
                   </span>
                 )}

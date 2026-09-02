@@ -33,7 +33,7 @@ const AdminRouteGuard = () => {
 
 const MainAppContent = () => {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
       <Navbar />
 
       <main className="flex-1 w-full mx-auto pb-5 sm:pb-8">

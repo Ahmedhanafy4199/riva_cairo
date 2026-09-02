@@ -129,16 +129,16 @@ export const CategoryPage = ({ onEditProduct }) => {
             <span>Category: {activeCategory}</span>
           </div>
 
-          <h1
+          <h3
             className="
               font-serif-brand
               text-2xl sm:text-3xl md:text-4xl
-              font-bold
+              font-semibold
               text-slate-900 dark:text-slate-100
             "
           >
             {currentMeta.title}
-          </h1>
+          </h3>
 
           <p
             className="
@@ -153,7 +153,7 @@ export const CategoryPage = ({ onEditProduct }) => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-800">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 bg-slate-50 dark:bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
         {/* Category Pills */}
         <div data-testid="category-pills" className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
           {["All", "Bags", "Wallets", "Jackets", "Belts"].map((cat) => {
@@ -169,7 +169,7 @@ export const CategoryPage = ({ onEditProduct }) => {
                 className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-semibold whitespace-nowrap cursor-pointer transition-all duration-200 shrink-0 ${
                   isActive
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-                    : "bg-slate-950 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700"
+                    : "bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                 }`}
               >
                 <span>{cat}</span>
@@ -196,7 +196,7 @@ export const CategoryPage = ({ onEditProduct }) => {
               placeholder="Search in this view..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500"
+              className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500"
             />
           </div>
 
@@ -204,7 +204,7 @@ export const CategoryPage = ({ onEditProduct }) => {
             <button
               type="button"
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="w-full sm:w-auto flex items-center gap-2 bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-300 font-medium transition-all min-w-40 sm:min-w-45 justify-between cursor-pointer"
+              className="w-full sm:w-auto flex items-center gap-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-700 dark:text-slate-300 font-medium transition-all min-w-40 sm:min-w-45 justify-between cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <LuSlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
@@ -235,9 +235,9 @@ export const CategoryPage = ({ onEditProduct }) => {
             </button>
 
             {isSortOpen && (
-              <div className="absolute right-0 top-full mt-2 w-52 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-slate-950/40 overflow-hidden">
-                <div className="px-3 py-2 border-b border-slate-800">
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500">
+              <div className="absolute right-0 top-full mt-2 w-52 z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl shadow-slate-200/60 dark:shadow-slate-950/40 overflow-hidden">
+                <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
                     Sort Products
                   </span>
                 </div>
@@ -258,13 +258,13 @@ export const CategoryPage = ({ onEditProduct }) => {
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2.5 text-xs transition-colors cursor-pointer ${
                       sortBy === option.value
-                        ? "bg-amber-500/10 text-amber-400"
-                        : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white"
                     }`}
                   >
                     <span>{option.label}</span>
                     {sortBy === option.value && (
-                      <span className="text-amber-400 text-sm font-bold">✓</span>
+                      <span className="text-amber-500 dark:text-amber-400 text-sm font-bold">✓</span>
                     )}
                   </button>
                 ))}
@@ -277,9 +277,9 @@ export const CategoryPage = ({ onEditProduct }) => {
       {/* Products Grid / Empty State */}
       {filteredProducts.length === 0 ? (
         <div className="py-16 sm:py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800 px-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
+          {/* <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
             <LuSparkles className="w-6 h-6 sm:w-8 sm:h-8" />
-          </div>
+          </div> */}
           <h3 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-300">
             No items found
           </h3>

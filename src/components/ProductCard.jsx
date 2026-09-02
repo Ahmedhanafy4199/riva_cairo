@@ -17,7 +17,7 @@ export const ProductCard = ({ product, onEdit }) => {
     <div className="group flex flex-col h-full">
       {/* Image Card */}
       <div
-        className="relative aspect-square w-full overflow-hidden bg-slate-950 cursor-pointer rounded-xl sm:rounded-2xl border border-slate-800/80 hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300"
+        className="relative aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-950 cursor-pointer rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-800/80 hover:border-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300"
         title="Quick View"
         onClick={() => navigate(`/product/${product.id}`)}
       >

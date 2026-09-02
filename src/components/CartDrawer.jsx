@@ -32,10 +32,10 @@ export const CartDrawer = () => {
         />
 
         <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
-          <div className="w-screen max-w-full sm:max-w-md bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col justify-between">
+          <div className="w-screen max-w-full sm:max-w-md bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between">
             
             {/* Header */}
-            <div className="p-4 sm:p-6 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/50">
+            <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
                   <LuShoppingBag className="w-5 h-5" />
@@ -56,7 +56,7 @@ export const CartDrawer = () => {
             </div>
 
             {/* Free Shipping Progress Bar */}
-            <div className="bg-slate-900/80 px-4 sm:px-6 py-2.5 sm:py-3 border-b border-slate-800/60">
+            <div className="bg-slate-50 dark:bg-slate-900/80 px-4 sm:px-6 py-2.5 sm:py-3 border-b border-slate-200 dark:border-slate-800/60">
               <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
                 <span className="text-slate-300">
                   {remainingForFreeShipping > 0 ? (
@@ -68,7 +68,7 @@ export const CartDrawer = () => {
                   )}
                 </span>
               </div>
-              <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-linear-to-r from-amber-500 to-amber-400 transition-all duration-500"
                   style={{ width: `${shippingProgress}%` }}
@@ -80,7 +80,7 @@ export const CartDrawer = () => {
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 sm:space-y-4">
               {cart.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12 px-4">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 mb-4">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
                     <LuShoppingBag className="w-8 h-8 sm:w-10 sm:h-10" />
                   </div>
                   <h3 className="font-serif-brand text-base sm:text-lg font-bold text-slate-300 mb-1">Your bag is empty</h3>
@@ -105,7 +105,7 @@ export const CartDrawer = () => {
                   return (
                     <div 
                       key={item.id}
-                      className="flex gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 transition-colors"
+                      className="flex gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
                     >
                       <img 
                         src={item.image} 
@@ -134,7 +134,7 @@ export const CartDrawer = () => {
                         </div>
 
                         <div className="flex items-end justify-between mt-2">
-                          <div className="flex items-center border border-slate-800 bg-slate-950 rounded-lg p-0.5">
+                          <div className="flex items-center border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-lg p-0.5">
                             <button
                               onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
                               className="p-1 text-slate-400 hover:text-white cursor-pointer"
@@ -181,7 +181,7 @@ export const CartDrawer = () => {
 
             {/* Footer Summary & Checkout */}
             {cart.length > 0 && (
-              <div className="p-4 sm:p-6 border-t border-slate-800/80 bg-slate-900/60 space-y-3 sm:space-y-4">
+              <div className="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/60 space-y-3 sm:space-y-4">
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between text-slate-400">
                     <span>Subtotal</span>

@@ -26,13 +26,13 @@ export const HomePage = ({ onEditProduct }) => {
 
       {/* Featured Products Section */}
       <section className="space-y-4 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-800/80 pb-3 sm:pb-4 gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-200 dark:border-slate-800/80 pb-3 sm:pb-4 gap-2 sm:gap-3">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 flex items-center gap-1.5">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-500 dark:text-amber-400 flex items-center gap-1.5">
               <LuSparkles className="w-3.5 h-3.5 shrink-0" />
               Handcrafted Selection
             </span>
-            <h2 className="font-serif-brand text-xl sm:text-3xl font-bold text-slate-100 mt-1">
+            <h2 className="font-serif-brand text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               Featured Luxury Products
             </h2>
           </div>
@@ -63,20 +63,20 @@ export const HomePage = ({ onEditProduct }) => {
         if (catProducts.length === 0) return null;
 
         return (
-          <section key={catName} className="space-y-4 sm:space-y-6 pt-4 border-t border-slate-900">
+          <section key={catName} className="space-y-4 sm:space-y-6 pt-4 border-t border-slate-200 dark:border-slate-900">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
               <div>
-                <h3 className="font-serif-brand text-lg sm:text-2xl font-bold text-slate-100">
+                <h3 className="font-serif-brand text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
                   {catName} Collection
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Explore our top artisan {catName.toLowerCase()} designs
                 </p>
               </div>
 
               <button
                 onClick={() => handleSelectCategory(catName)}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-amber-400 hover:text-amber-500 hover:border-amber-500/40 font-medium transition-colors cursor-pointer self-start sm:self-auto"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-500 hover:border-amber-400/40 dark:hover:border-amber-500/40 font-medium transition-colors cursor-pointer self-start sm:self-auto"
               >
                 See All {catName} →
               </button>
@@ -96,7 +96,7 @@ export const HomePage = ({ onEditProduct }) => {
               <div className="flex justify-center pt-1 sm:pt-2">
                 <button
                   onClick={() => handleSelectCategory(catName)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-500/40 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/40 dark:hover:border-amber-500/40 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer"
                 >
                   <span>View All {catName} ({catProducts.length})</span>
                   <LuArrowRight className="w-3.5 h-3.5" />

@@ -57,7 +57,7 @@ export const HeroSection = ({ onSelectCategory }) => {
     <div className="space-y-12 sm:space-y-16 pb-8 sm:pb-12">
       {/* Main Hero Banner */}
       <section className="space-y-6">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-950">
+        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/80 shadow-2xl bg-slate-100 dark:bg-slate-950">
           <img
             src={heroCoverImage}
             alt="Riva Cairo Handcrafted Leather Collection"
@@ -97,10 +97,10 @@ export const HeroSection = ({ onSelectCategory }) => {
       <section className="space-y-6">
         <div className="flex items-end justify-between">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 ">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-500 dark:text-amber-400 ">
               Curated Catalog
             </span>
-            <h2 className="font-serif-brand text-2xl sm:text-3xl font-bold text-slate-100 mt-1">
+            <h2 className="font-serif-brand text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               Explore Our Signature Departments
             </h2>
           </div>

@@ -387,7 +387,7 @@ export const ProductPage = ({ onEditProduct }) => {
             </div>
 
             {/* Collapsible Accordions */}
-            <div className="divide-y divide-slate-800 dark:divide-slate-800 border-t border-b border-slate-800 dark:border-slate-800 text-left">
+            <div className="divide-y divide-slate-200 dark:divide-slate-800 border-t border-b border-slate-200 dark:border-slate-800 text-left">
               {/* DESCRIPTION Accordion */}
               <div className="py-4">
                 <button

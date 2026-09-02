@@ -237,9 +237,9 @@ export const ProductsPage = ({ onEditProduct }) => {
       {/* Products Grid */}
       {filtered.length === 0 ? (
         <div className="py-16 sm:py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800 px-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
+          {/* <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
             <LuShoppingBag className="w-6 h-6 sm:w-8 sm:h-8" />
-          </div>
+          </div> */}
           <h3 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-300">
             No items found
           </h3>

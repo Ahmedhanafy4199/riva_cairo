@@ -44,6 +44,11 @@ export const CheckoutPage = () => {
       const order = await placeOrder(form);
       if (order) {
         setConfirmedOrder(order);
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+
       }
     } catch {
       setError('Failed to place order. Please try again.');
@@ -82,9 +87,9 @@ export const CheckoutPage = () => {
         </button>
       )}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-slate-800 bg-slate-950/60 flex items-center gap-3">
+        <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 flex items-center gap-3">
           <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
             <LuShieldCheck className="w-5 h-5" />
           </div>
@@ -113,7 +118,7 @@ export const CheckoutPage = () => {
               </p>
             </div>
 
-            <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800/80 text-left space-y-3 text-xs">
+            <div className="bg-slate-50 dark:bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800/80 text-left space-y-3 text-xs">
               <div className="flex flex-col sm:flex-row sm:justify-between text-slate-400 border-b border-slate-800 pb-2 gap-1">
                 <span>Shipping Address</span>
                 <span className="text-slate-200 font-medium text-right sm:text-left">
@@ -164,7 +169,7 @@ export const CheckoutPage = () => {
                 {cart.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950 border border-slate-800"
+                    className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"
                   >
                     <img
                       src={item.image}
@@ -199,7 +204,7 @@ export const CheckoutPage = () => {
                     placeholder="Enter your name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -210,7 +215,7 @@ export const CheckoutPage = () => {
                     placeholder="e.g. 01123456789"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
@@ -223,7 +228,7 @@ export const CheckoutPage = () => {
                   placeholder="Building, street, apartment details"
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -236,7 +241,7 @@ export const CheckoutPage = () => {
                     placeholder="e.g. Cairo, Giza, Alexandria"
                     value={form.city}
                     onChange={(e) => setForm({ ...form, city: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -246,14 +251,14 @@ export const CheckoutPage = () => {
                     placeholder="Optional email address"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* Payment Method */}
-            <div className="space-y-3 pt-3 sm:pt-4 border-t border-slate-800">
+            <div className="space-y-3 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-800">
               <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
                 <LuCreditCard className="w-4 h-4 shrink-0" />
                 2. Payment Method
@@ -263,7 +268,7 @@ export const CheckoutPage = () => {
                 className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                   form.paymentMethod === 'Cash on Delivery'
                     ? 'bg-amber-500/10 border-amber-500 text-amber-400 font-semibold'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <input
@@ -280,7 +285,7 @@ export const CheckoutPage = () => {
             </div>
 
             {/* Summary */}
-            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+            <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
               <div className="flex justify-between text-slate-400">
                 <span>Items ({cart.length})</span>
                 <span className="font-serif-brand text-slate-200">{cartSubtotal.toFixed(2)}</span>
@@ -289,7 +294,7 @@ export const CheckoutPage = () => {
                 <span>Delivery Fee</span>
                 <span className="text-emerald-400">{shippingFee === 0 ? 'FREE' : '15.00'}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-slate-100 pt-2 border-t border-slate-800">
+              <div className="flex justify-between text-sm font-bold text-slate-100 pt-2 border-t border-slate-200 dark:border-slate-800">
                 <span>Order Total</span>
                 <span className="text-amber-400 font-serif-brand text-lg">{totalAmount.toFixed(2)}</span>
               </div>
