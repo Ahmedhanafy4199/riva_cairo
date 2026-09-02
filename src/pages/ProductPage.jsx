@@ -103,7 +103,7 @@ export const ProductPage = ({ onEditProduct }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12 animate-fadeIn py-4 sm:py-8 px-2 sm:px-4">
+    <div className="max-w-6xl mx-auto space-y-12 animate-fadeIn">
       {/* Product Grid Layout (Image 1 Style) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left Column: Gallery (7 Columns on Large Screens) */}

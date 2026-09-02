@@ -108,7 +108,7 @@ export const HomePage = ({ onEditProduct }) => {
       })}
 
       {/* Explore All CTA Section */}
-      <section className="mt-8 p-6 sm:p-10 rounded-2xl sm:rounded-3xl bg-linear-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 text-center space-y-4 shadow-xl">
+      {/* <section className="mt-8 p-6 sm:p-10 rounded-2xl sm:rounded-3xl bg-linear-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 text-center space-y-4 shadow-xl">
         <div className="max-w-xl mx-auto space-y-2">
           <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase flex items-center justify-center gap-1.5">
             <LuSparkles className="w-3.5 h-3.5 shrink-0" />
@@ -128,7 +128,7 @@ export const HomePage = ({ onEditProduct }) => {
           <span>View All Products ({products.length})</span>
           <LuArrowRight className="w-4 h-4" />
         </button>
-      </section>
+      </section> */}
     </div>
   );
 };
