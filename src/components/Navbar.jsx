@@ -341,7 +341,7 @@ export const Navbar = () => {
           <button
             onClick={handleAdminClick}
             tabIndex={mobileMenuOpen ? 0 : -1}
-            className="relative w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 font-medium text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors"
+            className="relative w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-slate-900 dark:bg-amber-500  dark:text-slate-950 font-medium text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors"
           >
             <LuUser className="w-4 h-4" />
             {showRedDot && (
@@ -351,7 +351,7 @@ export const Navbar = () => {
               </span>
             )}
             <span>
-              {isAdminLoggedIn ? "Go to Admin Dashboard" : "Log in / Owner Login"}
+              {isAdminLoggedIn ? "Go to Admin Dashboard" : "Log in"}
             </span>
           </button>
         </div>
