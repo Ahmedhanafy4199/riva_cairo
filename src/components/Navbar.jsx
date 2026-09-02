@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LuShoppingBag,
   LuSearch,
-  LuShieldCheck,
-  LuLock,
   LuMenu,
   LuX,
   LuSparkles,
@@ -27,9 +25,6 @@ export const Navbar = () => {
     setIsSearchOpen,
     isAdminLoggedIn,
     setIsAdminModalOpen,
-    searchQuery,
-    setSearchQuery,
-    activeCategory,
     setActiveCategory,
     hasUnreadOrders,
   } = useShop();
@@ -41,6 +36,16 @@ export const Navbar = () => {
   const location = useLocation();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navCategories = [
     { id: "Home", label: "Home", type: "nav", path: "/", icon: LuSparkles },
@@ -93,44 +98,16 @@ export const Navbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
-            {/* Logo */}
-            <div
-              onClick={() => {
-                handleCategoryClick("Home");
-                window.scrollTo({
-                  top: 0,
-                  behavior: "smooth",
-                });
-              }}
-              className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group shrink-0"
-            >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl border border-[#D99A1A] p-0.5 shadow-lg shadow-[#D99A1A]/20 group-hover:scale-105 transition-transform duration-300 shrink-0">
-                <div className="w-full h-full rounded-[10px] overflow-hidden">
-                  <img
-                    src={logoImage}
-                    alt="RIVA CAIRO"
-                    className="w-full h-full object-contain rounded-[10px] block"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className={`font-serif-brand text-lg sm:text-2xl font-bold tracking-wider sm:tracking-widest transition-colors ${
-                    theme === "light"
-                      ? "text-slate-300 group-hover:text-amber-400"
-                      : "text-white group-hover:text-amber-400"
-                  }`}
-                >
-                  RIVA
-                  {/* <span className="text-amber-400 font-light">CAIRO</span> */}
-                </span>
-              </div>
-            </div>
-
-            {/* Desktop Nav Links */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-in-out ${
+          isScrolled
+            ? "bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 border-b border-slate-200/80 dark:border-slate-800 shadow-md"
+            : "bg-transparent text-slate-900 dark:text-slate-100 border-b border-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative flex items-center justify-between h-16 sm:h-20">
+            {/* Desktop Left: Navigation Links */}
             <nav
               aria-label="Desktop Navigation"
               className="hidden md:flex items-center space-x-4 lg:space-x-6 text-xs lg:text-sm font-normal"
@@ -144,10 +121,10 @@ export const Navbar = () => {
                   <button
                     key={item.id}
                     onClick={() => handleCategoryClick(item)}
-                    className={`transition-colors cursor-pointer ${
+                    className={`transition-colors cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? "text-slate-900 dark:text-white font-medium"
-                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                        ? "text-slate-950 dark:text-white font-bold border-b-2 border-slate-950 dark:border-white pb-0.5"
+                        : "text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium"
                     }`}
                   >
                     {item.label}
@@ -156,28 +133,84 @@ export const Navbar = () => {
               })}
             </nav>
 
-            {/* Actions & Utilities */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Search Trigger Button (Opens Search Modal matching Image 2) */}
+            {/* Mobile Left: Menu & Search Next to Each Other */}
+            <div className="flex md:hidden items-center gap-1">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Open mobile navigation"
+                className="relative p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 cursor-pointer shrink-0 transition-colors"
+              >
+                {showRedDot && (
+                  <span className="absolute top-1 right-1 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border border-white"></span>
+                  </span>
+                )}
+
+                {mobileMenuOpen ? (
+                  <LuX className="w-6 h-6" />
+                ) : (
+                  <LuMenu className="w-6 h-6" />
+                )}
+              </button>
+
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-slate-700 dark:text-slate-200 hover:text-amber-500 transition-colors cursor-pointer shrink-0"
+                className="p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 cursor-pointer shrink-0 transition-colors"
                 aria-label="Search"
                 title="Search products"
               >
-                <LuSearch className="w-5 h-5 sm:w-5 sm:h-5" />
+                <LuSearch className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Center Column: Logo (Dead Center) */}
+            <div
+              onClick={() => {
+                handleCategoryClick("Home");
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }}
+              className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 cursor-pointer group shrink-0"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl border border-[#D99A1A] p-0.5 shadow-md shadow-[#D99A1A]/10 group-hover:scale-105 transition-transform duration-300 shrink-0">
+                <div className="w-full h-full rounded-[9px] overflow-hidden">
+                  <img
+                    src={logoImage}
+                    alt="RIVA CAIRO"
+                    className="w-full h-full object-contain block"
+                  />
+                </div>
+              </div>
+              <span className="font-serif-brand text-lg sm:text-2xl font-bold tracking-wider sm:tracking-widest text-slate-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                RIVA
+              </span>
+            </div>
+
+            {/* Right Column: Actions & Utilities */}
+            <div className="flex items-center gap-1 sm:gap-3">
+              {/* Desktop Search Trigger Button */}
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="hidden md:flex p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0"
+                aria-label="Search"
+                title="Search products"
+              >
+                <LuSearch className="w-5 h-5" />
               </button>
 
               {/* Account / User Trigger Button */}
               <button
                 onClick={handleAdminClick}
-                className="p-2 text-slate-700 dark:text-slate-200 hover:text-amber-500 transition-colors cursor-pointer shrink-0 relative"
+                className="p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0 relative"
                 aria-label="Account"
                 title={isAdminLoggedIn ? "Admin Panel" : "Admin Login"}
               >
-                <LuUser className="w-5 h-5 sm:w-5 sm:h-5" />
+                <LuUser className="w-5 h-5" />
                 {showRedDot && (
-                  <span className="absolute top-1 right-1 flex h-2 w-2">
+                  <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                   </span>
@@ -187,115 +220,40 @@ export const Navbar = () => {
               {/* Cart Drawer Trigger */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-slate-700 dark:text-slate-200 hover:text-amber-500 transition-colors cursor-pointer shrink-0"
+                className="relative p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0"
                 aria-label="Shopping Cart"
                 title="Shopping Bag"
               >
-                <LuShoppingBag className="w-5 h-5 sm:w-5 sm:h-5" />
+                <LuShoppingBag className="w-5 h-5" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-950 dark:bg-amber-500  dark:text-slate-950 text-[10px] font-bold flex items-center justify-center">
                     {cartItemCount}
                   </span>
                 )}
               </button>
 
-              {/* Theme Toggle Button */}
+              {/* Desktop Theme Toggle Button */}
               <button
                 onClick={toggleTheme}
-                className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer shrink-0"
+                className="hidden md:flex p-2 text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors cursor-pointer shrink-0"
                 title="Toggle Theme"
                 aria-label="Toggle Theme"
               >
                 {theme === "light" ? (
-                  <LuMoon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <LuMoon className="w-5 h-5" />
                 ) : (
-                  <LuSun className="w-4 h-4 sm:w-5 sm:h-5" />
-                )}
-              </button>
-
-              {/* Admin Dashboard Access */}
-              <button
-                onClick={handleAdminClick}
-                className={`relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full text-xs font-semibold border transition-all duration-200 cursor-pointer shrink-0 ${
-                  location.pathname === "/admin"
-                    ? "bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20"
-                    : isAdminLoggedIn
-                      ? "bg-emerald-950/60 text-emerald-400 border-emerald-500/30 hover:border-emerald-500/60"
-                      : "bg-slate-900/80 text-slate-300 border-slate-800 hover:border-amber-500/40 hover:text-amber-400"
-                }`}
-                title={
-                  showRedDot
-                    ? `New client order(s) placed!`
-                    : isAdminLoggedIn
-                      ? "Access Admin Dashboard"
-                      : "Admin Login"
-                }
-              >
-                {/* Red Order Notification Dot */}
-                {showRedDot && (
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3 z-10">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-slate-950"></span>
-                  </span>
-                )}
-
-                {isAdminLoggedIn ? (
-                  <>
-                    <LuShieldCheck className="w-4 h-4 text-emerald-400" />
-                    <span className="hidden sm:inline">Admin Panel</span>
-                  </>
-                ) : (
-                  <>
-                    <LuLock className="w-4 h-4 text-amber-400" />
-                    <span className="hidden sm:inline">Admin</span>
-                  </>
-                )}
-              </button>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Open mobile navigation"
-                className="relative p-2 md:hidden rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white cursor-pointer shrink-0"
-              >
-                {showRedDot && (
-                  <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border border-slate-950"></span>
-                  </span>
-                )}
-
-                {mobileMenuOpen ? (
-                  <LuX className="w-5 h-5" />
-                ) : (
-                  <LuMenu className="w-5 h-5" />
+                  <LuSun className="w-5 h-5 text-amber-400" />
                 )}
               </button>
             </div>
           </div>
-
-          {/* Mobile Search Bar */}
-          {/* <div className="lg:hidden pb-3 pt-0.5">
-            <div className="relative flex items-center">
-              <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search bags, wallets, jackets, belts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900/90 border border-slate-800 rounded-full pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
-              />
-            </div>
-          </div> */}
         </div>
       </header>
 
-      {/* ── Mobile Nav Drawer — slides in from the right as a fixed overlay ── */}
-
-      {/* Backdrop */}
+      {/* Mobile Nav Drawer */}
       <div
         data-testid="mobile-backdrop"
-        className={`fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-xs transition-opacity duration-300 md:hidden ${
           mobileMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -304,33 +262,32 @@ export const Navbar = () => {
         aria-hidden="true"
       />
 
-      {/* Drawer Panel */}
       <div
         aria-hidden={!mobileMenuOpen}
-        inert={!mobileMenuOpen ? "" : undefined}
+        inert={!mobileMenuOpen}
         data-testid="mobile-nav-drawer"
-        className={`fixed top-0 right-0 h-full w-full z-50 bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-0 w-full h-full z-50 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out md:hidden ${
           mobileMenuOpen
             ? "translate-x-0 pointer-events-auto"
-            : "translate-x-full pointer-events-none"
+            : "-translate-x-full pointer-events-none"
         }`}
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800/80 bg-slate-900/50 shrink-0">
-          <span className="font-serif-brand text-base font-bold text-slate-100 tracking-widest">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 shrink-0">
+          <span className="font-serif-brand text-base font-bold text-slate-950 dark:text-slate-100 tracking-widest">
             MENU
           </span>
           <button
             onClick={() => setMobileMenuOpen(false)}
             tabIndex={mobileMenuOpen ? 0 : -1}
-            className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-2 rounded-full text-slate-500 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="Close menu"
           >
             <LuX className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Nav Links */}
+        {/* Drawer Navigation Links */}
         <nav
           aria-label="Mobile Navigation"
           className="flex-1 overflow-y-auto px-4 py-4 space-y-2"
@@ -339,8 +296,8 @@ export const Navbar = () => {
             const Icon = item.icon;
             const isActive =
               (location.pathname === "/" && item.id === "Home") ||
-              (location.pathname.startsWith("/category/") &&
-                activeCategory === item.id);
+              (location.pathname.startsWith("/category/") && item.id === "Products");
+
             return (
               <button
                 key={item.id}
@@ -348,35 +305,53 @@ export const Navbar = () => {
                 tabIndex={mobileMenuOpen ? 0 : -1}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                   isActive
-                    ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 font-semibold"
-                    : "text-slate-300 hover:bg-slate-900"
+                    ? "bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white font-bold border border-slate-200 dark:border-slate-700"
+                    : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
-                <Icon className="w-5 h-5 text-amber-400 shrink-0" />
+                <Icon className="w-5 h-5 text-slate-950 dark:text-amber-400 shrink-0" />
                 <span>{item.label}</span>
               </button>
             );
           })}
         </nav>
 
-        {/* Admin Button */}
-        <div className="px-4 py-4 border-t border-slate-800 shrink-0">
+        {/* Drawer Footer Actions: Dark Mode Switch & Admin/Log In */}
+        <div className="px-4 py-4 border-t border-slate-100 dark:border-slate-800 shrink-0 bg-slate-50 dark:bg-slate-900 space-y-2.5">
+          {/* Light Mode / Dark Mode Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            tabIndex={mobileMenuOpen ? 0 : -1}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs font-semibold cursor-pointer transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              {theme === "light" ? (
+                <LuMoon className="w-4 h-4 text-slate-700" />
+              ) : (
+                <LuSun className="w-4 h-4 text-amber-400" />
+              )}
+              <span>{theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}</span>
+            </div>
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-mono font-bold">
+              {theme === "light" ? "LIGHT" : "DARK"}
+            </span>
+          </button>
+
+          {/* Account Log In / Admin Button */}
           <button
             onClick={handleAdminClick}
             tabIndex={mobileMenuOpen ? 0 : -1}
-            className="relative w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-medium text-sm cursor-pointer"
+            className="relative w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 font-medium text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors"
           >
+            <LuUser className="w-4 h-4" />
             {showRedDot && (
               <span className="absolute top-2.5 right-3 flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-slate-950"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>
               </span>
             )}
-            <LuLock className="w-4 h-4" />
             <span>
-              {isAdminLoggedIn
-                ? "Go to Admin Dashboard"
-                : "Owner / Admin Login"}
+              {isAdminLoggedIn ? "Go to Admin Dashboard" : "Log in / Owner Login"}
             </span>
           </button>
         </div>

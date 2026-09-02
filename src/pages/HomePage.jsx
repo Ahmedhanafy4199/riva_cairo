@@ -21,7 +21,7 @@ export const HomePage = ({ onEditProduct }) => {
   const MAX_CATEGORY_HOME_PRODUCTS = 4;
 
   return (
-    <div className="space-y-10 sm:space-y-16 animate-fadeIn pb-12 sm:pb-16">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10 sm:space-y-16 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
       <HeroSection onSelectCategory={handleSelectCategory} />
 
       {/* Featured Products Section */}

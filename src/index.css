@@ -223,29 +223,33 @@ html.dark [class*="shadow-black"] {
   --tw-shadow-color: rgb(15 23 42 / 0.35) !important;
 }
 
-/* ── Light Mode: text-white → dark text ── */
-html:not(.dark) [class~="text-white"] {
-  color: #0f172a !important;
+/* ── OwlCarousel Animate Keyframe Transitions ── */
+@keyframes owlSlideNext {
+  0% {
+    opacity: 0.15;
+    transform: translateX(45px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
-html:not(.dark) [class*="hover:text-white"]:hover {
-  color: #1e293b !important;
+@keyframes owlSlidePrev {
+  0% {
+    opacity: 0.15;
+    transform: translateX(-45px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
-html:not(.dark) .group:hover [class*="group-hover:text-white"] {
-  color: #1e293b !important;
+.animate-owl-next {
+  animation: owlSlideNext 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* ── Light Mode: Additional Border Unification ── */
-html:not(.dark) [class*="border-slate-600"] {
-  border-color: #e2e8f0 !important;
-}
-
-html:not(.dark) [class*="border-red-900"] {
-  border-color: #fecaca !important;
-}
-
-/* ── Light Mode: Soften black shadows to slate ── */
-html:not(.dark) [class*="shadow-black"] {
-  --tw-shadow-color: rgb(148 163 184 / 0.15) !important;
+.animate-owl-prev {
+  animation: owlSlidePrev 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }

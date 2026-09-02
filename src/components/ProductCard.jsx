@@ -114,7 +114,7 @@ export const ProductCard = ({ product, onEdit }) => {
         {/* Title */}
         <h3
           onClick={() => navigate(`/product/${product.id}`)}
-          className="font-serif-brand font-normal text-slate-100 text-sm line-clamp-1 group-hover:text-amber-400 cursor-pointer transition-colors"
+          className="font-serif-brand font-normal text-slate-900 dark:text-slate-100 text-sm line-clamp-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 cursor-pointer transition-colors"
         >
           {product.title}
         </h3>
@@ -122,7 +122,7 @@ export const ProductCard = ({ product, onEdit }) => {
         {/* Price */}
         <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
           {product.originalPrice && product.originalPrice > product.price && (
-            <span className="text-xs sm:text-sm text-slate-400 line-through font-mono">
+            <span className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 line-through font-mono">
               {product.originalPrice?.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
               })}{" "}
@@ -130,7 +130,7 @@ export const ProductCard = ({ product, onEdit }) => {
             </span>
           )}
 
-          <span className="text-sm sm:text-base md:text-lg font-medium text-slate-100 font-serif-brand">
+          <span className="text-sm sm:text-base md:text-lg font-medium text-slate-900 dark:text-slate-100 font-serif-brand">
             {product.price?.toLocaleString("en-US")} EGP
           </span>
         </div>

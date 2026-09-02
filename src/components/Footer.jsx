@@ -6,10 +6,10 @@ import {
   LuArrowRight,
   LuTruck,
   LuMail,
-  LuSparkles,
   LuCircleCheck,
   LuCircleAlert,
   LuCircleX,
+  LuBadgeCheck,
   LuX,
   LuGlobe,
   LuDroplets,
@@ -17,6 +17,7 @@ import {
   LuPackage,
   LuRefreshCw,
   LuCheck,
+  LuSprayCan,
 } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
 import { useTheme } from "../context/ThemeContext";
@@ -50,29 +51,29 @@ export const Footer = () => {
     flag: "🇪🇬",
   });
 
-  const availableRegions = [
-    { code: "EGP", symbol: "ج.م", name: "Egypt (مصر)", flag: "🇪🇬" },
-    {
-      code: "SAR",
-      symbol: "ر.س",
-      name: "Saudi Arabia (المملكة العربية السعودية)",
-      flag: "🇸🇦",
-    },
-    {
-      code: "AED",
-      symbol: "د.إ",
-      name: "United Arab Emirates (الإمارات)",
-      flag: "🇦🇪",
-    },
-    { code: "KWT", symbol: "د.ك", name: "Kuwait (الكويت)", flag: "🇰🇼" },
-    {
-      code: "USD",
-      symbol: "$",
-      name: "United States / International (USD)",
-      flag: "🇺🇸",
-    },
-    { code: "EUR", symbol: "€", name: "European Union (EUR)", flag: "🇪🇺" },
-  ];
+  // const availableRegions = [
+  //   { code: "EGP", symbol: "ج.م", name: "Egypt (مصر)", flag: "🇪🇬" },
+  //   {
+  //     code: "SAR",
+  //     symbol: "ر.س",
+  //     name: "Saudi Arabia (المملكة العربية السعودية)",
+  //     flag: "🇸🇦",
+  //   },
+  //   {
+  //     code: "AED",
+  //     symbol: "د.إ",
+  //     name: "United Arab Emirates (الإمارات)",
+  //     flag: "🇦🇪",
+  //   },
+  //   { code: "KWT", symbol: "د.ك", name: "Kuwait (الكويت)", flag: "🇰🇼" },
+  //   {
+  //     code: "USD",
+  //     symbol: "$",
+  //     name: "United States / International (USD)",
+  //     flag: "🇺🇸",
+  //   },
+  //   { code: "EUR", symbol: "€", name: "European Union (EUR)", flag: "🇪🇺" },
+  // ];
 
   const handleSelectCategory = (catId) => {
     const targetCategory = catId === "Home" ? "All" : catId;
@@ -100,7 +101,11 @@ export const Footer = () => {
       text: "Don't wash it in a washing machine",
       ar: "عدم الغسيل في الغسالة الأوتوماتيك",
     },
-    { icon: LuCircleX, text: "No ironing", ar: "عدم استخدام المكواة" },
+    { 
+      icon: LuCircleX,
+      text: "No ironing", 
+      ar: "عدم استخدام المكواة"
+    },
     {
       icon: LuDroplets,
       text: "No excessive amount of water",
@@ -109,7 +114,7 @@ export const Footer = () => {
     {
       icon: LuPackage,
       text: "Keep it in its dust bag while not using",
-      ar: "احفظ المنتج داخل حقيبة القماش (Dust Bag) عند عدم الاستخدام",
+      ar: "احفظ المنتج داخل حقيبة القماش عند عدم الاستخدام",
     },
     {
       icon: LuCircleX,
@@ -119,10 +124,10 @@ export const Footer = () => {
     {
       icon: LuShirt,
       text: "Send it to the dry clean",
-      ar: "التنظيف الجاف فقط (Dry Clean)",
+      ar: "التنظيف الجاف فقط ",
     },
     {
-      icon: LuSparkles,
+      icon: LuSprayCan,
       text: "Clean it with a soft / microfiber - slightly wet towel",
       ar: "التنظيف بفوطة مايكروفايبر ناعمة ومبللة خفيفاً",
     },
@@ -169,7 +174,7 @@ export const Footer = () => {
     {
       icon: LuCircleX,
       text: "Items on sale can't be exchanged or refunded",
-      ar: "المنتجات المخفضة (Sale) غير قابلة للاستبدال أو الإرجاع",
+      ar: "المنتجات المخفضة غير قابلة للاستبدال أو الإرجاع",
     },
     {
       icon: LuCircleCheck,
@@ -324,7 +329,7 @@ export const Footer = () => {
                   className="w-full text-left p-2 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/40 hover:text-amber-400 transition-all flex items-center justify-between cursor-pointer group"
                 >
                   <div className="flex items-center gap-2">
-                    <LuSparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <LuBadgeCheck className="w-4 h-4 text-amber-400 shrink-0" />
                     <span className="font-medium text-slate-200 group-hover:text-amber-400 transition-colors">
                       Care Instructions
                     </span>
@@ -405,9 +410,9 @@ export const Footer = () => {
                     {selectedRegion.name}
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-400 uppercase font-semibold shrink-0 ml-1">
+                {/* <span className="text-[10px] text-slate-400 uppercase font-semibold shrink-0 ml-1">
                   Change
-                </span>
+                </span> */}
               </button>
             </div>
           </div>
@@ -452,19 +457,19 @@ export const Footer = () => {
 
             <div className="flex items-center gap-3 border-b border-slate-800 pb-4 pr-8">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                <LuSparkles className="w-5 h-5" />
+                <LuBadgeCheck className="w-5 h-5" />
               </div>
               <div>
                 <h3 className="font-serif-brand text-lg font-bold text-white">
                   Care Instructions
                 </h3>
                 <p className="text-xs text-amber-400 font-medium">
-                  تعليمات العناية والاعتناء بمنتجات RIVA CAIRO
+                  تعليمات العناية والاعتناء بمنتجات 
                 </p>
               </div>
             </div>
 
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 text-xs text-amber-200/90 leading-relaxed font-light">
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 text-xs  leading-relaxed font-light">
               "Each item is crafted with love and care so please read the
               following instructions to ensure it stays in its best condition:"
             </div>
@@ -647,7 +652,7 @@ export const Footer = () => {
                 <p className="font-semibold mb-1">
                   🚚 Cash on Delivery Available
                 </p>
-                <p className="text-[11px] text-emerald-400/80">
+                <p className="text-[11px] ">
                   You pay upon receiving your package safely at your doorstep.
                 </p>
               </div>
@@ -666,7 +671,7 @@ export const Footer = () => {
       )}
 
       {/* Currency & Region Selector Modal */}
-      {activeModal === "currency" && (
+      {/* {activeModal === "currency" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 max-h-[85vh] overflow-y-auto">
             <button
@@ -741,7 +746,7 @@ export const Footer = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </footer>
   );
 };
