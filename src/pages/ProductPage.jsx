@@ -69,7 +69,7 @@ export const ProductPage = ({ onEditProduct }) => {
         </h2>
         <button
           onClick={() => navigate(-1)}
-          className="px-6 py-2.5 rounded-full bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors cursor-pointer"
+          className="px-6 py-2.5 rounded-full bg-slate-900  font-medium text-xs hover:bg-slate-800 transition-colors cursor-pointer"
         >
           Go Back
         </button>
@@ -501,7 +501,7 @@ export const ProductPage = ({ onEditProduct }) => {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black dark:bg-amber-500 hover:bg-slate-900 dark:hover:bg-amber-400 text-white dark:text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shrink-0 transition-colors shadow-md cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black dark:bg-amber-500 hover:bg-slate-900 dark:hover:bg-amber-400  dark:text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shrink-0 transition-colors shadow-md cursor-pointer"
           >
             <LuShoppingBag className="w-4 h-4" />
             <span className="hidden sm:inline">Add to Cart</span>

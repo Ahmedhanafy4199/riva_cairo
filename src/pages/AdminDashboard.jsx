@@ -11,13 +11,108 @@ import {
   LuSparkles as Sparkles,
   LuShieldCheck as ShieldCheck,
   LuChevronDown as ChevronDown,
+  LuChevronLeft,
+  LuChevronRight,
   LuUpload as Upload,
   LuTrendingUp as TrendingUp,
   LuPhone,
   LuMapPin,
   LuBoxes,
+  LuTriangleAlert,
 } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
+
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  label = "items",
+}) => {
+  if (totalItems <= itemsPerPage) return null;
+
+  const startIdx = (currentPage - 1) * itemsPerPage + 1;
+  const endIdx = Math.min(currentPage * itemsPerPage, totalItems);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, "...", totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+      }
+    }
+    return pages;
+  };
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 px-1 sm:px-2 select-none">
+      <div className="text-xs text-slate-500 dark:text-slate-400 order-2 sm:order-1 text-center sm:text-left">
+        Showing <span className="font-semibold text-slate-800 dark:text-slate-200">{startIdx}</span>-
+        <span className="font-semibold text-slate-800 dark:text-slate-200">{endIdx}</span> of{" "}
+        <span className="font-semibold text-slate-800 dark:text-slate-200">{totalItems}</span> {label}
+      </div>
+
+      <div className="flex items-center gap-1.5 order-1 sm:order-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white disabled:opacity-35 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+          aria-label="Previous page"
+        >
+          <LuChevronLeft className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Prev</span>
+        </button>
+
+        <div className="hidden sm:flex items-center gap-1">
+          {getPageNumbers().map((p, idx) =>
+            p === "..." ? (
+              <span key={`ellipsis-${idx}`} className="px-1.5 text-xs text-slate-400">
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                type="button"
+                onClick={() => onPageChange(p)}
+                className={`min-w-8 h-8 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ${
+                  currentPage === p
+                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold"
+                    : "border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white"
+                }`}
+              >
+                {p}
+              </button>
+            )
+          )}
+        </div>
+
+        {/* Compact Mobile Page Info */}
+        <span className="sm:hidden px-2 text-xs font-semibold text-slate-700 dark:text-slate-300 font-serif-brand">
+          {currentPage} / {totalPages}
+        </span>
+
+        <button
+          type="button"
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white disabled:opacity-35 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+          aria-label="Next page"
+        >
+          <span className="hidden sm:inline">Next</span>
+          <LuChevronRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const AdminDashboard = () => {
   const {
@@ -86,6 +181,10 @@ export const AdminDashboard = () => {
     return stock <= 2;
   }).length;
 
+  const [productPage, setProductPage] = useState(1);
+  const [orderPage, setOrderPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
   const filteredProducts = products.filter((p) => {
     const matchesCategory =
       filterCategory === "All" || p.category === filterCategory;
@@ -95,6 +194,24 @@ export const AdminDashboard = () => {
       (p.barcode && p.barcode.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
+
+  React.useEffect(() => {
+    setProductPage(1);
+  }, [filterCategory, searchTerm]);
+
+  const totalProductPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE) || 1;
+  const safeProductPage = Math.min(productPage, totalProductPages);
+  const paginatedProducts = filteredProducts.slice(
+    (safeProductPage - 1) * ITEMS_PER_PAGE,
+    safeProductPage * ITEMS_PER_PAGE
+  );
+
+  const totalOrderPages = Math.ceil(orders.length / ITEMS_PER_PAGE) || 1;
+  const safeOrderPage = Math.min(orderPage, totalOrderPages);
+  const paginatedOrders = orders.slice(
+    (safeOrderPage - 1) * ITEMS_PER_PAGE,
+    safeOrderPage * ITEMS_PER_PAGE
+  );
 
   const handleOpenAddForm = () => {
     setEditingProduct(null);
@@ -270,9 +387,9 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fadeIn pb-12 sm:pb-16 max-w-full overflow-hidden">
+    <div className="space-y-6 sm:space-y-8 animate-fadeIn py-12 sm:pb-16 max-w-full overflow-hidden">
       {/* Admin Top Header */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-xl shadow-xl">
+      <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ">
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/10 shrink-0">
             <ShieldCheck className="w-5 h-5 sm:w-7 sm:h-7" />
@@ -304,7 +421,7 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Analytics Cards Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-4">
+      <div className="grid grid-cols-2 px-4 md:grid-cols-3 xl:grid-cols-5 gap-2.5 sm:gap-4">
         {/* Total Revenue */}
         <div className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between gap-2 shadow-md">
           <div className="min-w-0">
@@ -391,13 +508,13 @@ export const AdminDashboard = () => {
             </span>
           </div>
           <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">
-            <Sparkles className="w-4 h-4 sm:w-6 sm:h-6" />
+            <LuTriangleAlert className="w-4 h-4 sm:w-6 sm:h-6" />
           </div>
         </div>
       </div>
 
       {/* Admin Navigation Tabs */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-800 pb-3 sm:pb-4">
+      <div className="flex flex-col px-4 sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-800 pb-3 sm:pb-4">
         <div className="flex items-center gap-1 sm:gap-2 bg-slate-900/90 p-1 rounded-xl sm:rounded-2xl border border-slate-800 overflow-x-auto scrollbar-none max-w-full">
           <button
             onClick={() => setActiveTab("inventory")}
@@ -446,7 +563,7 @@ export const AdminDashboard = () => {
 
       {/* TAB 1: INVENTORY MANAGEMENT */}
       {activeTab === "inventory" && (
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-4 px-4 sm:space-y-6">
           {/* Filters & Search */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/60 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-800">
             <div className="relative w-full sm:w-72">
@@ -488,7 +605,7 @@ export const AdminDashboard = () => {
                 No products match your search or category filter.
               </div>
             ) : (
-              filteredProducts.map((p) => {
+              paginatedProducts.map((p) => {
                 const purchased = Number(p.purchasedQty || 0);
                 const sold = Number(getProductSoldCount(p.id, p.title) || 0);
                 const remaining = Math.max(0, purchased - sold);
@@ -607,7 +724,7 @@ export const AdminDashboard = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((p) => {
+                    paginatedProducts.map((p) => {
                       const purchased = Number(p.purchasedQty || 0);
                       const sold = Number(
                         getProductSoldCount(p.id, p.title) || 0,
@@ -719,6 +836,16 @@ export const AdminDashboard = () => {
               </table>
             </div>
           </div>
+
+          {/* Inventory Pagination */}
+          <Pagination
+            currentPage={safeProductPage}
+            totalPages={totalProductPages}
+            onPageChange={setProductPage}
+            totalItems={filteredProducts.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            label="products"
+          />
         </div>
       )}
 
@@ -1112,7 +1239,7 @@ export const AdminDashboard = () => {
 
       {/* TAB 3: CLIENT ORDERS MANAGEMENT */}
       {activeTab === "orders" && (
-        <div className="space-y-4 sm:space-y-6 relative">
+        <div className="space-y-4 px-4 sm:space-y-6 relative">
           {openStatusOrder !== null && (
             <div
               className="fixed inset-0 z-30 bg-transparent"
@@ -1127,7 +1254,7 @@ export const AdminDashboard = () => {
                 No orders recorded yet.
               </div>
             ) : (
-              orders.map((order, orderIdx) => (
+              paginatedOrders.map((order, orderIdx) => (
                 <div
                   key={order.id}
                   className="bg-slate-900/70 border border-slate-800 rounded-xl p-3.5 space-y-3 shadow-md"
@@ -1222,7 +1349,7 @@ export const AdminDashboard = () => {
                         {openStatusOrder === order.id && (
                           <div
                             className={`absolute right-0 w-44 z-50 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl shadow-slate-950 overflow-hidden ${
-                              orders.length > 2 && orderIdx >= orders.length - 2
+                              paginatedOrders.length > 2 && orderIdx >= paginatedOrders.length - 2
                                 ? "bottom-full mb-1"
                                 : "top-full mt-1"
                             }`}
@@ -1306,7 +1433,7 @@ export const AdminDashboard = () => {
                       </td>
                     </tr>
                   ) : (
-                    orders.map((order, orderIdx) => (
+                    paginatedOrders.map((order, orderIdx) => (
                       <tr
                         key={order.id}
                         className={`transition-colors ${
@@ -1384,8 +1511,8 @@ export const AdminDashboard = () => {
                             {openStatusOrder === order.id && (
                               <div
                                 className={`absolute right-0 w-45 z-50 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl shadow-slate-950 overflow-hidden ${
-                                  orders.length > 3 &&
-                                  orderIdx >= orders.length - 2
+                                  paginatedOrders.length > 3 &&
+                                  orderIdx >= paginatedOrders.length - 2
                                     ? "bottom-full mb-2"
                                     : "top-full mt-2"
                                 }`}
@@ -1442,6 +1569,16 @@ export const AdminDashboard = () => {
               </table>
             </div>
           </div>
+
+          {/* Orders Pagination */}
+          <Pagination
+            currentPage={safeOrderPage}
+            totalPages={totalOrderPages}
+            onPageChange={setOrderPage}
+            totalItems={orders.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            label="orders"
+          />
         </div>
       )}
     </div>

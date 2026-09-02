@@ -528,7 +528,7 @@ export const Footer = () => {
                 <LuRefreshCw className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif-brand text-lg font-bold text-white">
+                <h3 className="font-serif-brand text-lg font-bold ">
                   Return & Refund Policy
                 </h3>
                 <p className="text-xs text-amber-400 font-medium">

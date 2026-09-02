@@ -32,14 +32,20 @@ export const ProductCard = ({ product, onEdit }) => {
 
         {/* Sale Badge */}
         {product.originalPrice && product.originalPrice > product.price && (
-  <span className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-20 px-2 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#3b59c8] text-amber-50 text-[9px] sm:text-sm font-medium">
+          <span
+            className={`absolute z-20 px-1.5 py-0.5 sm:px-3 rounded-full bg-[#3b59c8] text-amber-50 text-[9px] sm:text-sm font-medium ${
+              isAdminLoggedIn
+                ? "bottom-10 left-2 sm:bottom-16 sm:left-2"
+                : "bottom-2 left-2 sm:bottom-4 sm:left-2"
+            }`}
+          >
             Sale
           </span>
         )}
 
         {/* Out of Stock Badge */}
         {isOutOfStock && (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-white text-[8px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
             Out of Stock
           </span>
         )}
