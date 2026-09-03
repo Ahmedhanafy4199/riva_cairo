@@ -80,24 +80,39 @@ export const SearchModal = () => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Search Bar */}
-        <div className="flex items-center px-4 py-3 sm:py-3.5 gap-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+        <form
+          action=""
+          onSubmit={(e) => {
+            e.preventDefault();
+            inputRef.current?.blur();
+          }}
+          className="flex items-center px-4 py-3 sm:py-3.5 gap-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+        >
           <LuSearch className="w-5 h-5 text-slate-400 shrink-0" />
           <input
             ref={inputRef}
-            type="text"
+            type="search"
+            enterKeyHint="search"
             placeholder="Search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                inputRef.current?.blur();
+              }
+            }}
+            className="w-full bg-transparent text-sm sm:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
           />
           <button
+            type="button"
             onClick={() => setIsSearchOpen(false)}
             className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
             aria-label="Close search"
           >
             <LuX className="w-5 h-5" />
           </button>
-        </div>
+        </form>
 
         {/* Content Section */}
         <div className="p-4 sm:p-5 max-h-[75vh] overflow-y-auto space-y-4">
