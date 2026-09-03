@@ -107,7 +107,7 @@ export const CategoryPage = ({ onEditProduct }) => {
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
       {/* Category Banner */}
       <div
-        className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-6 sm:p-10 md:p-12"
+        className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-3 pt-10 sm:p-10 md:p-12"
       >
         <div className="relative z-10 max-w-2xl space-y-3 sm:space-y-4">
           <div
@@ -171,7 +171,7 @@ export const CategoryPage = ({ onEditProduct }) => {
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full font-serif-brand ${
                     isActive
-                      ? "bg-slate-950/20 text-slate-950 font-bold"
+                      ? "bg-slate-950/20 text-slate-950 font-semibold"
                       : "bg-slate-900 text-slate-400"
                   }`}
                 >
@@ -259,7 +259,7 @@ export const CategoryPage = ({ onEditProduct }) => {
                   >
                     <span>{option.label}</span>
                     {sortBy === option.value && (
-                      <span className="text-amber-500 dark:text-amber-400 text-sm font-bold">✓</span>
+                      <span className="text-amber-500 dark:text-amber-400 text-sm font-semibold">✓</span>
                     )}
                   </button>
                 ))}
@@ -275,7 +275,7 @@ export const CategoryPage = ({ onEditProduct }) => {
           {/* <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
             <LuSparkles className="w-6 h-6 sm:w-8 sm:h-8" />
           </div> */}
-          <h3 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-300">
+          <h3 className="font-serif-brand  sm:text-xl font-semibold text-slate-300">
             No items found
           </h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -287,7 +287,7 @@ export const CategoryPage = ({ onEditProduct }) => {
               handleCategoryChange("All");
               setSearchQuery("");
             }}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
           >
             Clear Filters
           </button>

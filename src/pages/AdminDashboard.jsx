@@ -84,7 +84,7 @@ const Pagination = ({
                 onClick={() => onPageChange(p)}
                 className={`min-w-8 h-8 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center ${
                   currentPage === p
-                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold"
+                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-semibold"
                     : "border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
@@ -394,7 +394,7 @@ export const AdminDashboard = () => {
                 Authorized ({user?.email || "Admin"})
               </span>
             </div>
-            <h1 className="font-serif-brand text-lg sm:text-2xl md:text-3xl font-bold text-slate-100 mt-1 truncate">
+            <h1 className="font-serif-brand  sm:text-2xl md:text-3xl font-semibold text-slate-100 mt-1 truncate">
               Riva Cairo Admin Portal
             </h1>
             <p className="text-[10px] sm:text-xs text-slate-400 truncate">
@@ -422,7 +422,7 @@ export const AdminDashboard = () => {
             <span className="text-[11px] sm:text-xs font-medium text-slate-400 truncate block">
               Total Revenue
             </span>
-            <div className="text-base sm:text-xl md:text-2xl font-bold font-serif-brand text-amber-400 mt-0.5 truncate">
+            <div className="text-base sm:text-xl md:text-2xl font-semibold font-serif-brand text-amber-400 mt-0.5 truncate">
               {totalRevenue.toFixed(2)}
             </div>
             <span className="text-[9px] sm:text-[10px] text-emerald-400 truncate block">
@@ -440,7 +440,7 @@ export const AdminDashboard = () => {
             <span className="text-[11px] sm:text-xs font-medium text-slate-400 truncate block">
               Delivered Sales
             </span>
-            <div className="text-base sm:text-xl md:text-2xl font-bold font-serif-brand text-emerald-400 mt-0.5 truncate">
+            <div className="text-base sm:text-xl md:text-2xl font-semibold font-serif-brand text-emerald-400 mt-0.5 truncate">
               {(deliveredSalesRevenue || 0).toFixed(2)}
             </div>
             <span className="text-[9px] sm:text-[10px] text-emerald-400 truncate block">
@@ -458,7 +458,7 @@ export const AdminDashboard = () => {
             <span className="text-[11px] sm:text-xs font-medium text-slate-400 truncate block">
               Total Orders
             </span>
-            <div className="text-base sm:text-xl md:text-2xl font-bold font-serif-brand text-slate-100 mt-0.5 truncate">
+            <div className="text-base sm:text-xl md:text-2xl font-semibold font-serif-brand text-slate-100 mt-0.5 truncate">
               {totalOrdersCount}
             </div>
             <span className="text-[9px] sm:text-[10px] text-slate-500 truncate block">
@@ -476,7 +476,7 @@ export const AdminDashboard = () => {
             <span className="text-[11px] sm:text-xs font-medium text-slate-400 truncate block">
               Active Items
             </span>
-            <div className="text-base sm:text-xl md:text-2xl font-bold font-serif-brand text-slate-100 mt-0.5 truncate">
+            <div className="text-base sm:text-xl md:text-2xl font-semibold font-serif-brand text-slate-100 mt-0.5 truncate">
               {totalProductsCount}
             </div>
             <span className="text-[9px] sm:text-[10px] text-slate-500 truncate block">
@@ -494,7 +494,7 @@ export const AdminDashboard = () => {
             <span className="text-[11px] sm:text-xs font-medium text-slate-400 truncate block">
               Low Stock
             </span>
-            <div className="text-base sm:text-xl md:text-2xl font-bold font-serif-brand text-slate-100 mt-0.5 truncate">
+            <div className="text-base sm:text-xl md:text-2xl font-semibold font-serif-brand text-slate-100 mt-0.5 truncate">
               {outOfStockCount}
             </div>
             <span className="text-[9px] sm:text-[10px] text-amber-400 truncate block">
@@ -547,7 +547,7 @@ export const AdminDashboard = () => {
         {activeTab === "inventory" && (
           <button
             onClick={handleOpenAddForm}
-            className="flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all cursor-pointer shrink-0"
+            className="flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-xs shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all cursor-pointer shrink-0"
           >
             <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>Add New Item</span>
@@ -656,26 +656,26 @@ export const AdminDashboard = () => {
                     <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-800/80 text-center font-serif-brand">
                       <div className="bg-slate-950/80 p-1.5 rounded-lg border border-slate-800">
                         <span className="text-[9px] text-slate-500 block">Price</span>
-                        <span className="text-xs font-bold text-amber-400">
+                        <span className="text-xs font-semibold text-amber-400">
                           {p.price?.toFixed(2)}
                         </span>
                       </div>
                       <div className="bg-slate-950/80 p-1.5 rounded-lg border border-slate-800">
                         <span className="text-[9px] text-slate-500 block">Purchased</span>
-                        <span className="text-xs font-bold text-blue-400">
+                        <span className="text-xs font-semibold text-blue-400">
                           {p.purchasedQty || 0}
                         </span>
                       </div>
                       <div className="bg-slate-950/80 p-1.5 rounded-lg border border-slate-800">
                         <span className="text-[9px] text-slate-500 block">Sold</span>
-                        <span className="text-xs font-bold text-emerald-400">
+                        <span className="text-xs font-semibold text-emerald-400">
                           {sold}
                         </span>
                       </div>
                       <div className="bg-slate-950/80 p-1.5 rounded-lg border border-slate-800">
                         <span className="text-[9px] text-slate-500 block">Stock</span>
                         <span
-                          className={`text-xs font-bold ${
+                          className={`text-xs font-semibold ${
                             remaining === 0
                               ? "text-red-400"
                               : remaining <= 5
@@ -764,13 +764,13 @@ export const AdminDashboard = () => {
                             </span>
                           </td>
 
-                          <td className="px-6 py-4 font-serif-brand font-bold text-amber-400">
+                          <td className="px-6 py-4 font-serif-brand font-semibold text-amber-400">
                             {p.price?.toFixed(2)}
                           </td>
 
                           {/* Purchased Qty */}
                           <td className="px-6 py-4 font-serif-brand">
-                            <span className="text-blue-400 font-bold">
+                            <span className="text-blue-400 font-semibold">
                               {p.purchasedQty || 0}
                             </span>
                             <span className="text-slate-500 text-[10px] ml-1">
@@ -780,7 +780,7 @@ export const AdminDashboard = () => {
 
                           {/* Sold Qty */}
                           <td className="px-6 py-4 font-serif-brand">
-                            <span className="text-emerald-400 font-bold">
+                            <span className="text-emerald-400 font-semibold">
                               {sold}
                             </span>
                             <span className="text-slate-500 text-[10px] ml-1">
@@ -793,10 +793,10 @@ export const AdminDashboard = () => {
                             <span
                               className={
                                 remaining === 0
-                                  ? "text-red-400 font-bold"
+                                  ? "text-red-400 font-semibold"
                                   : remaining <= 5
-                                    ? "text-amber-400 font-bold"
-                                    : "text-slate-200 font-bold"
+                                    ? "text-amber-400 font-semibold"
+                                    : "text-slate-200 font-semibold"
                               }
                             >
                               {remaining}
@@ -850,7 +850,7 @@ export const AdminDashboard = () => {
         <div className="max-w-3xl mx-auto bg-slate-900/80 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-5 sm:mb-6">
             <div>
-              <h2 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-100">
+              <h2 className="font-serif-brand  sm:text-xl font-semibold text-slate-100">
                 {editingProduct
                   ? `Edit Product: ${editingProduct.title}`
                   : "Add New Leather Product"}
@@ -948,7 +948,7 @@ export const AdminDashboard = () => {
                         </div>
 
                         {form.category === option.value && (
-                          <span className="text-amber-400 font-bold">✓</span>
+                          <span className="text-amber-400 font-semibold">✓</span>
                         )}
                       </button>
                     ))}
@@ -991,7 +991,7 @@ export const AdminDashboard = () => {
                       price: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-amber-400 font-bold font-serif-brand focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-amber-400 font-semibold font-serif-brand focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -1033,7 +1033,7 @@ export const AdminDashboard = () => {
                       purchasedQty: e.target.value,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-blue-400 font-bold font-serif-brand focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-blue-400 font-semibold font-serif-brand focus:outline-none focus:border-amber-500"
                 />
                 <p className="mt-1 text-[10px] text-slate-500">
                   Total quantity purchased from the supplier.
@@ -1045,7 +1045,7 @@ export const AdminDashboard = () => {
                 <label className="block text-xs font-medium text-slate-300 mb-1">
                   Current Stock Preview
                 </label>
-                <div className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs font-bold font-serif-brand">
+                <div className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs font-semibold font-serif-brand">
                   {(() => {
                     const purchased = Number(form.purchasedQty || 0);
                     const sold = editingProduct
@@ -1138,7 +1138,7 @@ export const AdminDashboard = () => {
                               <button
                                 type="button"
                                 onClick={() => handleSetCoverImage(imgSrc)}
-                                className="px-1.5 py-0.5 bg-amber-500 text-slate-950 text-[9px] font-bold rounded hover:bg-amber-400 cursor-pointer"
+                                className="px-1.5 py-0.5 bg-amber-500 text-slate-950 text-[9px] font-semibold rounded hover:bg-amber-400 cursor-pointer"
                               >
                                 Cover
                               </button>
@@ -1154,7 +1154,7 @@ export const AdminDashboard = () => {
 
                           {/* Cover Badge */}
                           {isCover && (
-                            <span className="absolute top-1 left-1 px-1 py-0.2 rounded bg-amber-500 text-slate-950 text-[8px] font-bold">
+                            <span className="absolute top-1 left-1 px-1 py-0.2 rounded bg-amber-500 text-slate-950 text-[8px] font-semibold">
                               COVER
                             </span>
                           )}
@@ -1191,7 +1191,7 @@ export const AdminDashboard = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs sm:text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-xs sm:text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -1259,13 +1259,13 @@ export const AdminDashboard = () => {
                   <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
                     <div>
                       <span className="text-[10px] text-slate-500">Order ID</span>
-                      <div className="font-serif-brand font-bold text-amber-400 text-xs sm:text-sm">
+                      <div className="font-serif-brand font-semibold text-amber-400 text-xs sm:text-sm">
                         {order.id}
                       </div>
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] text-slate-500">Total</span>
-                      <div className="font-serif-brand font-bold text-slate-100 text-sm sm:text-base">
+                      <div className="font-serif-brand font-semibold text-slate-100 text-sm sm:text-base">
                         {order.totalAmount?.toFixed(2)}
                       </div>
                     </div>
@@ -1386,7 +1386,7 @@ export const AdminDashboard = () => {
                               >
                                 <span>{option.label}</span>
                                 {order.status === option.value && (
-                                  <span className="font-bold">✓</span>
+                                  <span className="font-semibold">✓</span>
                                 )}
                               </button>
                             ))}
@@ -1402,7 +1402,7 @@ export const AdminDashboard = () => {
 
           {/* Desktop Table View (>= 1024px) */}
           <div className="hidden lg:block bg-slate-900/60 border border-slate-800 rounded-2xl shadow-xl">
-            <div className="p-4 border-b border-slate-800 font-serif-brand font-bold text-slate-200 rounded-t-2xl">
+            <div className="p-4 border-b border-slate-800 font-serif-brand font-semibold text-slate-200 rounded-t-2xl">
               Recent Client Orders ({orders.length})
             </div>
 
@@ -1438,7 +1438,7 @@ export const AdminDashboard = () => {
                             : "relative z-1 hover:bg-slate-800/40"
                         }`}
                       >
-                        <td className="px-6 py-4 font-serif-brand font-bold text-amber-400">
+                        <td className="px-6 py-4 font-serif-brand font-semibold text-amber-400">
                           {order.id}
                         </td>
                         <td className="px-6 py-4 font-semibold text-slate-200">
@@ -1467,7 +1467,7 @@ export const AdminDashboard = () => {
                             ))}
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-serif-brand font-bold text-slate-100">
+                        <td className="px-6 py-4 font-serif-brand font-semibold text-slate-100">
                           {order.totalAmount?.toFixed(2)}
                         </td>
                         <td className="px-6 py-4">
@@ -1550,7 +1550,7 @@ export const AdminDashboard = () => {
                                     <span>{option.label}</span>
 
                                     {order.status === option.value && (
-                                      <span className="font-bold">✓</span>
+                                      <span className="font-semibold">✓</span>
                                     )}
                                   </button>
                                 ))}

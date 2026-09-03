@@ -56,25 +56,24 @@ export const HeroSection = ({ onSelectCategory }) => {
   return (
     <div className="space-y-12 sm:space-y-16 pb-8 sm:pb-12">
       {/* Main Hero Banner */}
-      <section className="space-y-6">
-        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/80 shadow-2xl bg-slate-100 dark:bg-slate-950">
+      <section className="-mx-3 -mt-5 sm:mx-0 sm:mt-0">
+        <div className="relative h-[100dvh] min-h-screen sm:min-h-0 sm:h-auto rounded-none sm:rounded-3xl overflow-hidden border-b sm:border border-slate-200 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-slate-100 dark:bg-slate-950">
           <img
             src={heroCoverImage}
             alt="Riva Cairo Handcrafted Leather Collection"
-            className="w-full h-auto block"
+            className="w-full h-full sm:h-auto object-cover object-center block"
           />
 
           {/* Shop All Products Button */}
-          <div className="absolute bottom-1/4 left-1/6 sm:left-6 md:left-1/5 -translate-y-1/2 px-2">
+          <div className="absolute bottom-10 sm:bottom-1/4 left-6 sm:left-6 md:left-1/5 px-2">
             <button
               onClick={() => onSelectCategory("All")}
               className="
-              px-1 py-0.5
-              sm:px-4 sm:py-2
-              rounded-md sm:rounded-xl
-              bg-slate-900
-              border border-slate-800
-              text-[5px] sm:text-xs
+              px-3.5 py-2 sm:px-4 sm:py-2
+              rounded-xl
+              bg-slate-900/90 hover:bg-slate-900
+              border border-slate-700 sm:border-slate-800
+              text-xs
               text-amber-400
               hover:text-amber-500
               hover:border-amber-500/40
@@ -82,12 +81,13 @@ export const HeroSection = ({ onSelectCategory }) => {
               transition-colors
               cursor-pointer
               flex items-center justify-center
-              gap-0.5 sm:gap-1.5
+              gap-1.5
               whitespace-nowrap
+              shadow-lg
             "
             >
               <span>Shop All Products</span>
-              <LuArrowRight className="w-2 h-2 sm:w-4 sm:h-4 md:w-5 md:h-5" />
+              <LuArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>
@@ -97,10 +97,10 @@ export const HeroSection = ({ onSelectCategory }) => {
       <section className="space-y-6">
         <div className="flex items-end justify-between">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-500 dark:text-amber-400 ">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-widest text-amber-500 dark:text-amber-400 ">
               Curated Catalog
             </span>
-            <h2 className="font-serif-brand text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+            <h2 className="font-serif-brand text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
               Explore Our Signature Departments
             </h2>
           </div>

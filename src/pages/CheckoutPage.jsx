@@ -63,11 +63,11 @@ export const CheckoutPage = () => {
         <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 mx-auto">
           <LuShoppingBag className="w-8 h-8 sm:w-10 sm:h-10" />
         </div>
-        <h2 className="font-serif-brand text-xl sm:text-2xl font-bold text-slate-300">Your cart is empty</h2>
+        <h2 className="font-serif-brand text-xl sm:text-2xl font-semibold text-slate-300">Your cart is empty</h2>
         <p className="text-xs text-slate-500">Add some products before proceeding to checkout.</p>
         <button
           onClick={() => navigate('/category/All')}
-          className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+          className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
         >
           Browse Products
         </button>
@@ -77,7 +77,7 @@ export const CheckoutPage = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5 sm:space-y-6 animate-fadeIn pb-12 sm:pb-16">
-      {!confirmedOrder && (
+      {/* {!confirmedOrder && (
         <button
           onClick={() => navigate('/category/All')}
           className="flex items-center gap-2 text-xs sm:text-sm text-slate-400 hover:text-amber-400 transition-colors group cursor-pointer"
@@ -85,16 +85,16 @@ export const CheckoutPage = () => {
           <LuArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           <span>Back to Cart</span>
         </button>
-      )}
+      )} */}
 
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 flex items-center gap-3">
+        <div className="p-4 pt-14 sm:p-6 sm:pt-16  flex items-center gap-3">
           <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
             <LuShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-100">Checkout & Delivery</h1>
+            <h2 className="font-serif-brand  sm:text-xl font-semibold text-slate-100">Checkout & Delivery</h2>
             <p className="text-[11px] sm:text-xs text-slate-400">Complete your order details below</p>
           </div>
         </div>
@@ -109,12 +109,12 @@ export const CheckoutPage = () => {
               <span className="text-[11px] sm:text-xs text-emerald-400 font-semibold tracking-widest uppercase bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/30">
                 Order Confirmed
               </span>
-              <h2 className="font-serif-brand text-xl sm:text-2xl font-bold text-slate-100 mt-3">
+              <h2 className="font-serif-brand text-xl sm:text-2xl font-semibold text-slate-100 mt-3">
                 Thank You, {confirmedOrder.customerName}!
               </h2>
               <p className="text-xs text-slate-400 mt-1">
                 Order Reference Code:{' '}
-                <span className="font-serif-brand text-amber-400 font-bold">{confirmedOrder.id}</span>
+                <span className="font-serif-brand text-amber-400 font-semibold">{confirmedOrder.id}</span>
               </p>
             </div>
 
@@ -133,9 +133,9 @@ export const CheckoutPage = () => {
                 <span>Payment Method</span>
                 <span className="text-amber-400 font-semibold">{confirmedOrder.paymentMethod}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-slate-100 pt-1">
+              <div className="flex justify-between text-sm font-semibold text-slate-100 pt-1">
                 <span>Total Paid / Due</span>
-                <span className="text-amber-400 font-serif-brand text-lg">
+                <span className="text-amber-400 font-serif-brand ">
                   {confirmedOrder.totalAmount.toFixed(2)}
                 </span>
               </div>
@@ -147,7 +147,7 @@ export const CheckoutPage = () => {
 
             <button
               onClick={() => navigate('/')}
-              className="w-full py-3.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 cursor-pointer"
+              className="w-full py-3.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-sm hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 cursor-pointer"
             >
               Back to Home
             </button>
@@ -162,7 +162,7 @@ export const CheckoutPage = () => {
 
             {/* Cart Items Preview */}
             <div className="space-y-2.5 sm:space-y-3">
-              <h3 className="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <h3 className="text-[11px] sm:text-xs font-semibold text-slate-400 uppercase tracking-widest">
                 Order Items ({cart.length})
               </h3>
               <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
@@ -180,7 +180,7 @@ export const CheckoutPage = () => {
                       <p className="text-xs text-slate-200 line-clamp-1">{item.title}</p>
                       <p className="text-[10px] text-slate-500">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-xs font-bold text-amber-400 font-serif-brand shrink-0">
+                    <span className="text-xs font-semibold text-amber-400 font-serif-brand shrink-0">
                       {(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -190,7 +190,7 @@ export const CheckoutPage = () => {
 
             {/* Customer Details */}
             <div className="space-y-3 sm:space-y-4">
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+              <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-widest flex items-center gap-2">
                 <LuTruck className="w-4 h-4 shrink-0" />
                 1. Shipping Address
               </h3>
@@ -259,7 +259,7 @@ export const CheckoutPage = () => {
 
             {/* Payment Method */}
             <div className="space-y-3 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-800">
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+              <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-widest flex items-center gap-2">
                 <LuCreditCard className="w-4 h-4 shrink-0" />
                 2. Payment Method
               </h3>
@@ -294,16 +294,16 @@ export const CheckoutPage = () => {
                 <span>Delivery Fee</span>
                 <span className="text-emerald-400">{shippingFee === 0 ? 'FREE' : '50.00'}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-slate-100 pt-2 border-t border-slate-200 dark:border-slate-800">
+              <div className="flex justify-between text-sm font-semibold text-slate-100 pt-2 border-t border-slate-200 dark:border-slate-800">
                 <span>Order Total</span>
-                <span className="text-amber-400 font-serif-brand text-lg">{totalAmount.toFixed(2)}</span>
+                <span className="text-amber-400 font-serif-brand ">{totalAmount.toFixed(2)}</span>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 sm:py-4 rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 sm:py-4 rounded-2xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
                 <>

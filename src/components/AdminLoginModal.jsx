@@ -52,7 +52,7 @@ export const AdminLoginModal = () => {
             <LuLock className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
 
-          <h3 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-100">
+          <h3 className="font-serif-brand  sm:text-xl font-semibold text-slate-100">
             Store Owner Authentication
           </h3>
           <p className="text-xs text-slate-400 mt-1">
@@ -106,7 +106,7 @@ export const AdminLoginModal = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-sm hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shadow-amber-500/20 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>

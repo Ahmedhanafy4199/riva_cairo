@@ -209,7 +209,7 @@ export const Footer = () => {
                       behavior: "smooth",
                     });
                   }}
-                  className={`font-serif-brand text-xl sm:text-2xl font-bold tracking-widest transition-colors ${
+                  className={`font-serif-brand text-xl sm:text-2xl font-semibold tracking-widest transition-colors ${
                     theme === "light"
                       ? "text-slate-300 hover:text-amber-400"
                       : "text-white hover:text-amber-400"
@@ -265,7 +265,7 @@ export const Footer = () => {
 
           {/* Quick Departments (2 Cols) */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="font-serif-brand text-xs font-bold text-slate-100 uppercase tracking-widest border-b border-slate-800 pb-2">
+            <h4 className="font-serif-brand text-xs font-semibold text-slate-100 uppercase tracking-widest border-b border-slate-800 pb-2">
               Collections
             </h4>
             <ul className="space-y-2 text-xs">
@@ -319,7 +319,7 @@ export const Footer = () => {
 
           {/* Policies & Assistance (3 Cols) */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="font-serif-brand text-xs font-bold text-slate-100 uppercase tracking-widest border-b border-slate-800 pb-2">
+            <h4 className="font-serif-brand text-xs font-semibold text-slate-100 uppercase tracking-widest border-b border-slate-800 pb-2">
               Customer Care & Policy
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -388,7 +388,7 @@ export const Footer = () => {
 
           {/* Email Subscription & Currency (3 Cols) */}
           <div className="lg:col-span-3 space-y-3 sm:space-y-4">
-            <h4 className="font-serif-brand text-xs font-bold text-slate-100 uppercase tracking-widest border-b border-slate-800 pb-2">
+            <h4 className="font-serif-brand text-xs font-semibold text-slate-100 uppercase tracking-widest border-b border-slate-800 pb-2">
               Country / Region & Currency
             </h4>
 
@@ -430,7 +430,7 @@ export const Footer = () => {
                   behavior: "smooth",
                 });
               }}
-              className="text-slate-200 font-bold hover:text-amber-400 transition-colors"
+              className="text-slate-200 font-semibold hover:text-amber-400 transition-colors"
             >
               RIVA CAIRO
             </Link>
@@ -460,7 +460,7 @@ export const Footer = () => {
                 <LuBadgeCheck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif-brand text-lg font-bold text-white">
+                <h3 className="font-serif-brand  font-semibold">
                   Care Instructions
                 </h3>
                 <p className="text-xs text-amber-400 font-medium">
@@ -502,7 +502,7 @@ export const Footer = () => {
               </span>
               <button
                 onClick={() => setActiveModal(null)}
-                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-colors cursor-pointer shrink-0"
+                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition-colors cursor-pointer shrink-0"
               >
                 Close & Got It
               </button>
@@ -528,7 +528,7 @@ export const Footer = () => {
                 <LuRefreshCw className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif-brand text-lg font-bold ">
+                <h3 className="font-serif-brand  font-semibold ">
                   Return & Refund Policy
                 </h3>
                 <p className="text-xs text-amber-400 font-medium">
@@ -567,12 +567,12 @@ export const Footer = () => {
               })}
             </div>
 
-            <div className="bg-slate-950 p-3.5 sm:p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="bg-slate-950 p-1.5 sm:p-4 rounded-2xl border border-slate-800 text-xs text-slate-300 flex sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <LuMail className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="text-xs">
+                <span className="">
                   For inquiries:{" "}
-                  <strong className="text-white">riva.cairo@gmail.com</strong>
+                  <strong >riva.cairo@gmail.com</strong>
                 </span>
               </div>
               <button
@@ -586,7 +586,7 @@ export const Footer = () => {
             <div className="pt-2 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setActiveModal(null)}
-                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-colors cursor-pointer"
+                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition-colors cursor-pointer"
               >
                 Understand & Close
               </button>
@@ -612,7 +612,7 @@ export const Footer = () => {
                 <LuTruck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif-brand text-lg font-bold text-white">
+                <h3 className="font-serif-brand  font-semibold ">
                   Shipping & Delivery
                 </h3>
                 <p className="text-xs text-amber-400 font-medium">
@@ -623,7 +623,7 @@ export const Footer = () => {
 
             <div className="space-y-3.5">
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1.5">
-                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs sm:text-sm">
+                <div className="flex items-center gap-2 text-amber-400 font-semibold text-xs sm:text-sm">
                   <LuPackage className="w-4 h-4 shrink-0" />
                   <span>Delivery inside Cairo / Giza</span>
                 </div>
@@ -636,7 +636,7 @@ export const Footer = () => {
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1.5">
-                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs sm:text-sm">
+                <div className="flex items-center gap-2 text-amber-400 font-semibold text-xs sm:text-sm">
                   <LuGlobe className="w-4 h-4 shrink-0" />
                   <span>Delivery to Other Governorates</span>
                 </div>
@@ -661,7 +661,7 @@ export const Footer = () => {
             <div className="pt-2 border-t border-slate-800 flex justify-end">
               <button
                 onClick={() => setActiveModal(null)}
-                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-colors cursor-pointer"
+                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition-colors cursor-pointer"
               >
                 Close
               </button>
@@ -687,7 +687,7 @@ export const Footer = () => {
                 <LuGlobe className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-serif-brand text-lg font-bold text-white">
+                <h3 className="font-serif-brand  font-semibold text-white">
                   Select Region & Currency
                 </h3>
                 <p className="text-xs text-slate-400">
@@ -729,7 +729,7 @@ export const Footer = () => {
                     </div>
 
                     {isSelected && (
-                      <LuCheck className="w-4 h-4 text-amber-400 font-bold shrink-0" />
+                      <LuCheck className="w-4 h-4 text-amber-400 font-semibold shrink-0" />
                     )}
                   </button>
                 );

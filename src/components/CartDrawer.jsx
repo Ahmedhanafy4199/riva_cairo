@@ -41,7 +41,7 @@ export const CartDrawer = () => {
                   <LuShoppingBag className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="font-serif-brand text-base sm:text-lg font-bold text-slate-100">Your Shopping Bag</h2>
+                  <h2 className="font-serif-brand text-base  font-semibold text-slate-100">Your Shopping Bag</h2>
                   <p className="text-[11px] sm:text-xs text-slate-400">{cart.length} item{cart.length !== 1 ? 's' : ''} in cart</p>
                 </div>
               </div>
@@ -60,7 +60,7 @@ export const CartDrawer = () => {
               <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
                 <span className="text-slate-300">
                   {remainingForFreeShipping > 0 ? (
-                    <>Add <span className="text-amber-400 font-bold">{remainingForFreeShipping.toFixed(2)}</span> for Free Shipping</>
+                    <>Add <span className="text-amber-400 font-semibold">{remainingForFreeShipping.toFixed(2)}</span> for Free Shipping</>
                   ) : (
                     <span className="text-emerald-400 font-semibold flex items-center gap-1">
                       🎉 You unlocked Free Express Shipping!
@@ -83,13 +83,13 @@ export const CartDrawer = () => {
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-600 mb-4">
                     <LuShoppingBag className="w-8 h-8 sm:w-10 sm:h-10" />
                   </div>
-                  <h3 className="font-serif-brand text-base sm:text-lg font-bold text-slate-300 mb-1">Your bag is empty</h3>
+                  <h3 className="font-serif-brand text-base  font-semibold text-slate-300 mb-1">Your bag is empty</h3>
                   <p className="text-xs text-slate-500 max-w-xs mb-6">
                     Explore our Tuscany handcrafted leather collection and find your perfect bag, wallet, or jacket.
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
-                    className="px-6 py-2.5 rounded-full bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition-colors cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-amber-500 text-slate-950 text-xs font-semibold hover:bg-amber-400 transition-colors cursor-pointer"
                   >
                     Start Shopping
                   </button>
@@ -144,7 +144,7 @@ export const CartDrawer = () => {
                             </button>
                             <span 
                               data-testid="cart-item-qty"
-                              className="w-6 text-center text-xs font-serif-brand font-bold text-slate-200"
+                              className="w-6 text-center text-xs font-serif-brand font-semibold text-slate-200"
                             >
                               {item.quantity}
                             </span>
@@ -168,7 +168,7 @@ export const CartDrawer = () => {
                             )}
                           </div>
 
-                          <span className="text-sm font-bold text-amber-400 font-serif-brand font-serif-brand">
+                          <span className="text-sm font-semibold text-amber-400 font-serif-brand font-serif-brand">
                             {(item.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
@@ -193,9 +193,9 @@ export const CartDrawer = () => {
                       {remainingForFreeShipping === 0 ? 'FREE' : '50.00'}
                     </span>
                   </div>
-                  <div className="flex justify-between text-base font-bold text-slate-100 pt-2 border-t border-slate-800">
+                  <div className="flex justify-between text-base font-semibold text-slate-100 pt-2 border-t border-slate-800">
                     <span>Total Amount</span>
-                    <span className="text-amber-400 font-serif-brand text-lg sm:text-xl">
+                    <span className="text-amber-400 font-serif-brand  sm:text-xl">
                       {(cartSubtotal + (remainingForFreeShipping === 0 ? 0 : 50)).toFixed(2)}
                     </span>
                   </div>
@@ -207,7 +207,7 @@ export const CartDrawer = () => {
                       setIsCartOpen(false);
                       navigate('/checkout');
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-sm shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all duration-300 cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-sm shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all duration-300 cursor-pointer"
                   >
                     <span>Proceed to Checkout</span>
                     <LuArrowRight className="w-4 h-4" />

@@ -102,7 +102,7 @@ export const ProductsPage = ({ onEditProduct }) => {
             <span>Category: {activeCategory}</span>
           </div>
 
-          <h1 className="font-serif-brand text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
+          <h1 className="font-serif-brand text-2xl sm:text-3xl md:text-4xl font-semibold text-slate-900 dark:text-slate-100">
             {currentMeta.title}
           </h1>
 
@@ -136,7 +136,7 @@ export const ProductsPage = ({ onEditProduct }) => {
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full font-serif-brand ${
                     isActive
-                      ? "bg-slate-950/20 text-slate-950 font-bold"
+                      ? "bg-slate-950/20 text-slate-950 font-semibold"
                       : "bg-slate-900 text-slate-400"
                   }`}
                 >
@@ -224,7 +224,7 @@ export const ProductsPage = ({ onEditProduct }) => {
                   >
                     <span>{option.label}</span>
                     {sortBy === option.value && (
-                      <span className="text-amber-400 text-sm font-bold">✓</span>
+                      <span className="text-amber-400 text-sm font-semibold">✓</span>
                     )}
                   </button>
                 ))}
@@ -240,7 +240,7 @@ export const ProductsPage = ({ onEditProduct }) => {
           {/* <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
             <LuShoppingBag className="w-6 h-6 sm:w-8 sm:h-8" />
           </div> */}
-          <h3 className="font-serif-brand text-lg sm:text-xl font-bold text-slate-300">
+          <h3 className="font-serif-brand  sm:text-xl font-semibold text-slate-300">
             No items found
           </h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -252,7 +252,7 @@ export const ProductsPage = ({ onEditProduct }) => {
               setActiveCategory("All");
               setSearchQuery("");
             }}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
           >
             Clear Filters
           </button>

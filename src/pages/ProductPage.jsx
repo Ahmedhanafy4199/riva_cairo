@@ -64,7 +64,7 @@ export const ProductPage = ({ onEditProduct }) => {
   if (!product) {
     return (
       <div className="py-20 text-center space-y-4 px-4">
-        <h2 className="font-serif-brand text-2xl font-bold text-slate-700 dark:text-slate-300">
+        <h2 className="font-serif-brand text-2xl font-semibold text-slate-700 dark:text-slate-300">
           Product not found
         </h2>
         <button
@@ -306,7 +306,7 @@ export const ProductPage = ({ onEditProduct }) => {
             <div className="flex items-center justify-center gap-3 text-xl sm:text-2xl font-serif-brand text-slate-900 dark:text-amber-400 tracking-wide mb-1">
               {product.originalPrice &&
                 product.originalPrice > product.price && (
-                  <span className="text-base sm:text-lg text-slate-400 dark:text-slate-500 line-through">
+                  <span className="text-base  text-slate-400 dark:text-slate-500 line-through">
                     LE{" "}
                     {product.originalPrice?.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
@@ -377,7 +377,7 @@ export const ProductPage = ({ onEditProduct }) => {
               <button
                 onClick={handleBuyItNow}
                 disabled={isOutOfStock}
-                className={`w-full py-3 px-4 rounded-full bg-black dark:bg-amber-500 hover:bg-slate-900 dark:hover:bg-amber-400  dark:text-slate-950 font-bold text-xs sm:text-sm tracking-widest uppercase flex items-center justify-center transition-all cursor-pointer shadow-md ${
+                className={`w-full py-3 px-4 rounded-full bg-black dark:bg-amber-500 hover:bg-slate-900 dark:hover:bg-amber-400  dark:text-slate-950 font-semibold text-xs sm:text-sm tracking-widest uppercase flex items-center justify-center transition-all cursor-pointer shadow-md ${
                   isOutOfStock
                     ? "opacity-40 cursor-not-allowed hover:bg-black dark:hover:bg-amber-500"
                     : ""
@@ -489,7 +489,7 @@ export const ProductPage = ({ onEditProduct }) => {
               <h4 className="font-serif-brand text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
                 {product.title}
               </h4>
-              <div className="text-xs sm:text-sm font-mono text-slate-900 dark:text-amber-400 font-bold">
+              <div className="text-xs sm:text-sm font-mono text-slate-900 dark:text-amber-400 font-semibold">
                 LE{" "}
                 {product.price?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
@@ -502,7 +502,7 @@ export const ProductPage = ({ onEditProduct }) => {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black dark:bg-amber-500 hover:bg-slate-900 dark:hover:bg-amber-400  dark:text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shrink-0 transition-colors shadow-md cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-500  font-semibold text-xs sm:text-sm  tracking-wider shrink-0 transition-colors cursor-pointer"
           >
             <LuShoppingBag className="w-4 h-4" />
             <span className="hidden sm:inline">Add to Cart</span>

@@ -28,11 +28,11 @@ export const HomePage = ({ onEditProduct }) => {
       <section className="space-y-4 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-slate-200 dark:border-slate-800/80 pb-3 sm:pb-4 gap-2 sm:gap-3">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-500 dark:text-amber-400 flex items-center gap-1.5">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-widest text-amber-500 dark:text-amber-400 flex items-center gap-1.5">
               <LuSparkles className="w-3.5 h-3.5 shrink-0" />
               Handcrafted Selection
             </span>
-            <h2 className="font-serif-brand text-xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+            <h2 className="font-serif-brand text-xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
               Featured Luxury Products
             </h2>
           </div>
@@ -66,7 +66,7 @@ export const HomePage = ({ onEditProduct }) => {
           <section key={catName} className="space-y-4 sm:space-y-6 pt-4 border-t border-slate-200 dark:border-slate-900">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
               <div>
-                <h3 className="font-serif-brand text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+                <h3 className="font-serif-brand  sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">
                   {catName} Collection
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -110,11 +110,11 @@ export const HomePage = ({ onEditProduct }) => {
       {/* Explore All CTA Section */}
       {/* <section className="mt-8 p-6 sm:p-10 rounded-2xl sm:rounded-3xl bg-linear-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 text-center space-y-4 shadow-xl">
         <div className="max-w-xl mx-auto space-y-2">
-          <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase flex items-center justify-center gap-1.5">
+          <span className="text-[11px] sm:text-xs font-semibold tracking-widest text-amber-400 uppercase flex items-center justify-center gap-1.5">
             <LuSparkles className="w-3.5 h-3.5 shrink-0" />
             Complete Artisan Catalog
           </span>
-          <h3 className="font-serif-brand text-2xl sm:text-3xl font-bold text-slate-100">
+          <h3 className="font-serif-brand text-2xl sm:text-3xl font-semibold text-slate-100">
             Looking for More?
           </h3>
           <p className="text-xs sm:text-sm text-slate-400">
@@ -123,7 +123,7 @@ export const HomePage = ({ onEditProduct }) => {
         </div>
         <button
           onClick={() => handleSelectCategory('All')}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs sm:text-sm transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
         >
           <span>View All Products ({products.length})</span>
           <LuArrowRight className="w-4 h-4" />

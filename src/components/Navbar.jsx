@@ -123,7 +123,7 @@ export const Navbar = () => {
                     onClick={() => handleCategoryClick(item)}
                     className={`transition-colors cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? "text-slate-950 dark:text-white font-bold border-b-2 border-slate-950 dark:border-white pb-0.5"
+                        ? "text-slate-950 dark:text-white font-semibold border-b-2 border-slate-950 dark:border-white pb-0.5"
                         : "text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium"
                     }`}
                   >
@@ -184,7 +184,7 @@ export const Navbar = () => {
                   />
                 </div>
               </div>
-              <span className="font-serif-brand text-lg sm:text-2xl font-bold tracking-wider sm:tracking-widest text-slate-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+              <span className="font-serif-brand  sm:text-2xl font-semibold tracking-wider sm:tracking-widest text-slate-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                 RIVA
               </span>
             </div>
@@ -226,7 +226,7 @@ export const Navbar = () => {
               >
                 <LuShoppingBag className="w-5 h-5" />
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-900 dark:bg-amber-500 dark:text-slate-950 text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-slate-900 dark:bg-amber-500 dark:text-slate-950 text-[10px] font-semibold flex items-center justify-center">
                     {cartItemCount}
                   </span>
                 )}
@@ -274,7 +274,7 @@ export const Navbar = () => {
       >
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 shrink-0">
-          <span className="font-serif-brand text-base font-bold text-slate-950 dark:text-slate-100 tracking-widest">
+          <span className="font-serif-brand text-base font-semibold text-slate-950 dark:text-slate-100 tracking-widest">
             MENU
           </span>
           <button
@@ -305,7 +305,7 @@ export const Navbar = () => {
                 tabIndex={mobileMenuOpen ? 0 : -1}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                   isActive
-                    ? "bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white font-bold border border-slate-200 dark:border-slate-700"
+                    ? "bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white font-semibold border border-slate-200 dark:border-slate-700"
                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white"
                 }`}
               >
@@ -332,7 +332,7 @@ export const Navbar = () => {
               )}
               <span>{theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}</span>
             </div>
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-mono font-bold">
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-mono font-semibold">
               {theme === "light" ? "LIGHT" : "DARK"}
             </span>
           </button>

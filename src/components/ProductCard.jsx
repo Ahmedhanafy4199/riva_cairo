@@ -45,7 +45,7 @@ export const ProductCard = ({ product, onEdit }) => {
 
         {/* Sold Out Badge */}
         {isOutOfStock && (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-[8px] sm:text-[10px] font-bold tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 px-2 py-0.5 sm:px-3 sm:py-1.5 rounded-full bg-red-600/90 text-[8px] sm:text-[10px] font-semibold tracking-wider border border-red-500/50 shadow-lg backdrop-blur-sm">
             Sold Out
           </span>
         )}
@@ -70,7 +70,7 @@ export const ProductCard = ({ product, onEdit }) => {
                 e.stopPropagation();
                 addToCart(product);
               }}
-              className="p-3 rounded-full bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-lg shadow-amber-500/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 cursor-pointer"
+              className="p-3 rounded-full bg-amber-500 text-slate-950 font-semibold hover:bg-amber-400 shadow-lg shadow-amber-500/20 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 cursor-pointer"
               title="Add to Cart"
               aria-label="Add to Cart"
             >
@@ -136,7 +136,7 @@ export const ProductCard = ({ product, onEdit }) => {
             </span>
           )}
 
-          <span className="text-sm sm:text-base md:text-lg font-medium text-slate-900 dark:text-slate-100 font-serif-brand">
+          <span className="text-sm sm:text-base  font-medium text-slate-900 dark:text-slate-100 font-serif-brand">
             {product.price?.toLocaleString("en-US")} EGP
           </span>
         </div>
