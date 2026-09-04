@@ -52,6 +52,62 @@ export const INITIAL_PRODUCTS = [
     featured: false,
     stock: 10
   },
+  {
+    id: 'bag-5',
+    title: 'Capri Classic Leather Shoulder Tote',
+    category: 'Bags',
+    price: 295,
+    originalPrice: 350,
+    rating: 4.9,
+    reviewsCount: 54,
+    sold: 85,
+    image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+    description: 'Sophisticated Italian leather tote with spacious interior, premium gold accents, and sturdy double handles.',
+    featured: true,
+    stock: 14
+  },
+  {
+    id: 'bag-6',
+    title: 'Verona Quilted Leather Clutch',
+    category: 'Bags',
+    price: 185,
+    originalPrice: 220,
+    rating: 4.8,
+    reviewsCount: 42,
+    sold: 68,
+    image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=800&q=80',
+    description: 'Elegant quilted evening clutch with detachable chain shoulder strap and magnetic snap closure.',
+    featured: true,
+    stock: 18
+  },
+  {
+    id: 'bag-7',
+    title: 'Florence Vintage Travel Duffle',
+    category: 'Bags',
+    price: 360,
+    originalPrice: 430,
+    rating: 5.0,
+    reviewsCount: 79,
+    sold: 95,
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+    description: 'Spacious vintage travel duffle handcrafted with distressed cognac leather and solid brass hardware.',
+    featured: false,
+    stock: 9
+  },
+  {
+    id: 'bag-8',
+    title: 'Milano Croc-Embossed Mini Satchel',
+    category: 'Bags',
+    price: 240,
+    originalPrice: 290,
+    rating: 4.7,
+    reviewsCount: 31,
+    sold: 45,
+    image: 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=800&q=80',
+    description: 'Statement crocodile-embossed luxury leather mini satchel with structured top handle and optional crossbody strap.',
+    featured: true,
+    stock: 11
+  },
 
   // WALLET
   {

@@ -5,6 +5,8 @@ import { useShop, matchCategory } from '../context/ShopContext';
 import { HeroSection } from '../components/HeroSection';
 import { ProductCard } from '../components/ProductCard';
 
+const MAX_MOBILE_PAGINATION_PRODUCTS = 9;
+
 const ProductCollectionRow = ({
   title,
   subtitle,
@@ -18,7 +20,25 @@ const ProductCollectionRow = ({
 }) => {
   const scrollRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(1);
-  const totalItems = items.length;
+
+  // Sort items by most sold first (best-selling), then by reviews/rating
+  const sortedItems = React.useMemo(() => {
+    return [...items].sort((a, b) => {
+      const soldA = parseInt(a.sold ?? a.soldQty ?? 0, 10);
+      const soldB = parseInt(b.sold ?? b.soldQty ?? 0, 10);
+      if (soldB !== soldA) return soldB - soldA;
+      const revA = parseInt(a.reviewsCount ?? 0, 10);
+      const revB = parseInt(b.reviewsCount ?? 0, 10);
+      return revB - revA;
+    });
+  }, [items]);
+
+  // Display only up to 9 most-sold products in mobile pagination
+  const displayProducts = React.useMemo(() => {
+    return sortedItems.slice(0, MAX_MOBILE_PAGINATION_PRODUCTS);
+  }, [sortedItems]);
+
+  const totalItems = displayProducts.length;
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
@@ -83,7 +103,7 @@ const ProductCollectionRow = ({
         onScroll={handleScroll}
         className="flex overflow-x-auto gap-3.5 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth"
       >
-        {items.map((product, idx) => (
+        {displayProducts.map((product, idx) => (
           <div
             key={product.id}
             className={`w-[52vw] min-w-[170px] max-w-[220px] sm:w-auto sm:min-w-0 sm:max-w-none shrink-0 sm:shrink snap-start ${
