@@ -307,17 +307,17 @@ export const ProductPage = ({ onEditProduct }) => {
               {product.originalPrice &&
                 product.originalPrice > product.price && (
                   <span className="text-base  text-slate-400 dark:text-slate-500 line-through">
-                    LE{" "}
+                    {" "}
                     {product.originalPrice?.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
-                    })}
+                    })}EGP
                   </span>
                 )}
               <span className="">
-                LE{" "}
+                {" "}
                 {product.price?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
-                })}
+                })}EGP
               </span>
             </div>
 

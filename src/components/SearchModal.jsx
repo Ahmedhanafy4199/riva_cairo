@@ -156,7 +156,7 @@ export const SearchModal = () => {
                     {mainFeaturedItem.title}
                   </h4>
                   <div className="text-xs text-slate-700 dark:text-slate-300 font-semibold">
-                    LE {mainFeaturedItem.price?.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    {mainFeaturedItem.price?.toLocaleString("en-US", { minimumFractionDigits: 2 })} EGP
                   </div>
                   <div className="text-[11px] text-slate-400 capitalize pt-0.5">
                     {mainFeaturedItem.category || "Products"}
