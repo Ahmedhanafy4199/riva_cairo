@@ -404,9 +404,10 @@ export const ProductPage = ({ onEditProduct }) => {
                 </button>
 
                 {isDescOpen && (
-                  <div className="mt-4 animate-fadeIn text-sm font-light text-slate-500 dark:text-slate-400 leading-relaxed">
-                    {product.description}
-                  </div>
+                  <div
+                    className="mt-4 animate-fadeIn text-sm  leading-relaxed rich-description"
+                    dangerouslySetInnerHTML={{ __html: product.description || "" }}
+                  />
                 )}
               </div>
 

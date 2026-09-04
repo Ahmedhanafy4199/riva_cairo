@@ -12,6 +12,11 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.112.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@tiptap/extension-placeholder": "^3.31.2",
+    "@tiptap/extension-underline": "^3.31.2",
+    "@tiptap/pm": "^3.31.2",
+    "@tiptap/react": "^3.31.2",
+    "@tiptap/starter-kit": "^3.31.2",
     "autoprefixer": "^10.5.4",
     "postcss": "^8.5.26",
     "react": "^19.2.7",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LuShoppingBag,
   LuWallet,
@@ -7,9 +7,12 @@ import {
   LuSparkles,
   LuSlidersHorizontal,
   LuSearch,
+  LuChevronLeft,
+  LuChevronRight,
 } from "react-icons/lu";
 import { useShop, normalizeCategory } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
+import { htmlToText } from "../lib/htmlUtils";
 
 export const ProductsPage = ({ onEditProduct }) => {
   const {
@@ -65,7 +68,7 @@ export const ProductsPage = ({ onEditProduct }) => {
     const matchesCategory = matchCategory(p.category, activeCategory);
     const matchesSearch =
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      htmlToText(p.description).toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.category.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -91,6 +94,27 @@ export const ProductsPage = ({ onEditProduct }) => {
     // Featured / default
     filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   }
+
+  // Pagination Configuration
+  const ITEMS_PER_PAGE = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, searchQuery, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedProducts = filtered.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 120, behavior: "smooth" });
+  };
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-fadeIn pb-12 sm:pb-16">
@@ -264,14 +288,83 @@ export const ProductsPage = ({ onEditProduct }) => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-          {filtered.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onEdit={onEditProduct}
-            />
-          ))}
+        <div className="space-y-6 sm:space-y-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {paginatedProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onEdit={onEditProduct}
+              />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {filtered.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 sm:pt-8 border-t border-slate-200 dark:border-slate-800">
+              {/* <div className="text-xs text-slate-500 dark:text-slate-400">
+                Showing{" "}
+                <span className="font-semibold text-slate-900 dark:text-slate-200">
+                  {startIndex + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-semibold text-slate-900 dark:text-slate-200">
+                  {Math.min(startIndex + ITEMS_PER_PAGE, filtered.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-slate-900 dark:text-slate-200">
+                  {filtered.length}
+                </span>{" "}
+                products
+              </div> */}
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-2 rounded-xl border text-xs font-medium flex items-center gap-1 transition-all ${
+                      currentPage === 1
+                        ? "border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-40"
+                        : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-amber-500 hover:text-amber-500 cursor-pointer"
+                    }`}
+                    aria-label="Previous page"
+                  >
+                    <LuChevronLeft className="w-4 h-4" />
+                    <span className="hidden sm:inline">Prev</span>
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                        currentPage === page
+                          ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold"
+                          : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-amber-400 dark:hover:border-amber-500 hover:text-amber-600 dark:hover:text-amber-400"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-2 rounded-xl border text-xs font-medium flex items-center gap-1 transition-all ${
+                      currentPage === totalPages
+                        ? "border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed opacity-40"
+                        : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-amber-500 hover:text-amber-500 cursor-pointer"
+                    }`}
+                    aria-label="Next page"
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <LuChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

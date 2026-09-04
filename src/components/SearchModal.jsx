@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { LuSearch, LuX } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
+import { htmlToText } from "../lib/htmlUtils";
 
 export const SearchModal = () => {
   const {
@@ -47,7 +48,7 @@ export const SearchModal = () => {
         (p) =>
           p.title.toLowerCase().includes(trimmedQuery) ||
           p.category.toLowerCase().includes(trimmedQuery) ||
-          (p.description && p.description.toLowerCase().includes(trimmedQuery))
+          htmlToText(p.description).toLowerCase().includes(trimmedQuery)
       )
     : [];
 

@@ -21,6 +21,8 @@ import {
   LuTriangleAlert,
 } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
+import { RichTextEditor } from "../components/RichTextEditor";
+import { htmlToText, isHtmlEmpty } from "../lib/htmlUtils";
 
 const Pagination = ({
   currentPage,
@@ -324,7 +326,7 @@ export const AdminDashboard = () => {
       !form.title.trim() ||
       !form.price ||
       !mainImage ||
-      !form.description.trim()
+      isHtmlEmpty(form.description)
     ) {
       alert(
         "Please fill in all required fields (Title, Price, at least one Image, Description).",
@@ -744,7 +746,7 @@ export const AdminDashboard = () => {
                                   {p.title}
                                 </div>
                                 <div className="text-[10px] text-slate-400 line-clamp-1">
-                                  {p.description}
+                                  {htmlToText(p.description)}
                                 </div>
                               </div>
                             </div>
@@ -1176,15 +1178,12 @@ export const AdminDashboard = () => {
               <label className="block text-xs font-medium text-slate-300 mb-1">
                 Product Description *
               </label>
-              <textarea
-                rows="3"
-                required
-                placeholder="Handcrafted from vegetable-tanned leather..."
+              <RichTextEditor
                 value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
+                onChange={(val) =>
+                  setForm((prev) => ({ ...prev, description: val }))
                 }
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 sm:px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+                placeholder="Handcrafted from vegetable-tanned leather..."
               />
             </div>
 

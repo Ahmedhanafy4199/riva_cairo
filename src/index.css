@@ -201,3 +201,103 @@ html.dark [class*="shadow-black"] {
 .animate-owl-prev {
   animation: owlSlidePrev 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
+
+/* ── TipTap Rich Text Editor & Rendered Content Styles ── */
+.tiptap {
+  outline: none !important;
+  min-height: 100px;
+}
+
+.tiptap p {
+  margin-bottom: 0.5rem;
+}
+.tiptap p:last-child {
+  margin-bottom: 0;
+}
+
+.tiptap h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.tiptap h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.tiptap ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap li {
+  margin-bottom: 0.2rem;
+}
+
+.tiptap blockquote {
+  border-left: 3px solid #f59e0b;
+  padding-left: 0.75rem;
+  font-style: italic;
+  margin: 0.5rem 0;
+  opacity: 0.85;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #64748b;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.rich-description {
+  line-height: 1.65;
+}
+.rich-description p {
+  margin-bottom: 0.6rem;
+}
+.rich-description p:last-child {
+  margin-bottom: 0;
+}
+.rich-description ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 0.6rem;
+}
+.rich-description ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-bottom: 0.6rem;
+}
+.rich-description li {
+  margin-bottom: 0.25rem;
+}
+.rich-description h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+.rich-description h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 0.7rem;
+  margin-bottom: 0.35rem;
+}
+.rich-description blockquote {
+  border-left: 3px solid #f59e0b;
+  padding-left: 0.75rem;
+  font-style: italic;
+  margin: 0.6rem 0;
+}
