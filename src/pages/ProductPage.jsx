@@ -310,14 +310,16 @@ export const ProductPage = ({ onEditProduct }) => {
                     {" "}
                     {product.originalPrice?.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
-                    })}EGP
+                    })}
+                    EGP
                   </span>
                 )}
               <span className="">
                 {" "}
                 {product.price?.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
-                })}EGP
+                })}
+                EGP
               </span>
             </div>
 
@@ -377,7 +379,12 @@ export const ProductPage = ({ onEditProduct }) => {
               <button
                 onClick={handleBuyItNow}
                 disabled={isOutOfStock}
-                className={`w-full py-3 px-4 rounded-full bg-black dark:bg-amber-500 hover:bg-slate-900 dark:hover:bg-amber-400  dark:text-slate-950 font-semibold text-xs sm:text-sm tracking-widest uppercase flex items-center justify-center transition-all cursor-pointer shadow-md ${
+                className={`w-full py-3 px-4 rounded-full 
+                bg-black dark:bg-amber-500 
+                hover:bg-neutral-800 dark:hover:bg-amber-400
+                text-white dark:text-slate-950 
+                font-semibold text-xs sm:text-sm tracking-widest uppercase 
+                flex items-center justify-center transition-all cursor-pointer shadow-md ${
                   isOutOfStock
                     ? "opacity-40 cursor-not-allowed hover:bg-black dark:hover:bg-amber-500"
                     : ""
@@ -406,7 +413,9 @@ export const ProductPage = ({ onEditProduct }) => {
                 {isDescOpen && (
                   <div
                     className="mt-4 animate-fadeIn text-sm  leading-relaxed rich-description"
-                    dangerouslySetInnerHTML={{ __html: product.description || "" }}
+                    dangerouslySetInnerHTML={{
+                      __html: product.description || "",
+                    }}
                   />
                 )}
               </div>

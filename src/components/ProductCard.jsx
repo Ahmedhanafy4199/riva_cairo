@@ -28,7 +28,7 @@ export const ProductCard = React.memo(({ product, onEdit }) => {
           loading="lazy"
         />
 
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+        {/* <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" /> */}
 
         {/* Sale Badge */}
         {product.originalPrice && product.originalPrice > product.price && (
