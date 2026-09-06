@@ -42,6 +42,7 @@ export const ShopProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
 
+
   // Unread Orders Notification State
   const [hasUnreadOrders, setHasUnreadOrders] = useState(() => {
     const saved = localStorage.getItem("riva_unread_orders");
@@ -360,7 +361,7 @@ export const ShopProvider = ({ children }) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isAdmin, fetchOrders]);
+  }, [isAdmin, fetchOrders, showToast]);
 
   // Sync cart to local storage
   useEffect(() => {
