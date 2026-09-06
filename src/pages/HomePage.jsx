@@ -44,8 +44,8 @@ const ProductCollectionRow = ({
     if (!scrollRef.current) return;
     const { scrollLeft } = scrollRef.current;
     const firstChild = scrollRef.current.firstElementChild;
-    const itemWidth = firstChild ? firstChild.clientWidth : 180;
-    const gap = 14;
+    const itemWidth = firstChild ? firstChild.clientWidth : 150;
+    const gap = 12;
     const idx = Math.round(scrollLeft / (itemWidth + gap)) + 1;
     setCurrentIndex(Math.min(Math.max(1, idx), totalItems));
   };
@@ -53,16 +53,16 @@ const ProductCollectionRow = ({
   const handlePrev = () => {
     if (!scrollRef.current) return;
     const firstChild = scrollRef.current.firstElementChild;
-    const itemWidth = firstChild ? firstChild.clientWidth : 180;
-    const gap = 14;
+    const itemWidth = firstChild ? firstChild.clientWidth : 150;
+    const gap = 12;
     scrollRef.current.scrollBy({ left: -(itemWidth + gap), behavior: 'smooth' });
   };
 
   const handleNext = () => {
     if (!scrollRef.current) return;
     const firstChild = scrollRef.current.firstElementChild;
-    const itemWidth = firstChild ? firstChild.clientWidth : 180;
-    const gap = 14;
+    const itemWidth = firstChild ? firstChild.clientWidth : 150;
+    const gap = 12;
     scrollRef.current.scrollBy({ left: itemWidth + gap, behavior: 'smooth' });
   };
 
@@ -101,12 +101,12 @@ const ProductCollectionRow = ({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex overflow-x-auto gap-3.5 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth"
+        className="flex overflow-x-auto gap-3 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth"
       >
         {displayProducts.map((product, idx) => (
           <div
             key={product.id}
-            className={`w-[52vw] min-w-[170px] max-w-[220px] sm:w-auto sm:min-w-0 sm:max-w-none shrink-0 sm:shrink snap-start ${
+            className={`w-[41.5vw] min-w-[135px] max-w-[200px] sm:w-auto sm:min-w-0 sm:max-w-none shrink-0 sm:shrink snap-start ${
               idx >= maxDesktopCount ? 'sm:hidden' : ''
             }`}
           >

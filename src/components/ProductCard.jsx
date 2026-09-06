@@ -126,7 +126,7 @@ export const ProductCard = React.memo(({ product, onEdit }) => {
         </h3>
 
         {/* Price */}
-        <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <div className="mt-2 flex flex-col items-start gap-1">
           {product.originalPrice && product.originalPrice > product.price && (
             <span className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 line-through font-mono">
               {product.originalPrice?.toLocaleString("en-US", {
