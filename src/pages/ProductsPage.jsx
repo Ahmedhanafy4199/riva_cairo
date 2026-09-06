@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useDeferredValue } from "react";
 import {
   LuShoppingBag,
   LuWallet,
@@ -9,10 +9,10 @@ import {
   LuSearch,
   LuChevronLeft,
   LuChevronRight,
+  LuLoader,
 } from "react-icons/lu";
 import { useShop, normalizeCategory } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
-import { htmlToText } from "../lib/htmlUtils";
 
 export const ProductsPage = ({ onEditProduct }) => {
   const {
@@ -24,8 +24,39 @@ export const ProductsPage = ({ onEditProduct }) => {
     matchCategory,
   } = useShop();
 
+  const [localSearch, setLocalSearch] = useState(searchQuery || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery || "");
+  const [isSearching, setIsSearching] = useState(false);
+
   const [sortBy, setSortBy] = useState("featured");
   const [isSortOpen, setIsSortOpen] = useState(false);
+
+  // Keep local search in sync if context searchQuery changes externally
+  useEffect(() => {
+    setLocalSearch(searchQuery || "");
+    setDebouncedSearch(searchQuery || "");
+  }, [searchQuery]);
+
+  // 2-second debounce: only search when user stops typing for 2 seconds
+  useEffect(() => {
+    if (!localSearch.trim()) {
+      setDebouncedSearch("");
+      setIsSearching(false);
+      if (searchQuery !== "") {
+        setSearchQuery("");
+      }
+      return;
+    }
+
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(localSearch);
+      setSearchQuery(localSearch);
+      setIsSearching(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [localSearch, searchQuery, setSearchQuery]);
 
   const categoryMeta = {
     All: {
@@ -63,37 +94,40 @@ export const ProductsPage = ({ onEditProduct }) => {
   const currentMeta = categoryMeta[activeCategory] || categoryMeta.All;
   const MetaIcon = currentMeta.icon;
 
-  // Filter products by Category & Search
-  let filtered = products.filter((p) => {
-    const matchesCategory = matchCategory(p.category, activeCategory);
-    const matchesSearch =
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      htmlToText(p.description).toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Filter products by Category & Search (Title only, triggers after 2-second debounce)
+  const filtered = useMemo(() => {
+    const term = debouncedSearch.trim().toLowerCase();
+    const result = products.filter((p) => {
+      const matchesCategory = matchCategory(p.category, activeCategory);
+      const matchesSearch =
+        !term || (p.title && p.title.toLowerCase().includes(term));
+      return matchesCategory && matchesSearch;
+    });
 
-  // Sort products
-  if (sortBy === "price-low") {
-    filtered.sort((a, b) => a.price - b.price);
-  } else if (sortBy === "price-high") {
-    filtered.sort((a, b) => b.price - a.price);
-  } else if (sortBy === "name-az") {
-    filtered.sort((a, b) =>
-      a.title.localeCompare(b.title, undefined, {
-        sensitivity: "base",
-      }),
-    );
-  } else if (sortBy === "name-za") {
-    filtered.sort((a, b) =>
-      b.title.localeCompare(a.title, undefined, {
-        sensitivity: "base",
-      }),
-    );
-  } else {
-    // Featured / default
-    filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-  }
+    // Sort products
+    if (sortBy === "price-low") {
+      result.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sortBy === "price-high") {
+      result.sort((a, b) => (b.price || 0) - (a.price || 0));
+    } else if (sortBy === "name-az") {
+      result.sort((a, b) =>
+        (a.title || "").localeCompare(b.title || "", undefined, {
+          sensitivity: "base",
+        })
+      );
+    } else if (sortBy === "name-za") {
+      result.sort((a, b) =>
+        (b.title || "").localeCompare(a.title || "", undefined, {
+          sensitivity: "base",
+        })
+      );
+    } else {
+      // Featured / default
+      result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    }
+
+    return result;
+  }, [products, activeCategory, debouncedSearch, sortBy]);
 
   // Pagination Configuration
   const ITEMS_PER_PAGE = 8;
@@ -101,7 +135,7 @@ export const ProductsPage = ({ onEditProduct }) => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [activeCategory, debouncedSearch, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -174,15 +208,23 @@ export const ProductsPage = ({ onEditProduct }) => {
         {/* Sort & Search */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
           <div className="relative flex-1 sm:w-56 md:w-64">
-            <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            {isSearching ? (
+              <LuLoader className="w-4 h-4 text-amber-500 animate-spin absolute left-3 top-2.5 pointer-events-none" />
+            ) : (
+              <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            )}
             <input
               type="search"
               enterKeyHint="search"
               placeholder="Search in this view..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  e.preventDefault();
+                  setDebouncedSearch(localSearch);
+                  setSearchQuery(localSearch);
+                  setIsSearching(false);
                   e.target.blur();
                 }
               }}
@@ -214,20 +256,20 @@ export const ProductsPage = ({ onEditProduct }) => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="2"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="m6 9 6 6 6-6"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
                 />
               </svg>
             </button>
 
             {isSortOpen && (
-              <div className="absolute right-0 top-full mt-2 w-52 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl shadow-slate-950/40 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-52 z-50 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl overflow-hidden">
                 <div className="px-3 py-2 border-b border-slate-800">
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-500">
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
                     Sort Products
                   </span>
                 </div>
@@ -248,7 +290,7 @@ export const ProductsPage = ({ onEditProduct }) => {
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2.5 text-xs transition-colors cursor-pointer ${
                       sortBy === option.value
-                        ? "bg-amber-500/10 text-amber-400"
+                        ? "bg-amber-500/10 text-amber-400 font-semibold"
                         : "text-slate-300 hover:bg-slate-800 hover:text-white"
                     }`}
                   >
@@ -264,12 +306,14 @@ export const ProductsPage = ({ onEditProduct }) => {
         </div>
       </div>
 
-      {/* Products Grid */}
-      {filtered.length === 0 ? (
+      {/* Products Grid / Searching Spinner / Empty State */}
+      {isSearching && localSearch.trim() ? (
+        <div className="py-20 flex flex-col items-center justify-center space-y-3 bg-slate-900/30 rounded-3xl border border-slate-800">
+          <div className="w-8 h-8 border-3 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
+          <span className="text-xs text-slate-400 font-light tracking-wide">Searching collection...</span>
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="py-16 sm:py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800 px-4">
-          {/* <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
-            <LuShoppingBag className="w-6 h-6 sm:w-8 sm:h-8" />
-          </div> */}
           <h3 className="font-serif-brand  sm:text-xl font-semibold text-slate-300">
             No items found
           </h3>

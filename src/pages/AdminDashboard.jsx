@@ -187,19 +187,25 @@ export const AdminDashboard = () => {
   const [orderPage, setOrderPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-  const filteredProducts = products.filter((p) => {
-    const matchesCategory =
-      filterCategory === "All" || p.category === filterCategory;
-    const matchesSearch =
-      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (p.barcode && p.barcode.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+  const deferredSearchTerm = React.useDeferredValue(searchTerm);
+
+  const filteredProducts = React.useMemo(() => {
+    const term = deferredSearchTerm.trim().toLowerCase();
+    return products.filter((p) => {
+      const matchesCategory =
+        filterCategory === "All" || p.category === filterCategory;
+      const matchesSearch =
+        !term ||
+        (p.title && p.title.toLowerCase().includes(term)) ||
+        (p.category && p.category.toLowerCase().includes(term)) ||
+        (p.barcode && p.barcode.toLowerCase().includes(term));
+      return matchesCategory && matchesSearch;
+    });
+  }, [products, filterCategory, deferredSearchTerm]);
 
   React.useEffect(() => {
     setProductPage(1);
-  }, [filterCategory, searchTerm]);
+  }, [filterCategory, deferredSearchTerm]);
 
   const totalProductPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE) || 1;
   const safeProductPage = Math.min(productPage, totalProductPages);

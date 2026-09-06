@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LuShoppingBag, LuEye, LuTrash2, LuPencil } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
 
-export const ProductCard = ({ product, onEdit }) => {
+export const ProductCard = React.memo(({ product, onEdit }) => {
   const { addToCart, isAdminLoggedIn, deleteProduct, getProductStock } =
     useShop();
   const navigate = useNavigate();
@@ -143,4 +143,4 @@ export const ProductCard = ({ product, onEdit }) => {
       </div>
     </div>
   );
-};
+});

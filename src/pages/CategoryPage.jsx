@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useDeferredValue } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   LuShoppingBag,
@@ -11,10 +11,10 @@ import {
   LuLayers,
   LuChevronLeft,
   LuChevronRight,
+  LuLoader,
 } from "react-icons/lu";
 import { useShop, normalizeCategory } from "../context/ShopContext";
 import { ProductCard } from "../components/ProductCard";
-import { htmlToText } from "../lib/htmlUtils";
 
 const categoryMeta = {
   All: {
@@ -61,6 +61,10 @@ export const CategoryPage = ({ onEditProduct }) => {
     matchCategory,
   } = useShop();
 
+  const [localSearch, setLocalSearch] = useState(searchQuery || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery || "");
+  const [isSearching, setIsSearching] = useState(false);
+
   const [sortBy, setSortBy] = useState("featured");
   const [isSortOpen, setIsSortOpen] = useState(false);
 
@@ -69,46 +73,79 @@ export const CategoryPage = ({ onEditProduct }) => {
     setActiveCategory(category);
   }, [categoryName, setActiveCategory]);
 
+  // Keep local search in sync if context searchQuery changes externally
+  useEffect(() => {
+    setLocalSearch(searchQuery || "");
+    setDebouncedSearch(searchQuery || "");
+  }, [searchQuery]);
+
+  // 2-second debounce: only search when user stops typing for 2 seconds
+  useEffect(() => {
+    if (!localSearch.trim()) {
+      setDebouncedSearch("");
+      setIsSearching(false);
+      if (searchQuery !== "") {
+        setSearchQuery("");
+      }
+      return;
+    }
+
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(localSearch);
+      setSearchQuery(localSearch);
+      setIsSearching(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [localSearch, searchQuery, setSearchQuery]);
+
   const currentMeta = categoryMeta[activeCategory] || categoryMeta.All;
   const MetaIcon = currentMeta.icon || LuSparkles;
 
-  // Filter products by Category & Search
-  let filteredProducts = products.filter((p) => {
-    const matchesCategory = matchCategory(p.category, activeCategory);
-    const matchesSearch =
-      !searchQuery ||
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      htmlToText(p.description).toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  // Filter products by Category & Search (Title only, triggers after 2-second debounce)
+  const filteredProducts = useMemo(() => {
+    const term = debouncedSearch.trim().toLowerCase();
+    const list = products.filter((p) => {
+      const matchesCategory = matchCategory(p.category, activeCategory);
+      const matchesSearch =
+        !term || (p.title && p.title.toLowerCase().includes(term));
+      return matchesCategory && matchesSearch;
+    });
 
-  // Sort products
-  if (sortBy === "price-low") {
-    filteredProducts.sort((a, b) => a.price - b.price);
-  } else if (sortBy === "price-high") {
-    filteredProducts.sort((a, b) => b.price - a.price);
-  } else if (sortBy === "name-az") {
-    filteredProducts.sort((a, b) =>
-      a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
-    );
-  } else if (sortBy === "name-za") {
-    filteredProducts.sort((a, b) =>
-      b.title.localeCompare(a.title, undefined, { sensitivity: "base" })
-    );
-  } else {
-    // Featured / default
-    filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
-  }
+    // Sort products
+    if (sortBy === "price-low") {
+      list.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sortBy === "price-high") {
+      list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    } else if (sortBy === "name-az") {
+      list.sort((a, b) =>
+        (a.title || "").localeCompare(b.title || "", undefined, {
+          sensitivity: "base",
+        })
+      );
+    } else if (sortBy === "name-za") {
+      list.sort((a, b) =>
+        (b.title || "").localeCompare(a.title || "", undefined, {
+          sensitivity: "base",
+        })
+      );
+    } else {
+      // Featured / default
+      list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    }
+
+    return list;
+  }, [products, activeCategory, debouncedSearch, sortBy]);
 
   // Pagination Configuration
   const ITEMS_PER_PAGE = 8;
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reset to page 1 whenever activeCategory, searchQuery, or sortBy changes
+  // Reset to page 1 whenever activeCategory, search, or sortBy changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [activeCategory, debouncedSearch, sortBy]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE) || 1;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -210,15 +247,23 @@ export const CategoryPage = ({ onEditProduct }) => {
         {/* Sort & Search Controls */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
           <div className="relative flex-1 sm:w-56 md:w-64">
-            <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            {isSearching ? (
+              <LuLoader className="w-4 h-4 text-amber-500 animate-spin absolute left-3 top-2.5 pointer-events-none" />
+            ) : (
+              <LuSearch className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
+            )}
             <input
               type="search"
               enterKeyHint="search"
               placeholder="Search in this view..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  e.preventDefault();
+                  setDebouncedSearch(localSearch);
+                  setSearchQuery(localSearch);
+                  setIsSearching(false);
                   e.target.blur();
                 }
               }}
@@ -249,8 +294,8 @@ export const CategoryPage = ({ onEditProduct }) => {
                 }`}
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
                 strokeWidth="2"
+                stroke="currentColor"
               >
                 <path
                   strokeLinecap="round"
@@ -300,8 +345,13 @@ export const CategoryPage = ({ onEditProduct }) => {
         </div>
       </div>
 
-      {/* Products Grid / Empty State */}
-      {filteredProducts.length === 0 ? (
+      {/* Products Grid / Searching Spinner / Empty State */}
+      {isSearching && localSearch.trim() ? (
+        <div className="py-20 flex flex-col items-center justify-center space-y-3 bg-slate-900/30 rounded-3xl border border-slate-800">
+          <div className="w-8 h-8 border-3 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
+          <span className="text-xs text-slate-400 font-light tracking-wide">Searching collection...</span>
+        </div>
+      ) : filteredProducts.length === 0 ? (
         <div className="py-16 sm:py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800 px-4">
           {/* <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
             <LuSparkles className="w-6 h-6 sm:w-8 sm:h-8" />
