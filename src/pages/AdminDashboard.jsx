@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   LuPlus as Plus,
   LuPencil as Edit3,
@@ -19,6 +20,7 @@ import {
   LuMapPin,
   LuBoxes,
   LuTriangleAlert,
+  LuExternalLink,
 } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
 import { RichTextEditor } from "../components/RichTextEditor";
@@ -1306,17 +1308,41 @@ export const AdminDashboard = () => {
                       <LuBoxes className="w-2.5 h-2.5 text-amber-400" />
                       Purchased Items
                     </span>
-                    {order.items?.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="text-[11px] text-slate-300 flex items-center justify-between"
-                      >
-                        <span className="truncate">{item.title}</span>
-                        <span className="font-serif-brand text-amber-400 font-semibold shrink-0 ml-2">
-                          x{item.quantity}
-                        </span>
-                      </div>
-                    ))}
+                    {order.items?.map((item, idx) => {
+                      const targetProductId =
+                        item.productId ||
+                        item.product_id ||
+                        item.id ||
+                        products.find(
+                          (p) =>
+                            p.title?.toLowerCase() === item.title?.toLowerCase()
+                        )?.id;
+
+                      return (
+                        <div
+                          key={idx}
+                          className="text-[11px] text-slate-300 flex items-center justify-between"
+                        >
+                          {targetProductId ? (
+                            <Link
+                              to={`/product/${targetProductId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="truncate text-slate-200 hover:text-amber-400 hover:underline transition-colors flex items-center gap-1 group font-medium"
+                              title={`View ${item.title} page`}
+                            >
+                              <span className="truncate">{item.title}</span>
+                              <LuExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-400 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
+                            </Link>
+                          ) : (
+                            <span className="truncate">{item.title}</span>
+                          )}
+                          <span className="font-serif-brand text-amber-400 font-semibold shrink-0 ml-2">
+                            x{item.quantity}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Status Dropdown */}
@@ -1458,18 +1484,44 @@ export const AdminDashboard = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="space-y-1">
-                            {order.items?.map((item, idx) => (
-                              <div
-                                key={idx}
-                                className="text-[11px] text-slate-300"
-                              >
-                                {item.quantity}x{" "}
-                                <span className="text-slate-100 font-medium">
-                                  {item.title}
-                                </span>
-                              </div>
-                            ))}
+                          <div className="space-y-1.5">
+                            {order.items?.map((item, idx) => {
+                              const targetProductId =
+                                item.productId ||
+                                item.product_id ||
+                                item.id ||
+                                products.find(
+                                  (p) =>
+                                    p.title?.toLowerCase() === item.title?.toLowerCase()
+                                )?.id;
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className="text-[11px] text-slate-300 flex items-center gap-1.5"
+                                >
+                                  <span className="text-slate-400 font-serif-brand shrink-0">
+                                    {item.quantity}x
+                                  </span>
+                                  {targetProductId ? (
+                                    <Link
+                                      to={`/product/${targetProductId}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-slate-100 font-medium hover:text-amber-400 hover:underline transition-colors inline-flex items-center gap-1 group"
+                                      title={`View ${item.title} page`}
+                                    >
+                                      <span>{item.title}</span>
+                                      <LuExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-400 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </Link>
+                                  ) : (
+                                    <span className="text-slate-100 font-medium">
+                                      {item.title}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         </td>
                         <td className="px-6 py-4 font-serif-brand font-semibold text-slate-100">

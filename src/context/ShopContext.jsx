@@ -287,6 +287,8 @@ export const ShopProvider = ({ children }) => {
           date: new Date(o.created_at).toISOString().split("T")[0],
           items: (o.order_items || []).map((item) => ({
             id: item.product_id || item.id,
+            productId: item.product_id || item.id,
+            product_id: item.product_id || item.id,
             title: item.title,
             price: parseFloat(item.price),
             quantity: parseInt(item.quantity, 10),
