@@ -11,7 +11,7 @@ import walletImage from "../assets/wallet.jpg";
 import jacketImage from "../assets/jacket.avif";
 import beltImage from "../assets/belt.jpg";
 import heroCoverImage from "../assets/banner1.jpg";
-import heroMobileImage from "../assets/banner.png";
+import heroMobileImage from "../assets/bannerMobile3.jpg";
 import { useShop, matchCategory } from "../context/ShopContext";
 
 export const HeroSection = ({ onSelectCategory }) => {
