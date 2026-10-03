@@ -112,7 +112,7 @@ export const HeroSection = ({ onSelectCategory }) => {
             <span className="text-[11px] sm:text-xs font-semibold tracking-widest text-amber-500 dark:text-amber-400 ">
               Curated Catalog
             </span>
-            <h2 className="font-serif-brand text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
+            <h2 className="font-serif-brand text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
               Explore Our Signature Departments
             </h2>
           </div>
