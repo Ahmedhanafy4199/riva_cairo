@@ -113,7 +113,7 @@ export const HeroSection = ({ onSelectCategory }) => {
               <div
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className="group relative h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800/80 cursor-pointer shadow-lg hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500"
+                className="group relative h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/80 cursor-pointer shadow-lg hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500"
               >
                 <img
                   src={cat.image}
@@ -124,20 +124,20 @@ export const HeroSection = ({ onSelectCategory }) => {
 
                 <div className="absolute inset-0 p-3.5 sm:p-6 flex flex-col justify-between">
                   {/* <div className="flex items-center justify-between">
-                    <span className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-950/80 border border-slate-800 text-amber-400 backdrop-blur-md">
-                      <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
-                    </span>
-                    <span className="text-[10px] sm:text-xs font-serif-brand font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-950/80 text-amber-300 border border-amber-500/30">
-                      {cat.count} Items
-                    </span>
-                  </div> */}
+                        <span className="p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-950/80 border border-slate-800 text-amber-400 backdrop-blur-md">
+                          <Icon className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+                        </span>
+                        <span className="text-[10px] sm:text-xs font-serif-brand font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-slate-950/80 text-amber-300 border border-amber-500/30">
+                          {cat.count} Items
+                        </span>
+                      </div> */}
 
-                  {/* <div>
-                    <div className="flex items-center gap-1 text-xs text-amber-400 font-semibold mt-2.5 group-hover:translate-x-1 transition-transform">
+                  <div className="mt-auto">
+                    <div className="inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 text-xs font-semibold border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-lg group-hover:translate-x-1 transition-all">
                       <span>Shop {cat.id}</span>
                       <LuArrowRight className="w-3.5 h-3.5" />
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             );

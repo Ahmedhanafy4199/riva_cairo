@@ -168,7 +168,7 @@ export const Footer = () => {
     },
     {
       icon: LuCircleAlert,
-      text: "Deduction of Extra Delivery fees in case of Return / Exchange",
+      text: "Deduction of Extra Shipping fees in case of Return / Exchange",
       ar: "خصم رسوم الشحن الإضافية عند الإرجاع أو الاستبدال",
     },
     {

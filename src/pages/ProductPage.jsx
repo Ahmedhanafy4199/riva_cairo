@@ -77,12 +77,23 @@ export const ProductPage = ({ onEditProduct }) => {
     );
   }
 
-  const images =
-    product.images && product.images.length > 0
-      ? product.images
-      : product.image
-        ? [product.image]
-        : [];
+  const images = React.useMemo(() => {
+    const rawImages =
+      product.images && product.images.length > 0
+        ? [...product.images]
+        : product.image
+          ? [product.image]
+          : [];
+
+    if (product.image && rawImages.length > 1) {
+      const coverIdx = rawImages.indexOf(product.image);
+      if (coverIdx > 0) {
+        rawImages.splice(coverIdx, 1);
+        rawImages.unshift(product.image);
+      }
+    }
+    return rawImages;
+  }, [product]);
 
   const activeImage = images[activeImageIndex] || images[0];
 

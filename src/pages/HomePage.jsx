@@ -98,7 +98,7 @@ const ProductCollectionRow = ({
         </div>
 
         {/* Desktop Top Action */}
-        <button
+        {/* <button
           onClick={() => onSelectCategory(categoryKey)}
           className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors cursor-pointer self-start sm:self-auto"
         >
@@ -107,7 +107,7 @@ const ProductCollectionRow = ({
             {totalCategoryCount || totalItems})
           </span>
           <LuArrowRight className="w-3.5 h-3.5" />
-        </button>
+        </button> */}
       </div>
 
       {/* Product List: Horizontal on mobile, Grid on desktop */}
@@ -163,8 +163,8 @@ const ProductCollectionRow = ({
         </div>
       )}
 
-      {/* Mobile Bottom View All Button */}
-      <div className="flex sm:hidden justify-center pt-1.5">
+      {/* Bottom View All Button */}
+      <div className="flex justify-center pt-1.5 sm:pt-2">
         <button
           onClick={() => onSelectCategory(categoryKey)}
           className="w-full max-w-[190px] py-2.5 px-6 border border-slate-900 dark:border-slate-100 text-slate-900 dark:text-slate-100 text-xs font-medium uppercase tracking-wider hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all cursor-pointer text-center"
@@ -172,22 +172,6 @@ const ProductCollectionRow = ({
           View all
         </button>
       </div>
-
-      {/* Desktop Bottom View All Button (if more than maxDesktopCount) */}
-      {(totalCategoryCount || totalItems) > maxDesktopCount && (
-        <div className="hidden sm:flex justify-center pt-1 sm:pt-2">
-          <button
-            onClick={() => onSelectCategory(categoryKey)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/40 dark:hover:border-amber-500/40 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer"
-          >
-            <span>
-              View All {categoryKey !== "All" ? categoryKey : "Products"} (
-              {totalCategoryCount || totalItems})
-            </span>
-            <LuArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
     </section>
   );
 };

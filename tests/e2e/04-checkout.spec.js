@@ -108,7 +108,7 @@ test.describe('11 – Checkout', () => {
   test('TC-11-I: free shipping threshold shown at 200', async ({ page }) => {
     const ok = await addProductAndGoToCheckout(page);
     if (!ok) { console.warn('No in-stock products – TC-11-I skipped'); return; }
-    // Delivery fee visible in summary
-    await expect(page.locator('text=Delivery Fee')).toBeVisible();
+    // Shipping fees visible in summary
+    await expect(page.locator('text=Shipping fees')).toBeVisible();
   });
 });

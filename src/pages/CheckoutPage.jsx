@@ -291,7 +291,7 @@ export const CheckoutPage = () => {
                 <span className="font-serif-brand text-slate-200">{cartSubtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-400">
-                <span>Delivery Fee</span>
+                <span>Shipping fees</span>
                 <span className="text-emerald-400">{shippingFee === 0 ? 'FREE' : '50.00'}</span>
               </div>
               <div className="flex justify-between text-sm font-semibold text-slate-100 pt-2 border-t border-slate-200 dark:border-slate-800">

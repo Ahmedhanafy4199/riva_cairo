@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   LuPlus as Plus,
@@ -331,8 +331,27 @@ export const AdminDashboard = () => {
     setActiveTab("add");
   };
 
+  const [draggedImageIndex, setDraggedImageIndex] = useState(null);
+  const [dragOverImageIndex, setDragOverImageIndex] = useState(null);
+
   const handleStartEdit = (product) => {
     setEditingProduct(product);
+
+    const initialImages =
+      product.images && product.images.length > 0
+        ? [...product.images]
+        : product.image
+          ? [product.image]
+          : [];
+
+    // Ensure cover image is placed at index 0
+    if (product.image && initialImages.length > 0) {
+      const coverIdx = initialImages.indexOf(product.image);
+      if (coverIdx > 0) {
+        initialImages.splice(coverIdx, 1);
+        initialImages.unshift(product.image);
+      }
+    }
 
     setForm({
       title: product.title || "",
@@ -341,8 +360,8 @@ export const AdminDashboard = () => {
       price: product.price?.toString() || "",
       originalPrice: product.originalPrice?.toString() || "",
       purchasedQty: (product.purchasedQty || 0).toString(),
-      image: product.image || "",
-      images: product.images || (product.image ? [product.image] : []),
+      image: initialImages[0] || product.image || "",
+      images: initialImages,
       description: product.description || "",
       featured: product.featured || false,
     });
@@ -372,31 +391,183 @@ export const AdminDashboard = () => {
       return {
         ...prev,
         images: newImages,
-        image: prev.image || newImages[0] || "",
+        image: newImages[0] || "",
+      };
+    });
+
+    e.target.value = "";
+  };
+
+  const handleSetCoverImage = (indexOrImg) => {
+    setForm((prev) => {
+      const currentImages = [...(prev.images || [])];
+      let targetIdx =
+        typeof indexOrImg === "number"
+          ? indexOrImg
+          : currentImages.indexOf(indexOrImg);
+      if (targetIdx <= 0 || targetIdx >= currentImages.length) return prev;
+
+      const [chosen] = currentImages.splice(targetIdx, 1);
+      currentImages.unshift(chosen);
+
+      return {
+        ...prev,
+        images: currentImages,
+        image: chosen,
       };
     });
   };
 
-  const handleSetCoverImage = (imgSrc) => {
-    setForm((prev) => ({
-      ...prev,
-      image: imgSrc,
-    }));
+  const handleMoveImage = (fromIndex, direction) => {
+    setForm((prev) => {
+      const currentImages = [...(prev.images || [])];
+      const toIndex = fromIndex + direction;
+      if (toIndex < 0 || toIndex >= currentImages.length) return prev;
+
+      const temp = currentImages[fromIndex];
+      currentImages[fromIndex] = currentImages[toIndex];
+      currentImages[toIndex] = temp;
+
+      return {
+        ...prev,
+        images: currentImages,
+        image: currentImages[0] || "",
+      };
+    });
+  };
+
+  const handleDragStart = (e, index) => {
+    setDraggedImageIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverImageIndex !== index) {
+      setDragOverImageIndex(index);
+    }
+  };
+
+  const handleDrop = (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedImageIndex === null || draggedImageIndex === targetIndex) {
+      setDraggedImageIndex(null);
+      setDragOverImageIndex(null);
+      return;
+    }
+
+    setForm((prev) => {
+      const currentImages = [...(prev.images || [])];
+      const [draggedItem] = currentImages.splice(draggedImageIndex, 1);
+      currentImages.splice(targetIndex, 0, draggedItem);
+
+      return {
+        ...prev,
+        images: currentImages,
+        image: currentImages[0] || "",
+      };
+    });
+
+    setDraggedImageIndex(null);
+    setDragOverImageIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedImageIndex(null);
+    setDragOverImageIndex(null);
+  };
+
+  // Mobile Touch Drag & Drop Support
+  const touchStateRef = useRef({
+    sourceIndex: null,
+    targetIndex: null,
+    startX: 0,
+    startY: 0,
+    isDragging: false,
+  });
+
+  const handleTouchStart = (e, index) => {
+    const touch = e.touches[0];
+    touchStateRef.current = {
+      sourceIndex: index,
+      targetIndex: index,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      isDragging: false,
+    };
+  };
+
+  const handleTouchMove = (e, index) => {
+    if (touchStateRef.current.sourceIndex === null) return;
+    const touch = e.touches[0];
+    const dx = Math.abs(touch.clientX - touchStateRef.current.startX);
+    const dy = Math.abs(touch.clientY - touchStateRef.current.startY);
+
+    // If moved more than 6px, treat as an active touch drag
+    if (dx > 6 || dy > 6) {
+      touchStateRef.current.isDragging = true;
+      if (draggedImageIndex !== touchStateRef.current.sourceIndex) {
+        setDraggedImageIndex(touchStateRef.current.sourceIndex);
+      }
+
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      // Check which element is under the touch point
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const card = el?.closest("[data-image-index]");
+      if (card) {
+        const hoveredIdx = parseInt(card.getAttribute("data-image-index"), 10);
+        if (!isNaN(hoveredIdx) && hoveredIdx !== dragOverImageIndex) {
+          touchStateRef.current.targetIndex = hoveredIdx;
+          setDragOverImageIndex(hoveredIdx);
+        }
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const { sourceIndex, targetIndex, isDragging } = touchStateRef.current;
+    if (
+      isDragging &&
+      sourceIndex !== null &&
+      targetIndex !== null &&
+      sourceIndex !== targetIndex
+    ) {
+      setForm((prev) => {
+        const currentImages = [...(prev.images || [])];
+        const [draggedItem] = currentImages.splice(sourceIndex, 1);
+        currentImages.splice(targetIndex, 0, draggedItem);
+
+        return {
+          ...prev,
+          images: currentImages,
+          image: currentImages[0] || "",
+        };
+      });
+    }
+
+    touchStateRef.current = {
+      sourceIndex: null,
+      targetIndex: null,
+      startX: 0,
+      startY: 0,
+      isDragging: false,
+    };
+    setDraggedImageIndex(null);
+    setDragOverImageIndex(null);
   };
 
   const handleRemoveImage = (indexToRemove) => {
     setForm((prev) => {
       const currentImages = prev.images || [];
       const newImages = currentImages.filter((_, idx) => idx !== indexToRemove);
-      let newCover = prev.image;
-
-      if (prev.image === currentImages[indexToRemove]) {
-        newCover = newImages.length > 0 ? newImages[0] : "";
-      }
       return {
         ...prev,
         images: newImages,
-        image: newCover,
+        image: newImages.length > 0 ? newImages[0] : "",
       };
     });
   };
@@ -404,12 +575,8 @@ export const AdminDashboard = () => {
   const handleSubmitForm = async (e) => {
     e.preventDefault();
 
-    let mainImage = form.image;
     let allImages = form.images || [];
-
-    if (allImages.length > 0 && !mainImage) {
-      mainImage = allImages[0];
-    }
+    let mainImage = allImages.length > 0 ? allImages[0] : form.image;
 
     if (mainImage && allImages.length === 0) {
       allImages = [mainImage];
@@ -1225,9 +1392,15 @@ export const AdminDashboard = () => {
 
               {form.images && form.images.length > 0 && (
                 <div className="space-y-2 pt-1">
-                  <span className="text-xs text-slate-400">
-                    Selected Images ({form.images.length})
-                  </span>
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <span className="text-xs text-slate-300 font-medium">
+                      Selected Images ({form.images.length})
+                    </span>
+                    {/* <span className="text-[10px] text-amber-400 font-medium">
+                      Drag & drop or use arrows to reorder. 1st image is Cover.
+                    </span> */}
+                  </div>
+
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3">
                     {form.images.map((imgSrc, index) => {
                       const displaySrc =
@@ -1236,48 +1409,123 @@ export const AdminDashboard = () => {
                           : imgSrc instanceof File
                             ? URL.createObjectURL(imgSrc)
                             : "";
-                      const isCover =
-                        form.image === imgSrc || (index === 0 && !form.image);
+                      const isCover = index === 0;
+                      const isDragging = draggedImageIndex === index;
+                      const isDragOver = dragOverImageIndex === index;
+
                       return (
                         <div
                           key={index}
-                          className={`relative group aspect-square rounded-xl overflow-hidden bg-slate-950 border ${
-                            isCover
-                              ? "border-amber-500 ring-2 ring-amber-500/20"
-                              : "border-slate-800 hover:border-slate-700"
+                          data-image-index={index}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, index)}
+                          onDragOver={(e) => handleDragOver(e, index)}
+                          onDrop={(e) => handleDrop(e, index)}
+                          onDragEnd={handleDragEnd}
+                          onTouchStart={(e) => handleTouchStart(e, index)}
+                          onTouchMove={(e) => handleTouchMove(e, index)}
+                          onTouchEnd={handleTouchEnd}
+                          onTouchCancel={handleTouchEnd}
+                          className={`relative group aspect-square rounded-xl overflow-hidden bg-slate-950 border transition-all duration-150 cursor-grab active:cursor-grabbing select-none touch-manipulation ${
+                            isDragging
+                              ? "opacity-40 scale-95 border-dashed border-amber-500 z-30 ring-2 ring-amber-500/50"
+                              : isDragOver
+                                ? "border-amber-400 ring-2 ring-amber-400/50 scale-105 z-20"
+                                : isCover
+                                  ? "border-amber-500 ring-2 ring-amber-500/30"
+                                  : "border-slate-800 hover:border-slate-700"
                           }`}
                         >
                           <img
                             src={displaySrc}
                             alt={`Gallery ${index}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover pointer-events-none"
                           />
-                          <div className="absolute inset-0 bg-slate-950/75 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 p-1">
-                            {!isCover && (
+
+                          {/* Action Overlay */}
+                          <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-between p-1.5 z-10">
+                            {/* Top row: Move Left / Right buttons */}
+                            <div className="flex items-center gap-1">
                               <button
                                 type="button"
-                                onClick={() => handleSetCoverImage(imgSrc)}
-                                className="px-1.5 py-0.5 bg-amber-500 text-slate-950 text-[9px] font-semibold rounded hover:bg-amber-400 cursor-pointer"
+                                disabled={index === 0}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleMoveImage(index, -1);
+                                }}
+                                title="Move Left"
+                                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-25 disabled:cursor-not-allowed cursor-pointer transition-colors"
                               >
-                                Cover
+                                <LuChevronLeft className="w-3.5 h-3.5" />
                               </button>
+                              <button
+                                type="button"
+                                disabled={index === form.images.length - 1}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleMoveImage(index, 1);
+                                }}
+                                title="Move Right"
+                                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-25 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                              >
+                                <LuChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Middle row: Set as Cover */}
+                            {!isCover ? (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSetCoverImage(index);
+                                }}
+                                className="px-2 py-0.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[10px] font-bold rounded shadow-xs cursor-pointer transition-colors"
+                              >
+                                Make Cover
+                              </button>
+                            ) : (
+                              <span className="text-[9px] text-amber-400 font-bold tracking-wider">
+                                Primary Cover
+                              </span>
                             )}
-                            <button
+
+                            {/* Bottom row: Delete image button */}
+                            {/* <button
                               type="button"
-                              onClick={() => handleRemoveImage(index)}
-                              className="p-1 bg-red-950/80 text-red-400 rounded hover:bg-red-900 hover:text-white cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveImage(index);
+                              }}
+                              title="Delete Image"
+                              className="p-1 bg-red-950/80 hover:bg-red-900 text-red-400 hover:text-white rounded transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-3 h-3" />
-                            </button>
+                            </button> */}
                           </div>
 
+                          {/* Quick Delete Button (accessible on both mobile and desktop) */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveImage(index);
+                            }}
+                            title="Delete Image"
+                            className="absolute top-1.5 right-1.5 z-20 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-slate-950/85 hover:bg-red-900/90 border border-slate-700/80 hover:border-red-500 text-red-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
+                          >
+                            <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          </button>
+
+                          {/* Cover Badge */}
                           {isCover && (
-                            <span className="absolute top-1 left-1 px-1 py-0.2 rounded bg-amber-500 text-slate-950 text-[8px] font-semibold">
+                            <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 text-[8px] font-bold tracking-wider shadow-sm z-5">
                               COVER
                             </span>
                           )}
 
-                          <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-slate-900/90 text-[9px] text-slate-300 flex items-center justify-center border border-slate-700 font-serif-brand">
+                          {/* Image Sequence Number */}
+                          <span className="absolute bottom-1.5 right-1.5 w-4 h-4 rounded-full bg-slate-900/90 text-[10px] text-slate-200 flex items-center justify-center border border-slate-700 font-serif-brand font-semibold z-5">
                             {index + 1}
                           </span>
                         </div>
