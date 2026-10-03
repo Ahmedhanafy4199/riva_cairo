@@ -186,7 +186,7 @@ export const Footer = () => {
   return (
     <footer className="relative bg-slate-950 border-t border-slate-900 text-slate-400 text-xs selection:bg-amber-500 selection:text-slate-950">
       {/* Main Footer Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="w-full px-4 sm:px-6 lg:px-10 2xl:px-16 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10">
           {/* Brand Col (4 Cols) */}
           <div className="sm:col-span-2 lg:col-span-4 space-y-4 sm:space-y-5">

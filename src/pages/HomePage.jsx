@@ -114,12 +114,12 @@ const ProductCollectionRow = ({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex overflow-x-auto gap-3 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth"
+        className="flex overflow-x-auto gap-3 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth scroll-pl-3 sm:scroll-pl-0"
       >
         {displayProducts.map((product, idx) => (
           <div
             key={product.id}
-            className={`w-[41.5vw] min-w-[135px] max-w-[200px] sm:w-auto sm:min-w-0 sm:max-w-none shrink-0 sm:shrink snap-start ${
+            className={`w-[calc((100vw-44px)/2.4)] min-w-[130px] max-w-[180px] sm:w-auto sm:min-w-0 sm:max-w-none shrink-0 sm:shrink snap-start ${
               idx >= maxDesktopCount ? "sm:hidden" : ""
             }`}
           >
@@ -192,7 +192,7 @@ export const HomePage = ({ onEditProduct }) => {
   const MAX_CATEGORY_HOME_PRODUCTS = 4;
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10 sm:space-y-16 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
+    <div className="w-full px-3 sm:px-6 lg:px-10 2xl:px-16 space-y-10 sm:space-y-16 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
       <HeroSection onSelectCategory={handleSelectCategory} />
 
       {/* Featured Products Section */}

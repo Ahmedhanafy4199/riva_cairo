@@ -10,7 +10,8 @@ import bagImage from "../assets/bag.jpg";
 import walletImage from "../assets/wallet.jpg";
 import jacketImage from "../assets/jacket.avif";
 import beltImage from "../assets/belt.jpg";
-import heroCoverImage from "../assets/banner.jpg";
+import heroCoverImage from "../assets/banner1.jpg";
+import heroMobileImage from "../assets/bannerMobile3.png";
 import { useShop, matchCategory } from "../context/ShopContext";
 
 export const HeroSection = ({ onSelectCategory }) => {
@@ -56,16 +57,27 @@ export const HeroSection = ({ onSelectCategory }) => {
   return (
     <div className="space-y-12 sm:space-y-16 pb-8 sm:pb-12">
       {/* Main Hero Banner */}
-      <section className="-mx-3 -mt-5 sm:mx-0 sm:mt-0">
-        <div className="relative h-[100dvh] min-h-screen sm:min-h-0 sm:h-auto rounded-none sm:rounded-3xl overflow-hidden border-b sm:border border-slate-200 dark:border-slate-800/80 shadow-none sm:shadow-2xl bg-slate-100 dark:bg-slate-950">
-          <img
+      <section className="-mx-3 sm:-mx-6 lg:-mx-10 2xl:-mx-16 -mt-5 sm:-mt-8">
+        <div className="relative h-[100dvh] min-h-screen sm:min-h-0 sm:h-auto rounded-none overflow-hidden border-b border-slate-200 dark:border-slate-800/80 shadow-none bg-slate-100 dark:bg-slate-950">
+          {/* <img
             src={heroCoverImage}
             alt="Riva Cairo Handcrafted Leather Collection"
             className="w-full h-full sm:h-auto object-cover object-center block"
-          />
+          /> */}
+          <picture>
+            {/* Mobile */}
+            <source media="(max-width: 639px)" srcSet={heroMobileImage} />
+
+            {/* Desktop */}
+            <img
+              src={heroCoverImage}
+              alt="Riva Cairo Handcrafted Leather Collection"
+              className="w-full h-full sm:h-auto object-cover object-center block"
+            />
+          </picture>
 
           {/* Shop All Products Button */}
-          <div className="absolute bottom-10 sm:bottom-1/4 left-6 sm:left-6 md:left-1/5 px-2">
+          <div className="absolute bottom-10 sm:bottom-1/3 left-1/4 sm:left-35 md:left-68 px-2">
             <button
               onClick={() => onSelectCategory("All")}
               className="

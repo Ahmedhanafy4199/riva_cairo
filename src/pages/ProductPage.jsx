@@ -471,7 +471,7 @@ export const ProductPage = ({ onEditProduct }) => {
 
       {/* Recommended Products ("You May Also Like") */}
       {relatedProducts.length > 0 && (
-        <section className="pt-16 border-t border-slate-200 dark:border-slate-800 space-y-8 text-center px-4 sm:px-8 max-w-7xl mx-auto">
+        <section className="pt-16 border-t border-slate-200 dark:border-slate-800 space-y-8 text-center px-4 sm:px-8 lg:px-10 2xl:px-16 w-full">
           <h2 className="font-serif-brand text-2xl sm:text-3xl font-normal text-slate-900 dark:text-slate-100 tracking-tight">
             You May Also Like
           </h2>
@@ -496,7 +496,7 @@ export const ProductPage = ({ onEditProduct }) => {
             : "translate-y-full opacity-0 pointer-events-none"
         }`}
       >
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+        <div className="w-full px-2 sm:px-6 lg:px-10 flex items-center justify-between gap-4">
           {/* Left: Thumbnail & Details */}
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-12 h-12 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 bg-slate-100 dark:bg-slate-900">

@@ -105,7 +105,7 @@ export const Navbar = () => {
             : "bg-transparent text-slate-900 dark:text-slate-100 border-b border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-10 2xl:px-16">
           <div className="relative flex items-center justify-between h-16 sm:h-20">
             {/* Desktop Left: Navigation Links */}
             <nav

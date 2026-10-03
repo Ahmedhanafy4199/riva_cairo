@@ -166,7 +166,7 @@ export const CategoryPage = ({ onEditProduct }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
+    <div className="w-full px-3 sm:px-6 lg:px-10 2xl:px-16 space-y-6 sm:space-y-8 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
       {/* Category Banner */}
       <div
         className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-3 pt-10 sm:p-10 md:p-12"
