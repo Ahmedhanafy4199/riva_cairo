@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useDeferredValue,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { LuSearch, LuX, LuLoader } from "react-icons/lu";
 import { useShop } from "../context/ShopContext";
 
@@ -22,7 +22,26 @@ export const SearchModal = () => {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef(null);
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Listen to ?search=open or ?modal=search from URL (for Open in New Tab support)
+  useEffect(() => {
+    const searchParam = searchParams.get("search");
+    const modalParam = searchParams.get("modal");
+    if (searchParam === "open" || modalParam === "search") {
+      setIsSearchOpen(true);
+    }
+  }, [searchParams, setIsSearchOpen]);
+
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    if (searchParams.get("search") || searchParams.get("modal") === "search") {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("search");
+      if (newParams.get("modal") === "search") newParams.delete("modal");
+      setSearchParams(newParams, { replace: true });
+    }
+  };
 
   // Focus search input when modal opens
   useEffect(() => {
@@ -41,12 +60,12 @@ export const SearchModal = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && isSearchOpen) {
-        setIsSearchOpen(false);
+        closeSearch();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isSearchOpen, setIsSearchOpen]);
+  }, [isSearchOpen]);
 
   // 2-second debounce: only search when user stops typing for 2 seconds
   useEffect(() => {
@@ -74,11 +93,6 @@ export const SearchModal = () => {
     );
   }, [products, trimmedQuery]);
 
-  const handleProductClick = (productId) => {
-    setIsSearchOpen(false);
-    navigate(`/product/${productId}`);
-  };
-
   const handleClear = () => {
     if (query) {
       setQuery("");
@@ -100,7 +114,7 @@ export const SearchModal = () => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 px-4 bg-black/60 backdrop-blur-xs animate-fadeIn"
-      onClick={() => setIsSearchOpen(false)}
+      onClick={closeSearch}
     >
       <div
         className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col transition-all"
@@ -143,7 +157,7 @@ export const SearchModal = () => {
 
           <button
             type="button"
-            onClick={() => setIsSearchOpen(false)}
+            onClick={closeSearch}
             className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
             aria-label="Close search"
           >
@@ -191,9 +205,10 @@ export const SearchModal = () => {
               {displayItems.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                   {displayItems.map((item) => (
-                    <div
+                    <Link
                       key={item.id}
-                      onClick={() => handleProductClick(item.id)}
+                      to={`/product/${item.id}`}
+                      onClick={closeSearch}
                       className="group flex flex-col space-y-2 cursor-pointer min-w-0"
                     >
                       <div className="w-full aspect-square rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800">
@@ -216,7 +231,7 @@ export const SearchModal = () => {
                           EGP
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

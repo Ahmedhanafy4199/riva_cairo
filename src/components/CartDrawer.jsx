@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LuX, LuShoppingBag, LuPlus, LuMinus, LuTrash2, LuArrowRight } from 'react-icons/lu';
 import { useShop } from '../context/ShopContext';
 
@@ -14,7 +14,6 @@ export const CartDrawer = () => {
     clearCart,
     getProductStock,
   } = useShop();
-  const navigate = useNavigate();
 
   if (!isCartOpen) return null;
 
@@ -87,12 +86,13 @@ export const CartDrawer = () => {
                   <p className="text-xs text-slate-500 max-w-xs mb-6">
                     Explore our Tuscany handcrafted leather collection and find your perfect bag, wallet, or jacket.
                   </p>
-                  <button
+                  <Link
+                    to="/category/All"
                     onClick={() => setIsCartOpen(false)}
-                    className="px-6 py-2.5 rounded-full bg-amber-500 text-slate-950 text-xs font-semibold hover:bg-amber-400 transition-colors cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-amber-500 text-slate-950 text-xs font-semibold hover:bg-amber-400 transition-colors cursor-pointer inline-block"
                   >
                     Start Shopping
-                  </button>
+                  </Link>
                 </div>
               ) : (
                 cart.map((item) => {
@@ -107,17 +107,29 @@ export const CartDrawer = () => {
                       key={item.id}
                       className="flex gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
                     >
-                      <img 
-                        src={item.image} 
-                        alt={item.title} 
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover bg-slate-950 shrink-0"
-                      />
+                      <Link
+                        to={`/product/${item.id}`}
+                        onClick={() => setIsCartOpen(false)}
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-slate-950 shrink-0 block"
+                      >
+                        <img 
+                          src={item.image} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover hover:scale-105 transition-transform"
+                        />
+                      </Link>
 
                       <div className="flex-1 flex flex-col justify-between min-w-0">
                         <div>
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="text-xs font-semibold text-slate-200 line-clamp-1">
-                              {item.title}
+                              <Link
+                                to={`/product/${item.id}`}
+                                onClick={() => setIsCartOpen(false)}
+                                className="hover:text-amber-400 transition-colors"
+                              >
+                                {item.title}
+                              </Link>
                             </h4>
                             <button
                               onClick={() => removeFromCart(item.id)}
@@ -202,16 +214,14 @@ export const CartDrawer = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <button
-                    onClick={() => {
-                      setIsCartOpen(false);
-                      navigate('/checkout');
-                    }}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-sm shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all duration-300 cursor-pointer"
+                  <Link
+                    to="/checkout"
+                    onClick={() => setIsCartOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 text-slate-950 font-semibold text-sm shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition-all duration-300 cursor-pointer text-center"
                   >
                     <span>Proceed to Checkout</span>
                     <LuArrowRight className="w-4 h-4" />
-                  </button>
+                  </Link>
 
                   <button
                     onClick={clearCart}

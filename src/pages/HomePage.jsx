@@ -5,7 +5,7 @@ import {
   LuChevronLeft,
   LuChevronRight,
 } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useShop, matchCategory } from "../context/ShopContext";
 import { HeroSection } from "../components/HeroSection";
 import { ProductCard } from "../components/ProductCard";
@@ -165,12 +165,13 @@ const ProductCollectionRow = ({
 
       {/* Bottom View All Button */}
       <div className="flex justify-center pt-1.5 sm:pt-2">
-        <button
-          onClick={() => onSelectCategory(categoryKey)}
-          className="w-full max-w-[190px] py-2.5 px-6 border border-slate-900 dark:border-slate-100 text-slate-900 dark:text-slate-100 text-xs font-medium uppercase tracking-wider hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all cursor-pointer text-center"
+        <Link
+          to={categoryKey === "All" ? "/category/All" : `/category/${categoryKey}`}
+          onClick={() => onSelectCategory && onSelectCategory(categoryKey)}
+          className="w-full max-w-[190px] py-2.5 px-6 border border-slate-900 dark:border-slate-100 text-slate-900 dark:text-slate-100 text-xs font-medium uppercase tracking-wider hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all cursor-pointer text-center block"
         >
           View all
-        </button>
+        </Link>
       </div>
     </section>
   );
@@ -178,13 +179,10 @@ const ProductCollectionRow = ({
 
 export const HomePage = ({ onEditProduct }) => {
   const { products, setActiveCategory } = useShop();
-  const navigate = useNavigate();
 
   const handleSelectCategory = (catId) => {
     const category = catId === "Home" ? "All" : catId;
     setActiveCategory(category);
-    navigate(category === "All" ? "/category/All" : `/category/${category}`);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const departmentCategories = ["Bags", "Wallets", "Jackets", "Belts"];

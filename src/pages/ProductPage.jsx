@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   LuShoppingBag,
   LuChevronDown,
@@ -67,12 +67,12 @@ export const ProductPage = ({ onEditProduct }) => {
         <h2 className="font-serif-brand text-2xl font-semibold text-slate-700 dark:text-slate-300">
           Product not found
         </h2>
-        <button
-          onClick={() => navigate(-1)}
-          className="px-6 py-2.5 rounded-full bg-slate-900  font-medium text-xs hover:bg-slate-800 transition-colors cursor-pointer"
+        <Link
+          to="/category/All"
+          className="px-6 py-2.5 rounded-full bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors cursor-pointer inline-block"
         >
           Go Back
-        </button>
+        </Link>
       </div>
     );
   }

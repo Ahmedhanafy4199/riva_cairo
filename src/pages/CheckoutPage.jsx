@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   LuArrowLeft,
   LuCircleCheck,
@@ -13,7 +13,6 @@ import { useShop } from '../context/ShopContext';
 
 export const CheckoutPage = () => {
   const { cart, cartSubtotal, placeOrder } = useShop();
-  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: '',
@@ -65,28 +64,18 @@ export const CheckoutPage = () => {
         </div>
         <h2 className="font-serif-brand text-xl sm:text-2xl font-semibold text-slate-300">Your cart is empty</h2>
         <p className="text-xs text-slate-500">Add some products before proceeding to checkout.</p>
-        <button
-          onClick={() => navigate('/category/All')}
-          className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+        <Link
+          to="/category/All"
+          className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer inline-block"
         >
           Browse Products
-        </button>
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-2xl mx-auto space-y-5 sm:space-y-6 animate-fadeIn pb-12 sm:pb-16">
-      {/* {!confirmedOrder && (
-        <button
-          onClick={() => navigate('/category/All')}
-          className="flex items-center gap-2 text-xs sm:text-sm text-slate-400 hover:text-amber-400 transition-colors group cursor-pointer"
-        >
-          <LuArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span>Back to Cart</span>
-        </button>
-      )} */}
-
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="p-4 pt-14 sm:p-6 sm:pt-16  flex items-center gap-3">
@@ -145,12 +134,12 @@ export const CheckoutPage = () => {
               We have received your order. Redirecting you to home page...
             </p>
 
-            <button
-              onClick={() => navigate('/')}
-              className="w-full py-3.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-sm hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 cursor-pointer"
+            <Link
+              to="/"
+              className="w-full py-3.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-sm hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20 block text-center cursor-pointer"
             >
               Back to Home
-            </button>
+            </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6">

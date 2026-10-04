@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   LuCrown,
   LuShieldCheck,
@@ -28,10 +28,26 @@ export const Footer = () => {
   const { setActiveCategory, isAdminLoggedIn, setIsAdminModalOpen, showToast } =
     useShop();
   const { theme } = useTheme();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Active modal state: 'care' | 'returns' | 'shipping' | 'currency' | null
   const [activeModal, setActiveModal] = useState(null);
+
+  React.useEffect(() => {
+    const modalParam = searchParams.get("modal");
+    if (modalParam && ["care", "returns", "shipping", "currency"].includes(modalParam)) {
+      setActiveModal(modalParam);
+    }
+  }, [searchParams]);
+
+  const closeModal = () => {
+    setActiveModal(null);
+    if (searchParams.get("modal")) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("modal");
+      setSearchParams(newParams, { replace: true });
+    }
+  };
 
   React.useEffect(() => {
     const handleOpenModal = (e) => {
@@ -75,17 +91,8 @@ export const Footer = () => {
   //   { code: "EUR", symbol: "€", name: "European Union (EUR)", flag: "🇪🇺" },
   // ];
 
-  const handleSelectCategory = (catId) => {
-    const targetCategory = catId === "Home" ? "All" : catId;
-    setActiveCategory(targetCategory);
-    navigate(catId === "Home" ? "/" : `/category/${targetCategory}`);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   const handleAdminClick = () => {
-    if (isAdminLoggedIn) {
-      navigate("/admin");
-    } else {
+    if (!isAdminLoggedIn) {
       setIsAdminModalOpen(true);
     }
   };
@@ -270,49 +277,69 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button
-                  onClick={() => handleSelectCategory("Bags")}
+                <Link
+                  to="/category/Bags"
+                  onClick={() => {
+                    setActiveCategory("Bags");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
                   Handcrafted Bags
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleSelectCategory("Wallets")}
+                <Link
+                  to="/category/Wallets"
+                  onClick={() => {
+                    setActiveCategory("Wallets");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60 shrink-0"></span>
                   Leather Wallets
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleSelectCategory("Jackets")}
+                <Link
+                  to="/category/Jackets"
+                  onClick={() => {
+                    setActiveCategory("Jackets");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60 shrink-0"></span>
                   Lambskin Jackets
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleSelectCategory("Belts")}
+                <Link
+                  to="/category/Belts"
+                  onClick={() => {
+                    setActiveCategory("Belts");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60 shrink-0"></span>
                   Artisan Belts
-                </button>
+                </Link>
               </li>
               <li>
-                <button
-                  onClick={() => handleSelectCategory("Home")}
+                <Link
+                  to="/category/All"
+                  onClick={() => {
+                    setActiveCategory("All");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className="text-amber-400 hover:text-amber-300 transition-colors cursor-pointer flex items-center gap-1 font-medium pt-1"
                 >
                   <span>Explore All Products</span>
                   <LuArrowRight className="w-3 h-3" />
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -324,7 +351,8 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <button
+                <Link
+                  to="/?modal=care"
                   onClick={() => setActiveModal("care")}
                   className="w-full text-left p-2 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/40 hover:text-amber-400 transition-all flex items-center justify-between cursor-pointer group"
                 >
@@ -337,11 +365,12 @@ export const Footer = () => {
                   <span className="text-[10px] text-amber-400/80 uppercase font-semibold">
                     View
                   </span>
-                </button>
+                </Link>
               </li>
 
               <li>
-                <button
+                <Link
+                  to="/?modal=returns"
                   onClick={() => setActiveModal("returns")}
                   className="w-full text-left p-2 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/40 hover:text-amber-400 transition-all flex items-center justify-between cursor-pointer group"
                 >
@@ -354,11 +383,12 @@ export const Footer = () => {
                   <span className="text-[10px] text-amber-400/80 uppercase font-semibold">
                     View
                   </span>
-                </button>
+                </Link>
               </li>
 
               <li>
-                <button
+                <Link
+                  to="/?modal=shipping"
                   onClick={() => setActiveModal("shipping")}
                   className="w-full text-left p-2 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-amber-500/40 hover:text-amber-400 transition-all flex items-center justify-between cursor-pointer group"
                 >
@@ -371,17 +401,27 @@ export const Footer = () => {
                   <span className="text-[10px] text-amber-400/80 uppercase font-semibold">
                     View
                   </span>
-                </button>
+                </Link>
               </li>
 
               <li className="pt-1">
-                <button
-                  onClick={handleAdminClick}
-                  className="text-slate-400 hover:text-amber-400 flex items-center gap-1.5 transition-colors text-xs cursor-pointer"
-                >
-                  <LuShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Store Administration Access</span>
-                </button>
+                {isAdminLoggedIn ? (
+                  <Link
+                    to="/admin"
+                    className="text-slate-400 hover:text-amber-400 flex items-center gap-1.5 transition-colors text-xs cursor-pointer"
+                  >
+                    <LuShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Store Administration Access</span>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => setIsAdminModalOpen(true)}
+                    className="text-slate-400 hover:text-amber-400 flex items-center gap-1.5 transition-colors text-xs cursor-pointer"
+                  >
+                    <LuShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Store Administration Access</span>
+                  </button>
+                )}
               </li>
             </ul>
           </div>
@@ -448,7 +488,7 @@ export const Footer = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl space-y-5 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
             <button
-              onClick={() => setActiveModal(null)}
+              onClick={closeModal}
               className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
               aria-label="Close modal"
             >
@@ -501,7 +541,7 @@ export const Footer = () => {
                 RIVA CAIRO Leather Guarantee
               </span>
               <button
-                onClick={() => setActiveModal(null)}
+                onClick={closeModal}
                 className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition-colors cursor-pointer shrink-0"
               >
                 Close & Got It
@@ -516,7 +556,7 @@ export const Footer = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl space-y-5 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
             <button
-              onClick={() => setActiveModal(null)}
+              onClick={closeModal}
               className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
               aria-label="Close modal"
             >
@@ -585,7 +625,7 @@ export const Footer = () => {
 
             <div className="pt-2 border-t border-slate-800 flex justify-end">
               <button
-                onClick={() => setActiveModal(null)}
+                onClick={closeModal}
                 className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition-colors cursor-pointer"
               >
                 Understand & Close
@@ -600,7 +640,7 @@ export const Footer = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl space-y-5 max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
             <button
-              onClick={() => setActiveModal(null)}
+              onClick={closeModal}
               className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
               aria-label="Close modal"
             >
@@ -660,7 +700,7 @@ export const Footer = () => {
 
             <div className="pt-2 border-t border-slate-800 flex justify-end">
               <button
-                onClick={() => setActiveModal(null)}
+                onClick={closeModal}
                 className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition-colors cursor-pointer"
               >
                 Close
@@ -675,7 +715,7 @@ export const Footer = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 max-h-[85vh] overflow-y-auto">
             <button
-              onClick={() => setActiveModal(null)}
+              onClick={closeModal}
               className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
               aria-label="Close modal"
             >
@@ -704,7 +744,7 @@ export const Footer = () => {
                     key={region.code}
                     onClick={() => {
                       setSelectedRegion(region);
-                      setActiveModal(null);
+                      closeModal();
                       showToast(
                         `Currency updated to ${region.code} (${region.symbol})`,
                         "success",
@@ -738,7 +778,7 @@ export const Footer = () => {
 
             <div className="pt-2 border-t border-slate-800 flex justify-end">
               <button
-                onClick={() => setActiveModal(null)}
+                onClick={closeModal}
                 className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs transition-colors cursor-pointer"
               >
                 Cancel

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   LuShoppingBag,
   LuSearch,
@@ -32,7 +32,6 @@ export const Navbar = () => {
   const showRedDot = Boolean(isAdminLoggedIn && hasUnreadOrders);
 
   const { theme, toggleTheme } = useTheme();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -55,44 +54,10 @@ export const Navbar = () => {
     { id: "Contact", label: "Contact us", type: "contact", icon: LuCrown },
   ];
 
-  const handleCategoryClick = (itemOrId) => {
-    const item = typeof itemOrId === "string"
-      ? navCategories.find((n) => n.id === itemOrId)
-      : itemOrId;
-
-    if (!item) {
-      setMobileMenuOpen(false);
-      return;
-    }
-
-    if (item.type === "nav") {
-      setActiveCategory("All");
-      if (item.id === "Home") {
-        navigate("/");
-      } else {
-        navigate("/category/All");
-      }
-    } else if (item.type === "modal") {
+  const handleCategoryClick = (item) => {
+    if (item?.type === "modal") {
       window.dispatchEvent(new CustomEvent("open-footer-modal", { detail: item.modal }));
-    } else if (item.type === "contact") {
-      window.open("https://wa.me/201037650495", "_blank");
     }
-
-    setMobileMenuOpen(false);
-  };
-
-  const handleAdminClick = () => {
-    if (location.pathname === "/admin") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    } else if (isAdminLoggedIn) {
-      navigate("/admin");
-    } else {
-      setIsAdminModalOpen(true);
-    }
-
     setMobileMenuOpen(false);
   };
 
@@ -117,15 +82,55 @@ export const Navbar = () => {
                   (location.pathname === "/" && item.id === "Home") ||
                   (location.pathname.startsWith("/category/") && item.id === "Products");
 
+                if (item.type === "nav") {
+                  return (
+                    <Link
+                      key={item.id}
+                      to={item.path}
+                      onClick={() => setActiveCategory("All")}
+                      className={`transition-colors cursor-pointer whitespace-nowrap ${
+                        isActive
+                          ? "text-slate-950 dark:text-white font-semibold border-b-2 border-slate-950 dark:border-white pb-0.5"
+                          : "text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                }
+
+                if (item.type === "contact") {
+                  return (
+                    <a
+                      key={item.id}
+                      href="https://wa.me/201037650495"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium transition-colors cursor-pointer whitespace-nowrap"
+                    >
+                      {item.label}
+                    </a>
+                  );
+                }
+
+                if (item.type === "modal") {
+                  return (
+                    <Link
+                      key={item.id}
+                      to={`/?modal=${item.modal}`}
+                      onClick={() => handleCategoryClick(item)}
+                      className="text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium transition-colors cursor-pointer whitespace-nowrap"
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                }
+
                 return (
                   <button
                     key={item.id}
                     onClick={() => handleCategoryClick(item)}
-                    className={`transition-colors cursor-pointer whitespace-nowrap ${
-                      isActive
-                        ? "text-slate-950 dark:text-white font-semibold border-b-2 border-slate-950 dark:border-white pb-0.5"
-                        : "text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium"
-                    }`}
+                    className="text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white font-medium transition-colors cursor-pointer whitespace-nowrap"
                   >
                     {item.label}
                   </button>
@@ -165,9 +170,10 @@ export const Navbar = () => {
             </div>
 
             {/* Center Column: Logo (Dead Center) */}
-            <div
+            <Link
+              to="/"
               onClick={() => {
-                handleCategoryClick("Home");
+                setActiveCategory("All");
                 window.scrollTo({
                   top: 0,
                   behavior: "smooth",
@@ -187,7 +193,7 @@ export const Navbar = () => {
               <span className="font-serif-brand  sm:text-2xl font-semibold tracking-wider sm:tracking-widest text-slate-950 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                 RIVA
               </span>
-            </div>
+            </Link>
 
             {/* Right Column: Actions & Utilities */}
             <div className="flex items-center gap-1 sm:gap-3">
@@ -202,25 +208,36 @@ export const Navbar = () => {
               </button>
 
               {/* Account / User Trigger Button */}
-              <button
-                onClick={handleAdminClick}
-                className="p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0 relative"
-                aria-label="Account"
-                title={isAdminLoggedIn ? "Admin Panel" : "Admin Login"}
-              >
-                <LuUser className="w-5 h-5" />
-                {showRedDot && (
-                  <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                  </span>
-                )}
-              </button>
+              {isAdminLoggedIn ? (
+                <Link
+                  to="/admin"
+                  className="p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0 relative block"
+                  aria-label="Account"
+                  title="Admin Panel"
+                >
+                  <LuUser className="w-5 h-5" />
+                  {showRedDot && (
+                    <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                  )}
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setIsAdminModalOpen(true)}
+                  className="p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0 relative block"
+                  aria-label="Account"
+                  title="Admin Login"
+                >
+                  <LuUser className="w-5 h-5" />
+                </button>
+              )}
 
               {/* Cart Drawer Trigger */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="relative p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0"
+                className="relative p-2 text-slate-900 dark:text-slate-100 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer shrink-0 block"
                 aria-label="Shopping Cart"
                 title="Shopping Bag"
               >
@@ -298,10 +315,64 @@ export const Navbar = () => {
               (location.pathname === "/" && item.id === "Home") ||
               (location.pathname.startsWith("/category/") && item.id === "Products");
 
+            if (item.type === "nav") {
+              return (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  onClick={() => {
+                    setActiveCategory("All");
+                    setMobileMenuOpen(false);
+                  }}
+                  tabIndex={mobileMenuOpen ? 0 : -1}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white font-semibold border border-slate-200 dark:border-slate-700"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white"
+                  }`}
+                >
+                  <Icon className="w-5 h-5 text-slate-950 dark:text-amber-400 shrink-0" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            }
+
+            if (item.type === "contact") {
+              return (
+                <a
+                  key={item.id}
+                  href="https://wa.me/201037650495"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  tabIndex={mobileMenuOpen ? 0 : -1}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white"
+                >
+                  <Icon className="w-5 h-5 text-slate-950 dark:text-amber-400 shrink-0" />
+                  <span>{item.label}</span>
+                </a>
+              );
+            }
+
+            if (item.type === "modal") {
+              return (
+                <Link
+                  key={item.id}
+                  to={`/?modal=${item.modal}`}
+                  onClick={() => handleCategoryClick(item)}
+                  tabIndex={mobileMenuOpen ? 0 : -1}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-950 dark:hover:text-white"
+                >
+                  <Icon className="w-5 h-5 text-slate-950 dark:text-amber-400 shrink-0" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            }
+
             return (
               <button
                 key={item.id}
-                onClick={() => handleCategoryClick(item.id)}
+                onClick={() => handleCategoryClick(item)}
                 tabIndex={mobileMenuOpen ? 0 : -1}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                   isActive
@@ -338,22 +409,35 @@ export const Navbar = () => {
           </button>
 
           {/* Account Log In / Admin Button */}
-          <button
-            onClick={handleAdminClick}
-            tabIndex={mobileMenuOpen ? 0 : -1}
-            className="relative w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-slate-900 dark:bg-amber-500  dark:text-slate-950 font-medium text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors"
-          >
-            <LuUser className="w-4 h-4" />
-            {showRedDot && (
-              <span className="absolute top-2.5 right-3 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>
-              </span>
-            )}
-            <span>
-              {isAdminLoggedIn ? "Go to Admin Dashboard" : "Log in"}
-            </span>
-          </button>
+          {isAdminLoggedIn ? (
+            <Link
+              to="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              tabIndex={mobileMenuOpen ? 0 : -1}
+              className="relative w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 font-medium text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors"
+            >
+              <LuUser className="w-4 h-4" />
+              {showRedDot && (
+                <span className="absolute top-2.5 right-3 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>
+                </span>
+              )}
+              <span>Go to Admin Dashboard</span>
+            </Link>
+          ) : (
+            <button
+              onClick={() => {
+                setIsAdminModalOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              tabIndex={mobileMenuOpen ? 0 : -1}
+              className="relative w-full flex items-center justify-center gap-2.5 py-3 rounded-xl bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 font-medium text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors"
+            >
+              <LuUser className="w-4 h-4" />
+              <span>Log in</span>
+            </button>
+          )}
         </div>
       </div>
     </>

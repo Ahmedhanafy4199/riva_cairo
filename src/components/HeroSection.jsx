@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   LuShoppingBag,
   LuWallet,
@@ -78,8 +79,9 @@ export const HeroSection = ({ onSelectCategory }) => {
 
           {/* Shop All Products Button */}
           <div className="absolute bottom-10 sm:bottom-1/3 left-1/4 sm:left-35 md:left-68 px-2">
-            <button
-              onClick={() => onSelectCategory("All")}
+            <Link
+              to="/category/All"
+              onClick={() => onSelectCategory && onSelectCategory("All")}
               className="
               px-3.5 py-2 sm:px-4 sm:py-2
               rounded-xl
@@ -92,7 +94,7 @@ export const HeroSection = ({ onSelectCategory }) => {
               font-medium
               transition-colors
               cursor-pointer
-              flex items-center justify-center
+              inline-flex items-center justify-center
               gap-1.5
               whitespace-nowrap
               shadow-lg
@@ -100,7 +102,7 @@ export const HeroSection = ({ onSelectCategory }) => {
             >
               <span>Shop All Products</span>
               <LuArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -122,10 +124,11 @@ export const HeroSection = ({ onSelectCategory }) => {
           {categoryHighlights.map((cat) => {
             const Icon = cat.icon;
             return (
-              <div
+              <Link
                 key={cat.id}
-                onClick={() => onSelectCategory(cat.id)}
-                className="group relative h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/80 cursor-pointer shadow-lg hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500"
+                to={`/category/${cat.id}`}
+                onClick={() => onSelectCategory && onSelectCategory(cat.id)}
+                className="group relative h-48 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800/80 cursor-pointer shadow-lg hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500 block"
               >
                 <img
                   src={cat.image}
@@ -151,7 +154,7 @@ export const HeroSection = ({ onSelectCategory }) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

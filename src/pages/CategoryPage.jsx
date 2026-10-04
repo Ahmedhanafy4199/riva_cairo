@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useDeferredValue } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   LuShoppingBag,
   LuWallet,
@@ -51,7 +51,6 @@ const categoryMeta = {
 
 export const CategoryPage = ({ onEditProduct }) => {
   const { categoryName } = useParams();
-  const navigate = useNavigate();
   const {
     products,
     setActiveCategory,
@@ -160,11 +159,6 @@ export const CategoryPage = ({ onEditProduct }) => {
     window.scrollTo({ top: 120, behavior: "smooth" });
   };
 
-  const handleCategoryChange = (cat) => {
-    setActiveCategory(cat);
-    navigate(cat === "All" ? "/category/All" : `/category/${cat}`);
-  };
-
   return (
     <div className="w-full px-3 sm:px-6 lg:px-10 2xl:px-16 space-y-6 sm:space-y-8 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
       {/* Category Banner */}
@@ -220,9 +214,10 @@ export const CategoryPage = ({ onEditProduct }) => {
                 ? products.length
                 : products.filter((p) => matchCategory(p.category, cat)).length;
             return (
-              <button
+              <Link
                 key={cat}
-                onClick={() => handleCategoryChange(cat)}
+                to={cat === "All" ? "/category/All" : `/category/${cat}`}
+                onClick={() => setActiveCategory(cat)}
                 className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-semibold whitespace-nowrap cursor-pointer transition-all duration-200 shrink-0 ${
                   isActive
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
@@ -239,7 +234,7 @@ export const CategoryPage = ({ onEditProduct }) => {
                 >
                   {count}
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -363,15 +358,16 @@ export const CategoryPage = ({ onEditProduct }) => {
             We couldn't find any products matching "{searchQuery}" in category "
             {activeCategory}".
           </p>
-          <button
+          <Link
+            to="/category/All"
             onClick={() => {
-              handleCategoryChange("All");
+              setActiveCategory("All");
               setSearchQuery("");
             }}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors cursor-pointer inline-block"
           >
             Clear Filters
-          </button>
+          </Link>
         </div>
       ) : (
         <div className="space-y-6 sm:space-y-8">
