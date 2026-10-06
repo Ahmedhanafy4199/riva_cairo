@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   LuShoppingBag,
@@ -10,16 +10,25 @@ import {
   LuPlus,
 } from "react-icons/lu";
 import { useShop, matchCategory } from "../context/ShopContext";
+import { supabase } from "../lib/supabase";
 import { ProductCard } from "../components/ProductCard";
 
 export const ProductPage = ({ onEditProduct }) => {
-  const { products, addToCart, getProductStock, showToast, addRecentlyViewed } =
-    useShop();
+  const {
+    products,
+    isLoadingProducts,
+    addToCart,
+    getProductStock,
+    showToast,
+    addRecentlyViewed,
+  } = useShop();
   const { productId } = useParams();
   const navigate = useNavigate();
 
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [directProduct, setDirectProduct] = useState(null);
+  const [isDirectLoading, setIsDirectLoading] = useState(false);
 
   // Accordion open/close state (Default CLOSED as requested)
   const [isDescOpen, setIsDescOpen] = useState(false);
@@ -38,7 +47,98 @@ export const ProductPage = ({ onEditProduct }) => {
   const touchStartX = useRef(null);
   const minSwipeDistance = 40;
 
-  const product = products.find((p) => p.id === productId);
+  // Find product from global context
+  const cachedProduct = useMemo(() => {
+    if (!products || products.length === 0 || !productId) return null;
+    return (
+      products.find(
+        (p) =>
+          String(p.id).trim().toLowerCase() ===
+          String(productId).trim().toLowerCase(),
+      ) || null
+    );
+  }, [products, productId]);
+
+  // Fetch product directly from Supabase if not present in context products cache
+  useEffect(() => {
+    if (cachedProduct) {
+      setDirectProduct(cachedProduct);
+      return;
+    }
+
+    if (isLoadingProducts) return;
+
+    let isMounted = true;
+    const fetchSingleProduct = async () => {
+      if (!productId) return;
+      try {
+        setIsDirectLoading(true);
+        const { data: p, error } = await supabase
+          .from("products")
+          .select("*, product_images (*)")
+          .eq("id", productId)
+          .maybeSingle();
+
+        if (!error && p && isMounted) {
+          const sortedImages = (p.product_images || []).sort(
+            (a, b) => (a.sort_order || 0) - (b.sort_order || 0),
+          );
+
+          const coverImageObj =
+            sortedImages.find((img) => img.is_cover) || sortedImages[0];
+          const imageUrls = sortedImages.map((img) => img.image_url);
+
+          const purchasedQty = parseInt(p.purchased_qty || 0, 10);
+          const sold = parseInt(p.sold || 0, 10);
+          const qtyStock = parseInt(
+            p.qty_stock !== undefined && p.qty_stock !== null ? p.qty_stock : 0,
+            10,
+          );
+
+          setDirectProduct({
+            id: p.id,
+            title: p.title,
+            category: p.category,
+            barcode: p.barcode || "",
+            price: parseFloat(p.price),
+            originalPrice: p.original_price
+              ? parseFloat(p.original_price)
+              : parseFloat(p.price) * 1.2,
+            purchasedQty,
+            sold,
+            qtyStock,
+            stock: qtyStock,
+            featured: Boolean(p.featured),
+            description: p.description || "",
+            rating: p.rating ? parseFloat(p.rating) : 5.0,
+            reviewsCount: p.reviews_count ? parseInt(p.reviews_count, 10) : 1,
+            image: coverImageObj ? coverImageObj.image_url : "",
+            images: imageUrls,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load product details:", err);
+      } finally {
+        if (isMounted) {
+          setIsDirectLoading(false);
+        }
+      }
+    };
+
+    fetchSingleProduct();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [cachedProduct, productId, isLoadingProducts]);
+
+  const product = cachedProduct || directProduct;
+
+  // Reset indices on route/product change
+  useEffect(() => {
+    setActiveImageIndex(0);
+    setQuantity(1);
+  }, [productId]);
 
   // Add product to recently viewed list on mount / change & scroll to top
   useEffect(() => {
@@ -61,23 +161,8 @@ export const ProductPage = ({ onEditProduct }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (!product) {
-    return (
-      <div className="py-20 text-center space-y-4 px-4">
-        <h2 className="font-serif-brand text-2xl font-semibold text-slate-700 dark:text-slate-300">
-          Product not found
-        </h2>
-        <Link
-          to="/category/All"
-          className="px-6 py-2.5 rounded-full bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors cursor-pointer inline-block"
-        >
-          Go Back
-        </Link>
-      </div>
-    );
-  }
-
-  const images = React.useMemo(() => {
+  const images = useMemo(() => {
+    if (!product) return [];
     const rawImages =
       product.images && product.images.length > 0
         ? [...product.images]
@@ -95,17 +180,27 @@ export const ProductPage = ({ onEditProduct }) => {
     return rawImages;
   }, [product]);
 
-  const activeImage = images[activeImageIndex] || images[0];
+  const activeImage = images[activeImageIndex] || images[0] || product?.image || "";
 
-  const relatedProducts = products
-    .filter(
-      (p) => p.id !== product.id && matchCategory(p.category, product.category),
-    )
-    .slice(0, 4);
+  const relatedProducts = useMemo(() => {
+    if (!product || !products) return [];
+    return products
+      .filter(
+        (p) =>
+          p &&
+          String(p.id).trim() !== String(product.id).trim() &&
+          matchCategory(p.category, product.category),
+      )
+      .slice(0, 4);
+  }, [product, products]);
 
-  const stock = getProductStock
-    ? getProductStock(product)
-    : (product.qtyStock ?? product.qty_stock ?? product.stock ?? 0);
+  const stock = useMemo(() => {
+    if (!product) return 0;
+    return getProductStock
+      ? getProductStock(product)
+      : (product.qtyStock ?? product.qty_stock ?? product.stock ?? 0);
+  }, [product, getProductStock]);
+
   const isOutOfStock = stock <= 0;
 
   const handleIncrement = () => {
@@ -119,13 +214,13 @@ export const ProductPage = ({ onEditProduct }) => {
   };
 
   const handleAddToCart = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock || !product) return;
     addToCart(product, quantity);
     setQuantity(1);
   };
 
   const handleBuyItNow = () => {
-    if (isOutOfStock) return;
+    if (isOutOfStock || !product) return;
     const success = addToCart(product, quantity);
     if (success !== false) {
       navigate("/checkout");
@@ -175,6 +270,31 @@ export const ProductPage = ({ onEditProduct }) => {
     setIsSwiping(false);
     touchStartX.current = null;
   };
+
+  if (isLoadingProducts || (isDirectLoading && !product)) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-slate-400">
+        <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+        <span className="text-xs tracking-wider">Loading product details...</span>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="py-20 text-center space-y-4 px-4 min-h-[50vh] flex flex-col items-center justify-center">
+        <h2 className="font-serif-brand text-2xl font-semibold text-slate-700 dark:text-slate-300">
+          Product not found
+        </h2>
+        <Link
+          to="/category/All"
+          className="px-6 py-2.5 rounded-full bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 font-medium text-xs hover:bg-slate-800 dark:hover:bg-amber-400 transition-colors cursor-pointer inline-block"
+        >
+          Go Back
+        </Link>
+      </div>
+    );
+  }
 
   // Description text formatting helper
   // const renderDescriptionContent = () => {

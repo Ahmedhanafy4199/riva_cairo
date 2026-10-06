@@ -53,6 +53,7 @@ export const CategoryPage = ({ onEditProduct }) => {
   const { categoryName } = useParams();
   const {
     products,
+    isLoadingProducts,
     setActiveCategory,
     activeCategory,
     searchQuery,
@@ -340,11 +341,16 @@ export const CategoryPage = ({ onEditProduct }) => {
         </div>
       </div>
 
-      {/* Products Grid / Searching Spinner / Empty State */}
+      {/* Products Grid / Searching Spinner / Loading / Empty State */}
       {isSearching && localSearch.trim() ? (
         <div className="py-20 flex flex-col items-center justify-center space-y-3 bg-slate-900/30 rounded-3xl border border-slate-800">
           <div className="w-8 h-8 border-3 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
           <span className="text-xs text-slate-400 font-light tracking-wide">Searching collection...</span>
+        </div>
+      ) : isLoadingProducts ? (
+        <div className="py-20 flex flex-col items-center justify-center space-y-3 min-h-[40vh]">
+          <div className="w-10 h-10 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+          <span className="text-xs text-slate-400 font-light tracking-wide">Loading collection...</span>
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="py-16 sm:py-20 text-center space-y-4 bg-slate-900/30 rounded-3xl border border-slate-800 px-4">
