@@ -86,7 +86,7 @@ const ProductCollectionRow = ({
             </span>
           )} */}
           <h2
-            className="font-serif-brand font-medium text-slate-900 dark:text-slate-100 mt-1"
+            className="font-serif-brand font-bold text-slate-900 dark:text-slate-100 mt-1"
           >
             {title}
           </h2>

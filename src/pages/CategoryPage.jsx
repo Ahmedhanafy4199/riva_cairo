@@ -139,7 +139,7 @@ export const CategoryPage = ({ onEditProduct }) => {
   }, [products, activeCategory, debouncedSearch, sortBy]);
 
   // Pagination Configuration
-  const ITEMS_PER_PAGE = 8;
+  const ITEMS_PER_PAGE = 20;
   const [currentPage, setCurrentPage] = useState(1);
 
   // Reset to page 1 whenever activeCategory, search, or sortBy changes
@@ -377,7 +377,7 @@ export const CategoryPage = ({ onEditProduct }) => {
         </div>
       ) : (
         <div className="space-y-6 sm:space-y-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6">
             {paginatedProducts.map((product) => (
               <ProductCard
                 key={product.id}

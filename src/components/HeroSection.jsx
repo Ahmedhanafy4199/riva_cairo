@@ -11,8 +11,8 @@ import bagImage from "../assets/bag.jpg";
 import walletImage from "../assets/wallet.jpg";
 import jacketImage from "../assets/jacket.avif";
 import beltImage from "../assets/belt.jpg";
-import heroCoverImage from "../assets/banner1.jpg";
-import heroMobileImage from "../assets/bannerMobile3.jpg";
+import heroCoverImage from "../assets/banner.jpg";
+import heroMobileImage from "../assets/bannerMobile15.jpg";
 import { useShop, matchCategory } from "../context/ShopContext";
 
 export const HeroSection = ({ onSelectCategory }) => {
@@ -111,10 +111,10 @@ export const HeroSection = ({ onSelectCategory }) => {
       <section className="space-y-6">
         <div className="flex items-end justify-between">
           <div>
-            <span className="text-[11px] sm:text-xs font-semibold tracking-widest text-amber-500 dark:text-amber-400 ">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-500 dark:text-amber-400 ">
               Curated Catalog
             </span>
-            <h2 className="font-serif-brand text-lg sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
+            <h2 className="font-serif-brand text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               Explore Our Signature Departments
             </h2>
           </div>
