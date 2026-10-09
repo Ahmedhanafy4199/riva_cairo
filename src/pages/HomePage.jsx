@@ -86,7 +86,7 @@ const ProductCollectionRow = ({
             </span>
           )} */}
           <h2
-            className="font-serif-brand font-bold text-slate-900 dark:text-slate-100 mt-1"
+            className="font-serif-brand text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1"
           >
             {title}
           </h2>
@@ -114,7 +114,7 @@ const ProductCollectionRow = ({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex overflow-x-auto gap-3 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth scroll-pl-3 sm:scroll-pl-0"
+        className="flex overflow-x-auto gap-3 pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 sm:gap-6 sm:overflow-visible no-scrollbar snap-x snap-mandatory scroll-smooth scroll-pl-3 sm:scroll-pl-0"
       >
         {displayProducts.map((product, idx) => (
           <div
@@ -186,8 +186,8 @@ export const HomePage = ({ onEditProduct }) => {
   };
 
   const departmentCategories = ["Bags", "Wallets", "Jackets", "Belts"];
-  const MAX_FEATURED_HOME_PRODUCTS = 4;
-  const MAX_CATEGORY_HOME_PRODUCTS = 4;
+  const MAX_FEATURED_HOME_PRODUCTS = 5;
+  const MAX_CATEGORY_HOME_PRODUCTS = 5;
 
   return (
     <div className="w-full px-3 sm:px-6 lg:px-10 2xl:px-16 space-y-10 sm:space-y-16 animate-fadeIn pt-5 sm:pt-8 pb-12 sm:pb-16">
@@ -196,7 +196,7 @@ export const HomePage = ({ onEditProduct }) => {
       {/* Featured Products Section */}
       <ProductCollectionRow
         badgeText="Handcrafted Selection"
-        title="Featured Luxury Products"
+        title="Explore All Products"
         items={products}
         maxDesktopCount={MAX_FEATURED_HOME_PRODUCTS}
         onSelectCategory={handleSelectCategory}

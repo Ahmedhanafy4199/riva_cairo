@@ -27,9 +27,9 @@ test.describe('01 – Homepage', () => {
     await expect(page.locator('button', { hasText: 'Shop All Products' })).toBeVisible();
   });
 
-  test('TC-01-C: Featured Luxury Products section heading visible', async ({ page }) => {
+  test('TC-01-C: Explore All Products section heading visible', async ({ page }) => {
     await expect(
-      page.locator('h2', { hasText: 'Featured Luxury Products' })
+      page.locator('h2', { hasText: 'Explore All Products' })
     ).toBeVisible();
   });
 

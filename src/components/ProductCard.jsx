@@ -141,7 +141,7 @@ export const ProductCard = React.memo(({ product, onEdit }) => {
             </span>
           )}
 
-          <span className="text-sm sm:text-base  font-medium text-slate-900 dark:text-slate-100 font-serif-brand">
+          <span className="text-sm sm:text-base  font-normal text-slate-900 dark:text-slate-100 font-serif-brand">
             {product.price?.toLocaleString("en-US")} EGP
           </span>
         </div>
